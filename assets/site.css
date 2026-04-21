@@ -163,6 +163,24 @@ main > h1 {
   gap: 1rem;
 }
 
+/* Whole card is one link (no nested <a> inside <article>). */
+a.shelf-card-hit {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+  border-radius: 0.75rem;
+}
+
+a.shelf-card-hit:focus-visible {
+  outline: 2px solid var(--pico-primary-focus);
+  outline-offset: 3px;
+}
+
+a.shelf-card-hit:hover article.shelf-item header h2 {
+  color: var(--pico-primary-hover);
+  text-decoration: underline;
+}
+
 /* Flat card: undo Pico’s two-tone <article> header strip */
 article.shelf-item {
   margin-bottom: 0;
@@ -187,20 +205,11 @@ article.shelf-item header h2 {
   --pico-line-height: 1.35;
   --pico-font-weight: 600;
   margin: 0;
-}
-
-article.shelf-item header h2 a {
   color: var(--pico-color);
-  text-decoration: none;
 }
 
-article.shelf-item header h2 a:hover {
-  color: var(--pico-primary-hover);
-  text-decoration: underline;
-}
-
-/* Off-site shelf cards: same layout; title opens elsewhere in a new tab. */
-article.shelf-item--external header h2 a.shelf-card-external::after {
+/* Off-site shelf cards: title shows external hint. */
+a.shelf-card-hit--external article.shelf-item--external header h2::after {
   content: " \2197";
   font-size: 0.82em;
   font-weight: 500;
