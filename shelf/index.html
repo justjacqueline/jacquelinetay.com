@@ -1,35 +1,62 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Shelf — Jacqueline Tay</title>
+  <title>What&rsquo;s on the shelf? — Jacqueline Tay</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2.1.1/css/pico.min.css">
   <link rel="stylesheet" href="/assets/site.css">
 </head>
 <body>
-  <header class="site-header">
-    <div class="site-header-inner">
-      <div class="site-title"><a href="/">Jacqueline Tay</a></div>
-      <nav class="site-nav" aria-label="Primary">
-        <a href="/shelf/">Shelf</a>
-        <a href="/about/">About</a>
-      </nav>
-    </div>
+  <header>
+    <nav class="container">
+      <ul>
+        <li>
+          <strong class="site-brand">
+            <a href="/shelf/" aria-label="Jacqueline Tay — shelf">
+              <img class="site-logo" src="/assets/logo-home.png" alt="" width="1036" height="191" decoding="async">
+            </a>
+          </strong>
+        </li>
+      </ul>
+    </nav>
   </header>
-  <main>
-    <h1>Shelf</h1>
-    <p class="lead">Charts, tools, and notes kept here publicly. Add new rows as you ship more work.</p>
-    <ul class="card-list">
-      <li class="card">
-        <h2><a href="/charts/worry-automation/">How worried are Americans about their work being automated?</a></h2>
-        <p>Diverging stacked bars from YouGov (via Our World in Data), Jan 2021–Jan 2026. Static D3-style layout in HTML/JS.</p>
-        <div class="tag-row">
-          <span class="tag">survey</span>
-          <span class="tag">YouGov</span>
-          <span class="tag">OWID</span>
+  <main class="container">
+    <div class="shelf-hero">
+      <h1>What&rsquo;s on the shelf?</h1>
+      <p class="shelf-subtitle">New projects, experiments, and ideas, with more to come.</p>
+    </div>
+    <div class="shelf-grid">
+      <article class="shelf-item">
+        <header>
+          <h2><a href="/charts/worry-automation/">How worried are Americans about their work being automated?</a></h2>
+        </header>
+        <p class="shelf-card-subtitle">After 2022, early to mid-career Americans are almost split on whether AI will take their jobs</p>
+        <div class="tag-row" role="list">
+          <span class="tag" role="listitem">data visualization</span>
+          <span class="tag" role="listitem">AI</span>
         </div>
-      </li>
-    </ul>
+      </article>
+      <article class="shelf-item shelf-item--external">
+        <header>
+          <h2>
+            <a
+              class="shelf-card-external"
+              href="https://how-can-i-help-others.netlify.app/"
+              target="_blank"
+              rel="noopener noreferrer"
+            >How can you help others?</a>
+          </h2>
+        </header>
+        <p class="shelf-card-subtitle">Explore how moral weights change a donation&rsquo;s impact</p>
+        <div class="tag-row" role="list">
+          <span class="tag" role="listitem">interactive explainer</span>
+          <span class="tag" role="listitem">data visualization</span>
+          <span class="tag" role="listitem">global health</span>
+          <span class="tag" role="listitem">charitable giving</span>
+        </div>
+      </article>
+    </div>
   </main>
 </body>
 </html>

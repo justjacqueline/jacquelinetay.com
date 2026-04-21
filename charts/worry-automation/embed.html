@@ -20,6 +20,11 @@
   --dontknow: #666;
 }
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+/* Keep root shrink-wrapped so iframe height math is not inflated to the iframe’s own assigned height. */
+html {
+  height: auto;
+  min-height: 0;
+}
 body {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   background: var(--bg); color: var(--text);
@@ -27,6 +32,8 @@ body {
   padding: 32px clamp(36px, 9vw, 120px) 56px;
   max-width: none;
   margin: 0 auto;
+  min-height: 0;
+  height: auto;
   overflow-x: auto;
 }
 h1 { font-size: 24px; font-weight: 700; margin-bottom: 20px; }
@@ -857,6 +864,52 @@ document.addEventListener('mousemove', e => {
   }
 })();
 
+/**
+ * Height for parent iframe: derived from in-flow body children only.
+ * scrollHeight on body/documentElement inside iframes often overshoots (~2×) vs real paint height.
+ */
+function measureEmbedStackHeight() {
+  const body = document.body;
+  const bodyStyle = getComputedStyle(body);
+  const padBottom = parseFloat(bodyStyle.paddingBottom) || 0;
+  const bodyTop = body.getBoundingClientRect().top;
+  let maxBottom = 0;
+  for (let i = 0; i < body.children.length; i++) {
+    const el = body.children[i];
+    if (el.tagName === 'SCRIPT') continue;
+    const pos = getComputedStyle(el).position;
+    if (pos === 'fixed') continue;
+    const r = el.getBoundingClientRect();
+    if (r.height === 0 && r.width === 0) continue;
+    maxBottom = Math.max(maxBottom, r.bottom);
+  }
+  const raw = maxBottom - bodyTop + padBottom;
+  return Math.max(200, Math.ceil(raw + 1));
+}
+
+/** When embedded in /charts/…/index.html, resize parent iframe so the page scrolls once. */
+function reportChartFrameHeight() {
+  if (window.parent === window) return;
+  const h = measureEmbedStackHeight();
+  window.parent.postMessage({ type: 'jt-chart-frame-height', height: h + 8 }, '*');
+}
+let jtChartFrameResizeObserver;
+function setupChartFrameAutoHeight() {
+  if (window.parent === window) return;
+  reportChartFrameHeight();
+  if (typeof ResizeObserver !== 'undefined') {
+    if (jtChartFrameResizeObserver) jtChartFrameResizeObserver.disconnect();
+    jtChartFrameResizeObserver = new ResizeObserver(function () {
+      reportChartFrameHeight();
+    });
+    jtChartFrameResizeObserver.observe(document.body);
+  }
+  window.addEventListener('resize', reportChartFrameHeight);
+}
+window.addEventListener('load', function () {
+  if (window.parent !== window) setTimeout(reportChartFrameHeight, 0);
+});
+
 (async function init() {
   try {
     let byNY = {};
@@ -874,6 +927,9 @@ document.addEventListener('mousemove', e => {
     });
     buildLegend();
     buildCharts(data);
+    requestAnimationFrame(setupChartFrameAutoHeight);
+    setTimeout(reportChartFrameHeight, 150);
+    setTimeout(reportChartFrameHeight, 600);
   } catch (err) {
     console.error(err);
     const charts = document.getElementById('charts');
@@ -883,6 +939,7 @@ document.addEventListener('mousemove', e => {
         'Could not draw the chart: ' + String(err.message || err) +
         '</p>';
     }
+    requestAnimationFrame(setupChartFrameAutoHeight);
   }
 })();
 </script>

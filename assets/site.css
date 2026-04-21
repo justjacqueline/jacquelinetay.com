@@ -1,152 +1,310 @@
-:root {
-  --bg: #fafafa;
-  --surface: #fff;
-  --text: #1a1a1c;
-  --muted: #5c5f66;
-  --border: #e4e5e8;
-  --accent: #3d5afe;
-  --accent-hover: #2a46e6;
-}
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-}
-body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  background: var(--bg);
-  color: var(--text);
-  line-height: 1.55;
-  font-size: 16px;
-}
-a {
-  color: var(--accent);
-  text-decoration: none;
-}
-a:hover {
-  color: var(--accent-hover);
-  text-decoration: underline;
-}
-.site-header {
-  border-bottom: 1px solid var(--border);
-  background: var(--surface);
-}
-.site-header-inner {
-  max-width: 44rem;
-  margin: 0 auto;
-  padding: 16px 20px;
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 12px;
-}
-.site-title {
-  font-size: 1.05rem;
-  font-weight: 600;
-}
-.site-title a {
-  color: var(--text);
-  text-decoration: none;
-}
-.site-title a:hover {
-  color: var(--accent);
-}
-.site-nav {
-  display: flex;
-  gap: 18px;
-  font-size: 0.95rem;
-}
-.site-nav a {
-  color: var(--muted);
-  font-weight: 500;
-}
-.site-nav a:hover {
-  color: var(--accent);
-}
-main {
-  max-width: 44rem;
-  margin: 0 auto;
-  padding: 28px 20px 48px;
-}
-h1 {
-  font-size: 1.65rem;
-  font-weight: 700;
-  margin: 0 0 12px;
-  line-height: 1.25;
-}
-.lead {
-  font-size: 1.05rem;
-  color: var(--muted);
-  margin: 0 0 24px;
-}
-.card-list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-}
-.card {
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  padding: 16px 18px;
-  background: var(--surface);
-}
-.card h2 {
-  margin: 0 0 6px;
-  font-size: 1.1rem;
-  font-weight: 600;
-}
-.card h2 a {
-  color: var(--text);
-}
-.card h2 a:hover {
-  color: var(--accent);
-}
-.card p {
-  margin: 0;
-  font-size: 0.95rem;
-  color: var(--muted);
-}
-.tag-row {
-  margin-top: 10px;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-}
-.tag {
-  font-size: 0.75rem;
-  padding: 2px 8px;
-  border-radius: 999px;
-  background: #eef0f4;
-  color: var(--muted);
+/* Inter — single family sitewide */
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
+
+/* Pico: https://picocss.com — overrides load after pico.min.css */
+
+[data-theme="light"],
+:root:not([data-theme="dark"]) {
+  --font-body: "Inter", system-ui, sans-serif;
+  --pico-font-family: var(--font-body);
+  /* Monochrome UI: one accent = ink */
+  --pico-color: #111827;
+  --pico-muted-color: #5a665f;
+  --pico-primary: #111827;
+  --pico-primary-background: #111827;
+  --pico-primary-border: #111827;
+  --pico-primary-underline: rgba(17, 24, 39, 0.35);
+  --pico-primary-hover: #000;
+  --pico-primary-hover-background: #1e293b;
+  --pico-primary-hover-border: #1e293b;
+  --pico-primary-hover-underline: #000;
+  --pico-primary-focus: rgba(17, 24, 39, 0.25);
+  --pico-primary-inverse: #fff;
+  --pico-text-selection-color: rgba(17, 24, 39, 0.15);
+  --pico-muted-border-color: rgba(82, 96, 88, 0.22);
+  --pico-card-background-color: rgba(255, 250, 240, 0.96);
+  --pico-card-border-color: rgba(92, 74, 52, 0.14);
+  --pico-card-sectioning-background-color: rgba(255, 250, 240, 0.96);
 }
 
-/* Chart shell: dark viz lives inside iframe so it doesn’t override site theme */
+/* Warm parchment base + gold / teal wash (type + tags stay modern / Inter) */
+body {
+  font-family: var(--font-body);
+  font-weight: 400;
+  position: relative;
+  isolation: isolate;
+  min-height: 100vh;
+  background-color: #efe6d8;
+  background-image:
+    linear-gradient(180deg, rgba(48, 36, 24, 0.055) 0%, transparent 38%),
+    radial-gradient(ellipse 120% 92% at 2% 4%, rgba(118, 148, 138, 0.34) 0%, transparent 56%),
+    radial-gradient(ellipse 90% 58% at 50% 34%, rgba(235, 188, 88, 0.5) 0%, transparent 54%),
+    radial-gradient(ellipse 102% 88% at 98% 96%, rgba(210, 182, 148, 0.58) 0%, transparent 52%),
+    linear-gradient(165deg, rgba(255, 252, 245, 0.35) 0%, transparent 55%);
+  background-attachment: fixed;
+}
+
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  opacity: 0.26;
+  mix-blend-mode: soft-light;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='280' height='280'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");
+  background-size: 220px 220px;
+}
+
+header {
+  position: relative;
+  z-index: 1;
+  background: rgba(250, 243, 230, 0.82);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: var(--pico-border-width) solid rgba(92, 74, 52, 0.12);
+}
+
+header nav.container > ul:first-of-type {
+  margin-left: 0;
+}
+header nav.container > ul:first-of-type > li {
+  padding-left: 0;
+}
+header nav.container > ul:first-of-type > li .site-brand a {
+  margin-left: 0;
+  margin-right: 0;
+  padding-left: 0;
+  padding-right: 0;
+}
+
+main {
+  position: relative;
+  z-index: 1;
+}
+
+.site-brand {
+  font-weight: unset;
+}
+.site-brand a {
+  display: flex;
+  align-items: center;
+  line-height: 0;
+}
+.site-brand a:focus-visible {
+  outline: var(--pico-outline-width) solid var(--pico-primary-focus);
+  outline-offset: 0.2rem;
+  border-radius: var(--pico-border-radius);
+}
+.site-logo {
+  display: block;
+  height: clamp(1.2rem, 4.5vw, 2.1rem);
+  width: auto;
+  max-width: min(18rem, 88vw);
+  aspect-ratio: 1036 / 191;
+  object-fit: contain;
+}
+
+header nav > ul:last-child a {
+  font-size: 0.9375rem;
+  font-weight: 500;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-family: var(--font-body);
+  font-weight: 600;
+  letter-spacing: -0.025em;
+  color: var(--pico-color);
+}
+
+main > h1 {
+  --pico-font-size: 1.625rem;
+  --pico-line-height: 1.25;
+  --pico-typography-spacing-top: 1.25rem;
+  font-weight: 600;
+}
+
+.shelf-hero {
+  margin-bottom: calc(var(--pico-block-spacing-vertical) * 1.35);
+  max-width: 40rem;
+}
+
+.shelf-hero h1 {
+  --pico-font-size: 1.625rem;
+  --pico-line-height: 1.25;
+  --pico-typography-spacing-top: 1rem;
+  font-weight: 600;
+  margin-bottom: 0.35rem;
+}
+
+.shelf-subtitle {
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 1.5;
+  letter-spacing: 0;
+  color: var(--pico-muted-color);
+  margin: 0;
+  max-width: 36rem;
+}
+
+.lead {
+  font-size: 1.0625rem;
+  font-weight: 400;
+  color: var(--pico-muted-color);
+  max-width: 40rem;
+}
+
+.shelf-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+/* Flat card: undo Pico’s two-tone <article> header strip */
+article.shelf-item {
+  margin-bottom: 0;
+  padding: 1.25rem 1.35rem;
+  border: 1px solid var(--pico-muted-border-color);
+  border-radius: 0.75rem;
+  background: var(--pico-card-background-color);
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+}
+
+article.shelf-item > header {
+  margin: 0;
+  margin-bottom: 0.5rem;
+  padding: 0;
+  border: none;
+  background: transparent;
+  border-radius: 0;
+}
+
+article.shelf-item header h2 {
+  --pico-font-size: 1.0625rem;
+  --pico-line-height: 1.35;
+  --pico-font-weight: 600;
+  margin: 0;
+}
+
+article.shelf-item header h2 a {
+  color: var(--pico-color);
+  text-decoration: none;
+}
+
+article.shelf-item header h2 a:hover {
+  color: var(--pico-primary-hover);
+  text-decoration: underline;
+}
+
+/* Off-site shelf cards: same layout; title opens elsewhere in a new tab. */
+article.shelf-item--external header h2 a.shelf-card-external::after {
+  content: " \2197";
+  font-size: 0.82em;
+  font-weight: 500;
+  opacity: 0.45;
+  text-decoration: none;
+  display: inline-block;
+}
+
+article.shelf-item > p.shelf-card-subtitle {
+  font-size: 1rem;
+  font-weight: 500;
+  line-height: 1.45;
+  color: var(--pico-muted-color);
+  margin: 0 0 0.5rem;
+}
+
+.shelf-card-body p {
+  font-size: 0.9375rem;
+  font-weight: 400;
+  line-height: 1.6;
+  color: var(--pico-muted-color);
+  margin: 0 0 0.85rem;
+}
+
+.shelf-card-body p:last-child {
+  margin-bottom: 0;
+}
+
+.tag-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin: 0;
+}
+
+.tag {
+  font-size: 0.6875rem;
+  font-weight: 500;
+  padding: 0.2rem 0.55rem;
+  border-radius: 999px;
+  border: none;
+  color: var(--pico-muted-color);
+  background: #e4eae6;
+}
+
+/* Chart shell */
 .chart-page-lead {
-  margin-bottom: 4px;
+  margin-bottom: 0.75rem;
+  color: var(--pico-color);
+  font-weight: 500;
 }
+
+.chart-page-prose {
+  max-width: 40rem;
+  margin-bottom: 1rem;
+}
+
+.chart-page-prose p {
+  font-size: 1rem;
+  line-height: 1.6;
+  color: var(--pico-muted-color);
+  margin: 0 0 0.85rem;
+}
+
+.chart-page-prose p:last-child {
+  margin-bottom: 0;
+}
+
 .chart-embed-wrap {
-  margin-top: 12px;
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  overflow: hidden;
+  margin-top: var(--pico-spacing);
+  border: 1px solid var(--pico-muted-border-color);
+  border-radius: calc(var(--pico-border-radius) * 2);
+  overflow: visible;
   background: #0f1117;
-  box-shadow: 0 2px 14px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.08);
 }
+
+/* Height set by embed postMessage so only the page scrolls vertically */
 .chart-iframe {
   display: block;
   width: 100%;
-  height: 85vh;
-  min-height: 480px;
+  height: 560px;
+  min-height: 280px;
   border: 0;
   vertical-align: top;
+  overflow: hidden;
 }
+
 .chart-open-full {
-  margin-top: 14px;
+  margin-top: var(--pico-spacing);
   font-size: 0.9rem;
-  color: var(--muted);
+  color: var(--pico-muted-color);
+}
+
+.breadcrumb {
+  margin: 0 0 0.5rem;
+  font-size: 0.9rem;
+  color: var(--pico-muted-color);
+}
+
+.breadcrumb a {
+  color: var(--pico-muted-color);
+}
+
+.breadcrumb a:hover {
+  color: var(--pico-color);
 }

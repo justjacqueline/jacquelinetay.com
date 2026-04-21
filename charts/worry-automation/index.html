@@ -1,31 +1,37 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Work automation worry — Jacqueline Tay</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2.1.1/css/pico.min.css">
   <link rel="stylesheet" href="/assets/site.css">
 </head>
 <body>
-  <header class="site-header">
-    <div class="site-header-inner">
-      <div class="site-title"><a href="/">Jacqueline Tay</a></div>
-      <nav class="site-nav" aria-label="Primary">
-        <a href="/shelf/">Shelf</a>
-        <a href="/about/">About</a>
-      </nav>
-    </div>
+  <header>
+    <nav class="container">
+      <ul>
+        <li>
+          <strong class="site-brand">
+            <a href="/shelf/" aria-label="Jacqueline Tay — shelf">
+              <img class="site-logo" src="/assets/logo-home.png" alt="" width="1036" height="191" decoding="async">
+            </a>
+          </strong>
+        </li>
+      </ul>
+    </nav>
   </header>
-  <main>
-    <p style="margin: 0 0 6px; font-size: 0.9rem;">
-      <a href="/shelf/">Shelf</a>
-      <span style="color: var(--muted)">/</span>
-      <span style="color: var(--muted)">Charts</span>
-    </p>
+  <main class="container">
+    <p class="breadcrumb"><a href="/shelf/">Shelf</a> · Charts</p>
     <h1>How worried are Americans about their work being automated?</h1>
     <p class="lead chart-page-lead">
-      YouGov (via Our World in Data). The interactive chart below uses the same dark layout as the standalone version; scroll inside the frame to see all groups.
+      After 2022, early to mid-career Americans are almost split on whether AI will take their jobs
     </p>
+    <div class="chart-page-prose">
+      <p>In 2021 and 2022, fewer than 25% of surveyed Americans said they were worried about their type of work being automated. By 2023, that had risen above 32%. The timing aligns with the release of ChatGPT and the wave of public attention to large language models.</p>
+      <p>However, the patterns are not uniform across age groups. Among adults aged 44 and younger, worry is higher and nearly balanced with non-worry: 37–42% say they are worried, compared to 49–59% who are not. These early-to-mid career workers may worry more because they have decades left in the workforce, giving AI more time to reach the level needed to replace their jobs.</p>
+      <p>This chart shows what Americans think about the risk, but the actual net impact of AI on jobs is still unfolding and has been contested among experts for over a decade. In the meantime, understanding public perception matters because it shapes support for regulation and reveals where better education about AI is needed during this period of rapid change.</p>
+    </div>
     <div class="chart-embed-wrap">
       <iframe
         class="chart-iframe"
@@ -39,5 +45,19 @@
       <a href="embed.html" target="_blank" rel="noopener">Open chart in its own tab</a>.
     </p>
   </main>
+  <script>
+    (function () {
+      var iframe = document.querySelector(".chart-iframe");
+      if (!iframe) return;
+      window.addEventListener("message", function (e) {
+        if (!e.data || e.data.type !== "jt-chart-frame-height") return;
+        if (e.source !== iframe.contentWindow) return;
+        if (location.protocol !== "file:" && e.origin !== location.origin) return;
+        var h = e.data.height;
+        if (typeof h !== "number" || h < 200 || h > 2e6) return;
+        iframe.style.height = h + "px";
+      });
+    })();
+  </script>
 </body>
 </html>

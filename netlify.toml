@@ -1,2 +1,8 @@
 [build]
   publish = "."
+
+# Site entry is the shelf; keep / for bookmarks and bare domain
+[[redirects]]
+  from = "/"
+  to = "/shelf/"
+  status = 301
