@@ -304,6 +304,17 @@ article.shelf-item > p.shelf-card-subtitle {
   color: var(--pico-muted-color);
 }
 
+.app-launch {
+  margin-top: calc(var(--pico-spacing) * 1.15);
+  font-size: 1.0625rem;
+  color: var(--pico-muted-color);
+  max-width: 40rem;
+}
+
+.app-launch a {
+  font-weight: 600;
+}
+
 .breadcrumb {
   margin: 0 0 0.5rem;
   font-size: 0.9rem;
