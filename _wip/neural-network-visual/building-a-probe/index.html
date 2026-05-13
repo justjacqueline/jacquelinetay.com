@@ -1,0 +1,2267 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- DRAFT: keep this noindex meta until ready to publish; see ../README.md -->
+  <meta name="robots" content="noindex, nofollow">
+  <title>Building a probe: from sentences to a direction — Jacqueline Tay</title>
+  <meta name="description" content="A step-by-step pedagogical sketch: how a labeled dataset of sentences becomes a probe direction in an LLM's activation space.">
+  <link rel="icon" href="/assets/favicon.png" type="image/png">
+  <link rel="apple-touch-icon" href="/assets/favicon.png">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2.1.1/css/pico.min.css">
+  <link rel="stylesheet" href="/assets/site.css">
+  <style>
+    /* Local styles for the building-a-probe app. Scoped to .bp-app to avoid leaking. */
+
+    /* --- House rule -----------------------------------------------------
+       Captions live INLINE with the visualization, not in a faraway sidebar.
+       If a caption needs a paragraph, the animation is doing too much.
+       ------------------------------------------------------------------ */
+
+    .bp-app {
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+      margin: 1.5rem 0 2rem;
+    }
+
+    /* Beat navigation */
+    .bp-nav {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      padding: 0.55rem 0.7rem;
+      background: rgba(255, 250, 240, 0.6);
+      border: 1px solid rgba(92, 74, 52, 0.14);
+      border-radius: 10px;
+      flex-wrap: wrap;
+    }
+    .bp-nav__btn {
+      font-family: inherit;
+      font-size: 0.78rem;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      padding: 0.35rem 0.7rem;
+      background: transparent;
+      color: rgba(17, 24, 39, 0.72);
+      border: 1px solid rgba(17, 24, 39, 0.2);
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background 0.12s ease, border-color 0.12s ease, color 0.12s ease;
+    }
+    .bp-nav__btn:hover:not([disabled]) {
+      background: rgba(17, 24, 39, 0.06);
+      border-color: rgba(17, 24, 39, 0.4);
+      color: rgba(17, 24, 39, 0.95);
+    }
+    .bp-nav__btn[disabled] {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+    .bp-nav__dots {
+      display: flex;
+      gap: 0.4rem;
+      align-items: center;
+      margin-left: auto;
+    }
+    .bp-nav__dot {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: transparent;
+      border: 1px solid rgba(17, 24, 39, 0.22);
+      color: rgba(17, 24, 39, 0.55);
+      font-size: 0.72rem;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: inherit;
+      transition: all 0.12s ease;
+    }
+    .bp-nav__dot:hover { border-color: rgba(17, 24, 39, 0.5); color: rgba(17, 24, 39, 0.85); }
+    .bp-nav__dot--active {
+      background: rgba(17, 24, 39, 0.85);
+      border-color: rgba(17, 24, 39, 0.85);
+      color: #fdf6e3;
+    }
+    .bp-nav__title {
+      font-size: 0.8rem;
+      color: rgba(17, 24, 39, 0.55);
+      letter-spacing: 0.02em;
+    }
+    .bp-nav__title strong {
+      color: rgba(17, 24, 39, 0.92);
+      font-weight: 600;
+      margin-left: 0.35rem;
+    }
+
+    /* Top caption (lives directly above the viz) */
+    .bp-caption {
+      font-size: 0.95rem;
+      color: rgba(17, 24, 39, 0.82);
+      line-height: 1.55;
+      max-width: 60ch;
+      margin: 0;
+    }
+    .bp-caption strong { color: rgba(17, 24, 39, 0.95); font-weight: 600; }
+
+    /* Beat-dependent stages. Only one is shown at a time. */
+    .bp-stage { margin: 0; }
+
+    /* Beat 1 (display): static full-width dataset reveal */
+    .bp-stage--dataset {
+      padding: 1.1rem 1.25rem 1.25rem;
+      background: rgba(255, 250, 240, 0.72);
+      border: 1px solid rgba(92, 74, 52, 0.14);
+      border-radius: 12px;
+    }
+    .bp-stage--dataset .bp-dataset__columns {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+    }
+    @media (max-width: 820px) {
+      .bp-stage--dataset .bp-dataset__columns { grid-template-columns: 1fr; }
+    }
+    .bp-stage--dataset h4 {
+      margin: 0 0 0.5rem;
+      font-size: 0.78rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      font-weight: 600;
+    }
+    .bp-stage--dataset .bp-dataset__col--true  h4 { color: #1f6feb; }
+    .bp-stage--dataset .bp-dataset__col--false h4 { color: #d97706; }
+    .bp-stage--dataset .bp-dataset__list {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 0.32rem;
+    }
+    .bp-stage--dataset .bp-dataset__item {
+      padding: 0.42rem 0.65rem;
+      border-radius: 6px;
+      border: 1px solid rgba(17, 24, 39, 0.1);
+      background: rgba(255, 255, 255, 0.6);
+      color: rgba(17, 24, 39, 0.85);
+      font-size: 0.92rem;
+      line-height: 1.35;
+    }
+
+    /* Beat 2 (display): two-column drop animation — model | plot.
+       The dataset list is intentionally NOT shown here; the reader knows what's
+       being processed from the input tokens at the top of the model. */
+    .bp-stage--drop {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      gap: 1rem;
+      align-items: start;
+    }
+    @media (max-width: 820px) {
+      .bp-stage--drop { grid-template-columns: 1fr; }
+    }
+
+    /* Beat 3+ (display): centered plot only */
+    .bp-stage--plot-only {
+      display: flex;
+      justify-content: center;
+    }
+    .bp-stage--plot-only .bp-plot {
+      max-width: 640px;
+      width: 100%;
+    }
+
+    /* Sentence highlight states */
+    .bp-sentence--highlighted {
+      border-color: rgba(217, 119, 6, 0.55) !important;
+      background: rgba(255, 248, 235, 1) !important;
+      box-shadow: 0 0 0 2px rgba(217, 119, 6, 0.18);
+    }
+
+    /* Auto-play controls strip (only visible on beat 2) */
+    .bp-controls {
+      display: flex;
+      gap: 0.5rem;
+      justify-content: center;
+      align-items: center;
+      padding: 0.45rem 0.6rem;
+      margin-top: 0.25rem;
+      font-size: 0.78rem;
+    }
+    .bp-controls__btn {
+      font-family: inherit;
+      font-size: 0.74rem;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      padding: 0.35rem 0.7rem;
+      background: transparent;
+      color: rgba(17, 24, 39, 0.7);
+      border: 1px solid rgba(17, 24, 39, 0.2);
+      border-radius: 5px;
+      cursor: pointer;
+      transition: all 0.12s ease;
+    }
+    .bp-controls__btn:hover:not([disabled]) {
+      background: rgba(17, 24, 39, 0.06);
+      color: rgba(17, 24, 39, 0.95);
+      border-color: rgba(17, 24, 39, 0.4);
+    }
+    .bp-controls__btn[disabled] { opacity: 0.4; cursor: not-allowed; }
+    .bp-controls__status {
+      font-size: 0.72rem;
+      color: rgba(17, 24, 39, 0.55);
+      font-variant-numeric: tabular-nums;
+      letter-spacing: 0.02em;
+      margin-right: 0.5rem;
+    }
+
+    /* --- Dataset list (left column) --- */
+    .bp-dataset {
+      padding: 0.7rem 0.85rem;
+      background: rgba(255, 250, 240, 0.72);
+      border: 1px solid rgba(92, 74, 52, 0.14);
+      border-radius: 10px;
+      max-height: 520px;
+      overflow-y: auto;
+    }
+    .bp-dataset h3 {
+      margin: 0 0 0.5rem;
+      font-size: 0.82rem;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: rgba(17, 24, 39, 0.55);
+      font-weight: 600;
+    }
+    .bp-dataset__group + .bp-dataset__group { margin-top: 0.7rem; }
+    .bp-dataset__group h4 {
+      margin: 0 0 0.35rem;
+      font-size: 0.74rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      font-weight: 600;
+    }
+    .bp-dataset__group--true h4  { color: #1f6feb; }
+    .bp-dataset__group--false h4 { color: #d97706; }
+    .bp-dataset__list {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 0.22rem;
+    }
+    .bp-sentence {
+      width: 100%;
+      text-align: left;
+      font-family: inherit;
+      font-size: 0.82rem;
+      line-height: 1.35;
+      padding: 0.32rem 0.5rem;
+      border-radius: 6px;
+      border: 1px solid rgba(17, 24, 39, 0.1);
+      background: rgba(255, 255, 255, 0.6);
+      color: rgba(17, 24, 39, 0.85);
+      cursor: pointer;
+      transition: background 0.1s ease, border-color 0.1s ease, transform 0.1s ease;
+      position: relative;
+    }
+    .bp-sentence:hover:not([disabled]) {
+      background: rgba(255, 255, 255, 0.95);
+      border-color: rgba(17, 24, 39, 0.3);
+    }
+    .bp-sentence[disabled] { cursor: default; }
+    .bp-sentence--dropped {
+      opacity: 0.55;
+      background: rgba(255, 255, 255, 0.35);
+    }
+    .bp-sentence--dropped::after {
+      content: "✓";
+      position: absolute;
+      right: 0.5rem;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 0.7rem;
+      color: rgba(17, 24, 39, 0.35);
+    }
+    .bp-sentence--current {
+      border-color: rgba(17, 24, 39, 0.6);
+      background: #fff;
+      box-shadow: 0 0 0 2px rgba(17, 24, 39, 0.08);
+    }
+    .bp-dataset__autoplay {
+      margin-top: 0.7rem;
+      width: 100%;
+      font-family: inherit;
+      font-size: 0.74rem;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      padding: 0.4rem 0.6rem;
+      background: rgba(17, 24, 39, 0.85);
+      color: #fdf6e3;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background 0.1s ease;
+    }
+    .bp-dataset__autoplay:hover:not([disabled]) { background: rgba(17, 24, 39, 1); }
+    .bp-dataset__autoplay[disabled] { opacity: 0.4; cursor: not-allowed; }
+
+    /* --- Model interior (middle column) --- */
+    .bp-model {
+      padding: 0.85rem;
+      background: rgba(255, 250, 240, 0.72);
+      border: 1px solid rgba(92, 74, 52, 0.14);
+      border-radius: 10px;
+      min-height: 480px;
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+    }
+    .bp-model__header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.75rem;
+      color: rgba(17, 24, 39, 0.55);
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+    .bp-model__toggle {
+      font-family: inherit;
+      font-size: 0.7rem;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      padding: 0.28rem 0.6rem;
+      background: transparent;
+      color: rgba(17, 24, 39, 0.6);
+      border: 1px solid rgba(17, 24, 39, 0.22);
+      border-radius: 5px;
+      cursor: pointer;
+      transition: all 0.12s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+    .bp-model__toggle:hover {
+      background: rgba(17, 24, 39, 0.05);
+      color: rgba(17, 24, 39, 0.92);
+      border-color: rgba(17, 24, 39, 0.4);
+    }
+    .bp-model__toggle--active {
+      background: rgba(217, 119, 6, 0.12);
+      color: rgba(146, 64, 14, 1);
+      border-color: rgba(217, 119, 6, 0.55);
+    }
+    .bp-model__toggle--active:hover {
+      background: rgba(217, 119, 6, 0.2);
+    }
+    .bp-model__svg {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
+    .bp-model__step {
+      font-size: 0.78rem;
+      color: rgba(17, 24, 39, 0.7);
+      min-height: 2.2em;
+      line-height: 1.35;
+      transition: opacity 0.15s ease;
+      font-style: italic;
+    }
+
+    /* --- 2D plot (right column) --- */
+    .bp-plot {
+      padding: 0.85rem;
+      background: rgba(255, 250, 240, 0.72);
+      border: 1px solid rgba(92, 74, 52, 0.14);
+      border-radius: 10px;
+      min-height: 480px;
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+    }
+    .bp-plot__header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      font-size: 0.75rem;
+      color: rgba(17, 24, 39, 0.55);
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+    .bp-plot__header span:last-child {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      text-transform: none;
+      letter-spacing: 0;
+      font-size: 0.7rem;
+      color: rgba(17, 24, 39, 0.4);
+    }
+    .bp-plot__svg { display: block; width: 100%; height: auto; }
+    .bp-plot__caption {
+      font-size: 0.78rem;
+      color: rgba(17, 24, 39, 0.55);
+      min-height: 2.2em;
+      line-height: 1.35;
+      font-style: italic;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .bp-plot__replay {
+      font-family: inherit;
+      font-size: 0.72rem;
+      letter-spacing: 0.02em;
+      font-style: normal;
+      padding: 0.2rem 0.55rem;
+      background: transparent;
+      color: rgba(17, 24, 39, 0.7);
+      border: 1px solid rgba(17, 24, 39, 0.25);
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.12s ease;
+      white-space: nowrap;
+    }
+    .bp-plot__replay:hover {
+      background: rgba(17, 24, 39, 0.06);
+      color: rgba(17, 24, 39, 0.9);
+      border-color: rgba(17, 24, 39, 0.4);
+    }
+
+    /* --- Disclaimers --- */
+    .bp-disclaimer {
+      font-size: 0.78rem;
+      color: rgba(17, 24, 39, 0.6);
+      padding: 0.5rem 0.75rem;
+      background: rgba(235, 188, 88, 0.15);
+      border-left: 3px solid rgba(235, 188, 88, 0.6);
+      border-radius: 0 6px 6px 0;
+      max-width: 70ch;
+    }
+    .bp-disclaimer strong {
+      color: rgba(17, 24, 39, 0.85);
+      font-weight: 600;
+    }
+
+    /* --- Notes section (bottom) --- */
+    .bp-notes {
+      max-width: 64ch;
+      display: flex;
+      flex-direction: column;
+      gap: 0.55rem;
+      margin-top: 0.5rem;
+    }
+    .bp-notes p {
+      margin: 0;
+      font-size: 0.95rem;
+      line-height: 1.55;
+    }
+    .bp-notes details {
+      margin-top: 0.4rem;
+      padding: 0.65rem 0.85rem;
+      background: rgba(255, 250, 240, 0.72);
+      border: 1px solid rgba(92, 74, 52, 0.14);
+      border-radius: 10px;
+    }
+    .bp-notes details > summary {
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.9rem;
+    }
+    .bp-notes details[open] > summary { margin-bottom: 0.45rem; }
+    .bp-notes details p { font-size: 0.88rem; margin-bottom: 0.4rem; }
+    .bp-notes details p:last-child { margin-bottom: 0; }
+    .bp-notes code {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 0.88em;
+      background: rgba(17, 24, 39, 0.06);
+      padding: 0 0.25rem;
+      border-radius: 3px;
+    }
+
+    /* --- Final "go play" card --- */
+    .bp-next {
+      margin-top: 1rem;
+      padding: 1rem 1.2rem;
+      background: rgba(255, 250, 240, 0.85);
+      border: 1px solid rgba(92, 74, 52, 0.2);
+      border-radius: 12px;
+    }
+    .bp-next h2 {
+      margin: 0 0 0.4rem;
+      font-size: 1rem;
+    }
+    .bp-next p { margin: 0 0 0.6rem; font-size: 0.92rem; }
+    .bp-next a {
+      display: inline-block;
+      padding: 0.45rem 0.9rem;
+      background: rgba(17, 24, 39, 0.85);
+      color: #fdf6e3;
+      text-decoration: none;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      transition: background 0.1s ease;
+    }
+    .bp-next a:hover { background: rgba(17, 24, 39, 1); }
+
+    .draft-flag {
+      font-size: 0.75rem;
+      color: var(--pico-muted-color);
+      margin-top: 1.5rem;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <nav class="container">
+      <ul>
+        <li>
+          <strong class="site-brand">
+            <a href="/shelf/" aria-label="Jacqueline Tay — shelf">
+              <img class="site-logo" src="/assets/logo-home.png" alt="" width="1036" height="191" decoding="async">
+            </a>
+          </strong>
+        </li>
+      </ul>
+    </nav>
+  </header>
+  <main class="container">
+    <p class="breadcrumb"><a href="/shelf/">Shelf</a> · <a href="../">Neural networks, visually</a> · Draft</p>
+    <h1>Building a probe: from sentences to a direction</h1>
+    <p class="lead chart-page-lead">
+      A probe is a single direction in an LLM's activation space. This page walks through how that direction actually gets built — starting from a list of labeled sentences, ending with an arrow on a plot.
+    </p>
+    <div class="chart-page-prose">
+      <p>
+        Click <strong>Next</strong> to step through, or jump to any beat using the dots. Beat 1 is the most important: you'll watch each sentence flow through a (toy) model and become a single dot.
+      </p>
+    </div>
+
+    <div id="root"></div>
+
+    <p class="draft-flag">Draft sketch — not linked from the shelf.</p>
+  </main>
+
+  <!--
+    Implementation notes:
+    - React + htm via esm.sh (no build step). Same pattern as siblings.
+    - The page is a state machine over 6 "beats" (0..5; displayed 1..6).
+    - Beat 2 (the cascade) has two model views:
+        * Simple (default): tokens → black box → output pill → dot.
+        * Detailed (click 🔍): tokens → input pills → Layer 1, Layer 2,
+          ⋮ , Layer 7 (extracted), each layer showing its attention +
+          feedforward sublayers, with a yellow wave traveling through.
+      The toggle persists across the cascade; the next sentence picks up
+      the new mode via a ref so we don't tear down the autoplay closure.
+    - Sentence drop animation runs in 5 phases; timings differ by view
+      (PHASE_TIMINGS_SIMPLE vs PHASE_TIMINGS_DETAILED). Detailed view
+      propagates layers fast but lingers on the dot landing.
+    - Dot positions are pre-baked from a seeded Gaussian draw so every
+      visit shows the same picture and captions stay accurate.
+    - Logistic regression in beat 5 (display) is the same hand-rolled
+      gradient descent used in ../probing/index.html. We capture
+      intermediate weights every few steps and animate through them so
+      the reader sees the line settle.
+    - All math is inline. See ../README.md for the publish recipe.
+  -->
+  <script type="module">
+    import React, { useMemo, useState, useCallback, useEffect, useRef } from "https://esm.sh/react@18.3.1?dev";
+    import { createRoot } from "https://esm.sh/react-dom@18.3.1/client?deps=react@18.3.1&dev";
+    import htm from "https://esm.sh/htm@3.1.1";
+
+    const html = htm.bind(React.createElement);
+
+    // ==================================================================
+    // 1. The dataset (baked-in sentences + dot positions)
+    // ==================================================================
+
+    // Hand-picked simple factual sentences. Pairs are mostly negations of
+    // each other so the audience sees true/false versions of the same fact.
+    const SENTENCES = [
+      // 8 true
+      { text: "Paris is in France.",            label: "true" },
+      { text: "Water freezes at 0°C.",          label: "true" },
+      { text: "The sun rises in the east.",     label: "true" },
+      { text: "Dogs are mammals.",              label: "true" },
+      { text: "There are seven days in a week.",label: "true" },
+      { text: "The Pacific is an ocean.",       label: "true" },
+      { text: "Humans have two eyes.",          label: "true" },
+      { text: "January comes before February.", label: "true" },
+      // 8 false
+      { text: "Paris is in Brazil.",            label: "false" },
+      { text: "Water freezes at 50°C.",         label: "false" },
+      { text: "The sun rises in the west.",     label: "false" },
+      { text: "Dogs are reptiles.",             label: "false" },
+      { text: "There are twelve days in a week.",label: "false" },
+      { text: "The Pacific is a desert.",       label: "false" },
+      { text: "Humans have three eyes.",        label: "false" },
+      { text: "January comes after February.",  label: "false" },
+    ];
+
+    // ----- Bake (x, y) positions with a seeded PRNG so every visit
+    // ----- shows the same plot. -----
+    function mulberry32(seed) {
+      let a = (seed | 0) || 1;
+      return function () {
+        a = (a + 0x6D2B79F5) >>> 0;
+        let t = a;
+        t = Math.imul(t ^ (t >>> 15), t | 1);
+        t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+        return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+      };
+    }
+    function gaussianPair(rng) {
+      let u1 = 0;
+      while (u1 === 0) u1 = rng();
+      const u2 = rng();
+      const r = Math.sqrt(-2 * Math.log(u1));
+      const theta = 2 * Math.PI * u2;
+      return [r * Math.cos(theta), r * Math.sin(theta)];
+    }
+    function chol2x2(a, b, c) {
+      const safeA = Math.max(a, 1e-9);
+      const l11 = Math.sqrt(safeA);
+      const l21 = b / l11;
+      const inner = c - l21 * l21;
+      const l22 = Math.sqrt(Math.max(inner, 1e-9));
+      return { l11, l21, l22 };
+    }
+
+    // Build the dataset of (sentence, label, (x, y)) tuples once at module
+    // load. Positions are deterministic given the seed.
+    const BAKED = (() => {
+      const rng = mulberry32(7);
+      const sigmaX = 1.4, sigmaY = 0.85, rho = 0.35;
+      const cov12 = rho * sigmaX * sigmaY;
+      const L = chol2x2(sigmaX * sigmaX, cov12, sigmaY * sigmaY);
+      const muTrue  = [0,  1.5];
+      const muFalse = [0, -1.5];
+      return SENTENCES.map((s) => {
+        const [z1, z2] = gaussianPair(rng);
+        const mu = s.label === "true" ? muTrue : muFalse;
+        return {
+          ...s,
+          x: mu[0] + L.l11 * z1,
+          y: mu[1] + L.l21 * z1 + L.l22 * z2,
+        };
+      });
+    })();
+
+    // ==================================================================
+    // 2. Model-interior visual constants
+    // ==================================================================
+
+    // Soft pastel palette for token columns. Cycles if a sentence has more
+    // than COLORS.length tokens (rare for our short examples).
+    const TOKEN_COLORS = [
+      { fill: "#cffafe", stroke: "#67e8f9", text: "#0e7490" },  // cyan
+      { fill: "#fef3c7", stroke: "#fcd34d", text: "#b45309" },  // amber
+      { fill: "#fce7f3", stroke: "#f9a8d4", text: "#9d174d" },  // pink
+      { fill: "#dcfce7", stroke: "#86efac", text: "#166534" },  // green
+      { fill: "#ede9fe", stroke: "#c4b5fd", text: "#5b21b6" },  // violet
+      { fill: "#ffedd5", stroke: "#fdba74", text: "#9a3412" },  // orange
+    ];
+
+    // Truth conventions: true = blue (calm, "trusted"), false = orange ("flag").
+    // This is the opposite of the original probing app — we swapped both apps
+    // together for consistency across the neural-network-visual section.
+    const LABEL_COLORS = {
+      true:  "#1f6feb",
+      false: "#e5731f",
+    };
+
+    // Tokenize: just split on whitespace + keep punctuation attached.
+    // Real LLM tokenizers are subword; we hand-wave that in a <details>.
+    function tokenize(text) {
+      return text.trim().split(/\s+/).slice(0, TOKEN_COLORS.length);
+    }
+
+    // Fake-but-plausible vector readout for a pill. Same input → same output
+    // so the numbers don't flicker between renders.
+    function fakeVecPreview(seedString, layerIdx) {
+      // Tiny string-hash → seed
+      let h = 2166136261;
+      for (let i = 0; i < seedString.length; i++) {
+        h ^= seedString.charCodeAt(i);
+        h = Math.imul(h, 16777619);
+      }
+      h = (h ^ layerIdx * 2654435761) >>> 0;
+      const rng = mulberry32(h || 1);
+      const v1 = (rng() * 2 - 1).toFixed(1);
+      const v2 = (rng() * 2 - 1).toFixed(1);
+      return `${v1} … ${v2}`;
+    }
+
+    // ==================================================================
+    // 3. Probe math (mirrors the probing/ app)
+    // ==================================================================
+
+    function meanOf(points) {
+      let sx = 0, sy = 0;
+      for (const [x, y] of points) { sx += x; sy += y; }
+      return [sx / points.length, sy / points.length];
+    }
+    function unitOf(v) {
+      const n = Math.hypot(v[0], v[1]);
+      if (n < 1e-12) return [0, 0];
+      return [v[0] / n, v[1] / n];
+    }
+    function sigmoid(z) {
+      if (z >= 0) {
+        const ez = Math.exp(-z);
+        return 1 / (1 + ez);
+      }
+      const ez = Math.exp(z);
+      return ez / (1 + ez);
+    }
+
+    // Train logistic regression with batch gradient descent, capturing
+    // (w1, w2, b) at evenly spaced snapshots so we can animate the line
+    // settling into place.
+    function trainLogRegWithSnapshots(truePts, falsePts, opts) {
+      const { learningRate = 0.05, steps = 1500, l2 = 0.001, snapshots = 28 } = opts || {};
+      const N = truePts.length + falsePts.length;
+      const X1 = new Float64Array(N);
+      const X2 = new Float64Array(N);
+      const Y  = new Float64Array(N);
+      let i = 0;
+      for (const [x1, x2] of falsePts) { X1[i] = x1; X2[i] = x2; Y[i] = 0; i++; }
+      for (const [x1, x2] of truePts)  { X1[i] = x1; X2[i] = x2; Y[i] = 1; i++; }
+
+      let w1 = 0.8, w2 = -0.6, b = 0;  // deliberately wrong start
+      const snaps = [];
+      const snapEvery = Math.max(1, Math.floor(steps / snapshots));
+      snaps.push({ w1, w2, b });
+      for (let s = 0; s < steps; s++) {
+        let g1 = 0, g2 = 0, gb = 0;
+        for (let k = 0; k < N; k++) {
+          const z = w1 * X1[k] + w2 * X2[k] + b;
+          const p = sigmoid(z);
+          const e = p - Y[k];
+          g1 += e * X1[k];
+          g2 += e * X2[k];
+          gb += e;
+        }
+        g1 = g1 / N + l2 * w1;
+        g2 = g2 / N + l2 * w2;
+        gb = gb / N;
+        w1 -= learningRate * g1;
+        w2 -= learningRate * g2;
+        b  -= learningRate * gb;
+        if ((s + 1) % snapEvery === 0) snaps.push({ w1, w2, b });
+      }
+      const final = { w1, w2, b };
+      const vec = [final.w1, final.w2];
+      return { snapshots: snaps, final, vec, unit: unitOf(vec) };
+    }
+
+    // Decision boundary: w1*x + w2*y + b = 0 → y = -(w1*x + b)/w2.
+    function boundaryFromWeights(w1, w2, b, bounds) {
+      const eps = 1e-6;
+      if (Math.abs(w2) > eps) {
+        return [
+          [bounds.xMin, -(w1 * bounds.xMin + b) / w2],
+          [bounds.xMax, -(w1 * bounds.xMax + b) / w2],
+        ];
+      }
+      if (Math.abs(w1) > eps) {
+        const x = -b / w1;
+        return [[x, bounds.yMin], [x, bounds.yMax]];
+      }
+      return null;
+    }
+
+    function angleBetweenDeg(u, v) {
+      const d = Math.max(-1, Math.min(1, u[0] * v[0] + u[1] * v[1]));
+      return (Math.acos(d) * 180) / Math.PI;
+    }
+
+    // ==================================================================
+    // 4. Beat metadata
+    // ==================================================================
+
+    const BEATS = [
+      {
+        id: 0,
+        title: "The dataset",
+        caption: html`To probe for any concept, you start the same way: <strong>collect labeled examples</strong>. Here we want a probe for <strong>truth</strong>, so we have 8 true sentences and 8 false ones. Click <em>Next</em> to feed them through the model.`,
+      },
+      {
+        id: 1,
+        title: "Sentences become dots",
+        caption: html`Each sentence runs through the model and lands as one dot on the right. The cascade auto-plays so you can watch the cloud build. Want to see what's happening inside the model? Click the <strong>🔍 look inside</strong> button.`,
+      },
+      {
+        id: 2,
+        title: "Look at the cloud",
+        caption: html`All 16 dots plotted. They <strong>cluster</strong> by label, but the clusters overlap and the boundary isn't obvious. <em>Hover any dot</em> to see which sentence it came from. The question now: how do we extract a single <em>"truth direction"</em> from this cloud?`,
+      },
+      {
+        id: 3,
+        title: "Method 1 — average and connect",
+        caption: html`The simplest probe runs in three small steps. Watch as we <strong>highlight the trues</strong> and place an X at their average, <strong>highlight the falses</strong> and place an X at theirs, then <strong>draw an arrow connecting</strong> the two X's. That arrow is the <strong>mass-mean probe</strong>.`,
+      },
+      {
+        id: 4,
+        title: "Method 2 — find the dividing line",
+        caption: html`A more ambitious probe: <strong>find the single straight line that best separates true from false</strong>. The dotted line wobbles into place over ~1,500 tiny adjustments. Then the arrow grows out from the line at a <strong>90° angle</strong> — that perpendicular is the <strong>logistic-regression probe</strong>.`,
+      },
+      {
+        id: 5,
+        title: "Compare them",
+        caption: html`Here are both probes on the same cloud. They <em>roughly</em> agree but not exactly — they're answering subtly different questions about the same data. Go play with the slider sandbox below to see when they agree and when they disagree.`,
+      },
+    ];
+
+    // ==================================================================
+    // 5. SVG geometry
+    // ==================================================================
+
+    // Model interior SVG
+    const M_W = 360;
+    const M_H = 460;
+    const M_PAD = 14;
+
+    // 2D plot SVG. The plot is intentionally SQUARE in both pixel space
+    // and data space so geometric relationships (perpendicularity, equal-
+    // length probes) actually look right. With a non-square plot, the
+    // log-reg probe — which is mathematically perpendicular to the
+    // decision boundary — appeared visually skewed.
+    const P_W = 460;
+    const P_H = 460;
+    const P_PAD = { top: 16, right: 16, bottom: 36, left: 40 };
+    const PLOT_BOUNDS = { xMin: -5, xMax: 5, yMin: -5, yMax: 5 };
+
+    function makeScale(bounds, plotW, plotH, padLeft, padTop) {
+      const w = bounds.xMax - bounds.xMin || 1;
+      const h = bounds.yMax - bounds.yMin || 1;
+      return {
+        sx: (x) => padLeft + ((x - bounds.xMin) / w) * plotW,
+        sy: (y) => padTop + plotH - ((y - bounds.yMin) / h) * plotH,
+      };
+    }
+
+    // ==================================================================
+    // 6. Drop animation (per sentence)
+    // ==================================================================
+    //
+    // Five phases, same shape in both simple and detailed mode but with
+    // different visual interpretations and different timings.
+    //
+    //   0 = idle
+    //   1 = input shown (words + token pills)
+    //   2 = transformation (pulse in simple; wave through layers in detailed)
+    //   3 = output pill (the extracted activation) appears
+    //   4 = dot lands on the 2D plot
+    //   5 = animation complete
+    //
+    // Detailed view runs the layer-propagation faster than the simple
+    // pulse, but holds the dot landing longer — because the dot is the
+    // climax and the reader needs a beat to register it.
+
+    const PHASE_TIMINGS_SIMPLE = [
+      { phase: 1, at: 0    },
+      { phase: 2, at: 220  },
+      { phase: 3, at: 500  },
+      { phase: 4, at: 700  },
+      { phase: 5, at: 1000 },
+    ];
+    const PHASE_TIMINGS_DETAILED = [
+      { phase: 1, at: 0    },
+      { phase: 2, at: 200  },
+      { phase: 3, at: 600  },  // wave through ~7 layers takes ~400ms
+      { phase: 4, at: 880  },  // dot lands — slow, deliberate
+      { phase: 5, at: 1300 },
+    ];
+
+    const PHASE_CAPTIONS_SIMPLE = {
+      1: "A sentence goes in.",
+      2: "The model processes it.",
+      3: "Out comes one vector (squished to 2 numbers for the plot).",
+      4: "And lands as a dot.",
+      5: "",
+    };
+    const PHASE_CAPTIONS_DETAILED = {
+      1: "Words become token vectors.",
+      2: "A wave of computation runs up through the layers.",
+      3: "We grab the activation from layer 7, last token (squished to 2D).",
+      4: "And drop it on the plot.",
+      5: "",
+    };
+
+    // ==================================================================
+    // 7. The Model Interior — two views
+    // ==================================================================
+    //
+    // SimpleModelInterior  — the default. Tokens go into a black box,
+    //                        a single output vector comes out, a dot lands.
+    //                        No layer details. Most readers stop here.
+    //
+    // DetailedModelInterior — the "look inside" view. Tokens become input
+    //                        pills, a wave of computation runs through
+    //                        Layer 1 → Layer 2 → ⋮ → Layer 7 (extracted),
+    //                        each layer showing its attention + feedforward
+    //                        sublayers. The extracted cell glows orange.
+
+    function tokenLayout(activeSentence) {
+      const tokens = activeSentence ? tokenize(activeSentence.text) : [];
+      const nTokens = Math.max(tokens.length, 4);
+      const innerW = M_W - 2 * M_PAD;
+      const colWidth = innerW / nTokens;
+      const tokenColX = (i) => M_PAD + colWidth * (i + 0.5);
+      return { tokens, nTokens, innerW, colWidth, tokenColX };
+    }
+
+    function ModelInteriorSimple({ activeSentence, phase }) {
+      const { tokens, innerW, colWidth, tokenColX } = tokenLayout(activeSentence);
+      const tokenPillW = Math.min(colWidth - 8, 64);
+
+      // Layout reads as three discrete labeled steps so the reader sees
+      // "input → run → extract" without any caption text below the SVG.
+      const step1LabelY = 20;
+      const wordsY      = 50;
+      const arrowY1     = 78;
+
+      const step2LabelY = 102;
+      const boxTop      = 116;
+      const boxHeight   = 200;
+      const boxBottom   = boxTop + boxHeight;     // 316
+      const arrowY2     = boxBottom + 18;         // 334
+
+      const step3LabelY = 360;
+      const outputPillY = 376;
+      const outputPillH = 30;
+
+      const showInput  = phase >= 1 && tokens.length > 0;
+      const pulseOn    = phase === 2;
+      const showOutput = phase >= 3 && tokens.length > 0;
+
+      return html`
+        <svg
+          className="bp-model__svg"
+          viewBox=${`0 0 ${M_W} ${M_H}`}
+          role="img"
+          aria-label="Model interior (simple view) — three steps from input to extracted activation"
+        >
+          <text x=${M_PAD} y=${step1LabelY}
+                fontSize="10" fontWeight="600" letterSpacing="1.2"
+                fill="rgba(17, 24, 39, 0.55)">STEP 1.  INPUT DATA EXAMPLES</text>
+
+          ${showInput && tokens.map((t, i) => {
+            const c = TOKEN_COLORS[i % TOKEN_COLORS.length];
+            return html`
+              <g key=${"w" + i}>
+                <rect
+                  x=${tokenColX(i) - tokenPillW / 2}
+                  y=${wordsY - 12}
+                  width=${tokenPillW}
+                  height=${22}
+                  rx="5"
+                  fill=${c.fill}
+                  stroke=${c.stroke}
+                  strokeWidth="1"
+                />
+                <text
+                  x=${tokenColX(i)}
+                  y=${wordsY + 3}
+                  fontSize="11"
+                  fill=${c.text}
+                  textAnchor="middle"
+                  fontWeight="500"
+                >${t.length > 9 ? t.slice(0, 8) + "…" : t}</text>
+              </g>
+            `;
+          })}
+
+          ${showInput && html`
+            <text x=${M_W / 2} y=${arrowY1} fontSize="14" fill="rgba(17, 24, 39, 0.4)" textAnchor="middle">↓</text>
+          `}
+
+          <text x=${M_PAD} y=${step2LabelY}
+                fontSize="10" fontWeight="600" letterSpacing="1.2"
+                fill="rgba(17, 24, 39, 0.55)">STEP 2.  RUN LLM</text>
+
+          <rect
+            x=${M_PAD + 20}
+            y=${boxTop}
+            width=${innerW - 40}
+            height=${boxHeight}
+            rx="14"
+            fill="rgba(255, 255, 255, 0.92)"
+            stroke="rgba(17, 24, 39, 0.32)"
+            strokeWidth="1.5"
+          />
+
+          ${pulseOn && html`
+            <g key=${"pulse-" + (activeSentence ? activeSentence.text : "")}>
+              <rect
+                x=${M_PAD + 22}
+                y=${boxTop + 2}
+                width=${innerW - 44}
+                height=${boxHeight - 4}
+                rx="12"
+                fill="rgba(252, 211, 77, 0.55)"
+              >
+                <animate
+                  attributeName="opacity"
+                  values="0;1;0"
+                  dur="0.32s"
+                  fill="freeze"
+                />
+              </rect>
+            </g>
+          `}
+
+          <text
+            x=${M_W / 2}
+            y=${boxTop + boxHeight / 2 + 5}
+            fontSize="11"
+            fill="rgba(17, 24, 39, 0.38)"
+            textAnchor="middle"
+            fontStyle="italic"
+          >click 🔍 above to look inside</text>
+
+          ${showOutput && html`
+            <text x=${M_W / 2} y=${arrowY2} fontSize="14" fill="rgba(17, 24, 39, 0.4)" textAnchor="middle">↓</text>
+          `}
+
+          <text x=${M_PAD} y=${step3LabelY}
+                fontSize="10" fontWeight="600" letterSpacing="1.2"
+                fill="rgba(17, 24, 39, 0.55)">STEP 3.  EXTRACT ACTIVATIONS</text>
+
+          ${showOutput && html`
+            <g>
+              <rect
+                x=${M_PAD + 40}
+                y=${outputPillY}
+                width=${innerW - 80}
+                height=${outputPillH}
+                rx=${outputPillH / 2}
+                fill="rgba(255, 255, 255, 0.96)"
+                stroke="rgba(17, 24, 39, 0.4)"
+                strokeWidth="1.25"
+              />
+              <text
+                x=${M_W / 2}
+                y=${outputPillY + outputPillH / 2 + 4}
+                fontSize="12"
+                fontFamily="ui-monospace, Menlo, Consolas, monospace"
+                fill="rgba(17, 24, 39, 0.75)"
+                textAnchor="middle"
+              >[ ${fakeVecPreview(activeSentence ? activeSentence.text : "·", 1)} ]</text>
+            </g>
+          `}
+        </svg>
+      `;
+    }
+
+    function ModelInteriorDetailed({ activeSentence, phase }) {
+      const { tokens, innerW, colWidth, tokenColX } = tokenLayout(activeSentence);
+      const tokenPillW = Math.min(colWidth - 6, 58);
+      const sublayerPillH = 11;
+      const layerPillW = Math.min(colWidth - 6, 52);
+
+      // Layout
+      const wordsY        = 36;
+      const arrowsY       = 56;
+      const inputPillsY   = 78;
+      const inputPillH    = 18;
+
+      const layerH        = 50;
+      const layerGap      = 6;
+      const layer1Top     = 110;
+      const layer2Top     = layer1Top + layerH + layerGap;          // 166
+      const ellipsisTop   = layer2Top + layerH + layerGap;          // 222
+      const ellipsisH     = 28;
+      const layer7Top     = ellipsisTop + ellipsisH + layerGap;     // 256
+      const layer7Bottom  = layer7Top + layerH;                     // 306
+
+      const arrowOutY     = layer7Bottom + 14;                      // 320
+      const outputPillY   = layer7Bottom + 28;                      // 334
+      const outputPillH   = 22;
+      const extractLabelY = outputPillY + outputPillH + 16;         // 372
+
+      const extractColIdx = Math.max(tokens.length - 1, 0);
+      const showWords      = phase >= 1 && tokens.length > 0;
+      const showInputPills = phase >= 1 && tokens.length > 0;
+      const waveOn         = phase === 2;
+      const showOutput     = phase >= 3 && tokens.length > 0;
+      const highlight      = phase >= 4;
+
+      // Helper: render one transformer layer card (attention row + ffn row).
+      function renderLayer({ y, label, highlightLast, k }) {
+        const attnY = y + 22;
+        const ffnY  = y + 38;
+        const stroke = highlightLast ? "rgba(217, 119, 6, 0.85)" : "rgba(17, 24, 39, 0.18)";
+        return html`
+          <g key=${k}>
+            <rect
+              x=${M_PAD + 4}
+              y=${y}
+              width=${innerW - 8}
+              height=${layerH}
+              rx="7"
+              fill="rgba(255, 255, 255, 0.88)"
+              stroke=${stroke}
+              strokeWidth=${highlightLast ? "2" : "1"}
+            />
+            <text
+              x=${M_PAD + 12}
+              y=${y + 13}
+              fontSize="9"
+              fill=${highlightLast ? "rgba(146, 64, 14, 1)" : "rgba(17, 24, 39, 0.55)"}
+              fontWeight="600"
+              letterSpacing="0.3"
+            >${label}</text>
+            <text
+              x=${M_PAD + innerW - 12}
+              y=${y + 13}
+              fontSize="8"
+              fill="rgba(17, 24, 39, 0.32)"
+              textAnchor="end"
+              fontStyle="italic"
+            >attn · ffn</text>
+
+            ${tokens.map((_, i) => {
+              const c = TOKEN_COLORS[i % TOKEN_COLORS.length];
+              const isExtractCell = highlightLast && i === extractColIdx;
+              return html`
+                <g key=${"row" + i}>
+                  <rect
+                    x=${tokenColX(i) - layerPillW / 2}
+                    y=${attnY - sublayerPillH / 2}
+                    width=${layerPillW}
+                    height=${sublayerPillH}
+                    rx=${sublayerPillH / 2}
+                    fill=${c.fill}
+                    stroke=${c.stroke}
+                    strokeWidth="0.5"
+                    opacity="0.85"
+                  />
+                  <rect
+                    x=${tokenColX(i) - layerPillW / 2}
+                    y=${ffnY - sublayerPillH / 2}
+                    width=${layerPillW}
+                    height=${sublayerPillH}
+                    rx=${sublayerPillH / 2}
+                    fill=${c.fill}
+                    stroke=${isExtractCell ? "rgba(217, 119, 6, 1)" : c.stroke}
+                    strokeWidth=${isExtractCell ? "1.5" : "0.5"}
+                    opacity=${isExtractCell ? 1 : 0.85}
+                  />
+                </g>
+              `;
+            })}
+          </g>
+        `;
+      }
+
+      return html`
+        <svg
+          className="bp-model__svg"
+          viewBox=${`0 0 ${M_W} ${M_H}`}
+          role="img"
+          aria-label="Model interior (detailed view — transformer layers)"
+        >
+          <defs>
+            <filter id="bp-glow-detailed" x="-50%" y="-50%" width="200%" height="200%">
+              <feGaussianBlur stdDeviation="2.5" result="blur" />
+              <feMerge>
+                <feMergeNode in="blur" />
+                <feMergeNode in="SourceGraphic" />
+              </feMerge>
+            </filter>
+          </defs>
+
+          <text x=${M_PAD} y=${20}
+                fontSize="10" fontWeight="600" letterSpacing="1.2"
+                fill="rgba(17, 24, 39, 0.55)">INPUT DATA EXAMPLES</text>
+
+          ${showWords && tokens.map((t, i) => {
+            const c = TOKEN_COLORS[i % TOKEN_COLORS.length];
+            return html`
+              <g key=${"w" + i}>
+                <rect
+                  x=${tokenColX(i) - tokenPillW / 2}
+                  y=${wordsY - 11}
+                  width=${tokenPillW}
+                  height=${18}
+                  rx="3"
+                  fill=${c.fill}
+                  stroke=${c.stroke}
+                  strokeWidth="1"
+                />
+                <text
+                  x=${tokenColX(i)}
+                  y=${wordsY + 2}
+                  fontSize="9.5"
+                  fill=${c.text}
+                  textAnchor="middle"
+                  fontWeight="500"
+                >${t.length > 8 ? t.slice(0, 7) + "…" : t}</text>
+              </g>
+            `;
+          })}
+
+          ${showInputPills && tokens.map((_, i) => html`
+            <text
+              key=${"a" + i}
+              x=${tokenColX(i)}
+              y=${arrowsY}
+              fontSize="8"
+              fill="rgba(17, 24, 39, 0.35)"
+              textAnchor="middle"
+            >▼</text>
+          `)}
+
+          ${showInputPills && tokens.map((t, i) => {
+            const c = TOKEN_COLORS[i % TOKEN_COLORS.length];
+            return html`
+              <g key=${"ip" + i}>
+                <rect
+                  x=${tokenColX(i) - tokenPillW / 2}
+                  y=${inputPillsY - inputPillH / 2}
+                  width=${tokenPillW}
+                  height=${inputPillH}
+                  rx=${inputPillH / 2}
+                  fill=${c.fill}
+                  stroke=${c.stroke}
+                  strokeWidth="1"
+                />
+                <text
+                  x=${tokenColX(i)}
+                  y=${inputPillsY + 3}
+                  fontSize="8.5"
+                  fontFamily="ui-monospace, Menlo, monospace"
+                  fill=${c.text}
+                  textAnchor="middle"
+                >${fakeVecPreview(activeSentence.text + ":" + t, 0)}</text>
+              </g>
+            `;
+          })}
+
+          ${activeSentence && html`
+            ${renderLayer({ y: layer1Top, label: "Layer 1", highlightLast: false, k: "L1" })}
+            ${renderLayer({ y: layer2Top, label: "Layer 2", highlightLast: false, k: "L2" })}
+            <text
+              x=${M_W / 2}
+              y=${ellipsisTop + 12}
+              fontSize="16"
+              fill="rgba(17, 24, 39, 0.5)"
+              textAnchor="middle"
+              letterSpacing="2"
+            >⋮</text>
+            <text
+              x=${M_W / 2}
+              y=${ellipsisTop + 24}
+              fontSize="8.5"
+              fill="rgba(17, 24, 39, 0.45)"
+              textAnchor="middle"
+              fontStyle="italic"
+            >layers 3 – 6</text>
+            ${renderLayer({ y: layer7Top, label: "Layer 7 (extracted)", highlightLast: highlight, k: "L7" })}
+          `}
+
+          ${waveOn && html`
+            <g key=${"wave-" + (activeSentence ? activeSentence.text : "")}>
+              <rect
+                x=${M_PAD + 4}
+                y=${layer1Top}
+                width=${innerW - 8}
+                height=${6}
+                fill="rgba(252, 211, 77, 0.9)"
+                rx="3"
+              >
+                <animate
+                  attributeName="y"
+                  from=${layer1Top}
+                  to=${layer7Bottom - 6}
+                  dur="0.4s"
+                  fill="freeze"
+                />
+                <animate
+                  attributeName="opacity"
+                  values="0.9;0.9;0"
+                  keyTimes="0;0.8;1"
+                  dur="0.42s"
+                  fill="freeze"
+                />
+              </rect>
+            </g>
+          `}
+
+          ${showOutput && html`
+            <g>
+              <text x=${M_W / 2} y=${arrowOutY} fontSize="14" fill="rgba(17, 24, 39, 0.45)" textAnchor="middle">↓</text>
+              <text x=${M_W / 2 + 14} y=${arrowOutY}
+                    fontSize="10" fontWeight="600" letterSpacing="1.2"
+                    fill="rgba(17, 24, 39, 0.55)">EXTRACT ACTIVATIONS</text>
+            </g>
+          `}
+
+          ${showOutput && html`
+            <g>
+              <rect
+                x=${M_PAD + 60}
+                y=${outputPillY}
+                width=${innerW - 120}
+                height=${outputPillH}
+                rx=${outputPillH / 2}
+                fill="rgba(255, 255, 255, 0.96)"
+                stroke="rgba(17, 24, 39, 0.4)"
+                strokeWidth="1.25"
+              />
+              <text
+                x=${M_W / 2}
+                y=${outputPillY + outputPillH / 2 + 4}
+                fontSize="10.5"
+                fontFamily="ui-monospace, Menlo, monospace"
+                fill="rgba(17, 24, 39, 0.75)"
+                textAnchor="middle"
+                fontWeight="500"
+              >[ ${fakeVecPreview(activeSentence ? activeSentence.text : "·", 1)} ]</text>
+            </g>
+          `}
+
+          ${highlight && html`
+            <text
+              x=${M_W / 2}
+              y=${extractLabelY}
+              fontSize="9.5"
+              fill="rgba(17, 24, 39, 0.55)"
+              textAnchor="middle"
+              fontStyle="italic"
+            >(from layer 7, last token)</text>
+          `}
+
+          ${!activeSentence && html`
+            <text
+              x=${M_W / 2}
+              y=${M_H / 2 + 6}
+              fontSize="11"
+              fill="rgba(17, 24, 39, 0.32)"
+              textAnchor="middle"
+              fontStyle="italic"
+            >ready to start…</text>
+          `}
+        </svg>
+      `;
+    }
+
+    // ==================================================================
+    // 8. The 2D Plot component (SVG)
+    // ==================================================================
+
+    // Neutral colour for the moment a dot "exists but hasn't been labelled yet".
+    // The transition from this to the label colour is the visual proof that
+    // the truth label is something WE attach — the model just spits out a
+    // number-vector and doesn't know if it's true or false.
+    const DOT_NEUTRAL = "rgba(120, 120, 130, 0.95)";
+
+    function PlotPanel({
+      droppedDots,
+      droppedIdxs,
+      justLandedIdx,
+      landingPhase,
+      mmStage,           // 0..4  (was showMassMean boolean)
+      logregWeights,
+      lrStage,           // 0..3  (was showLogregProbe boolean)
+      showAngle,
+      beat,
+      hoveredIdx,
+      onHover,
+      showLegend,
+    }) {
+      const innerW = P_W - P_PAD.left - P_PAD.right;
+      const innerH = P_H - P_PAD.top - P_PAD.bottom;
+      const scale = makeScale(PLOT_BOUNDS, innerW, innerH, P_PAD.left, P_PAD.top);
+
+      // Compute class means + mass-mean unit direction.
+      const truePts = droppedDots.filter((d) => d.label === "true").map((d) => [d.x, d.y]);
+      const falsePts = droppedDots.filter((d) => d.label === "false").map((d) => [d.x, d.y]);
+      let meanT = null, meanF = null, mmUnit = null;
+      if (truePts.length > 0 && falsePts.length > 0) {
+        meanT = meanOf(truePts);
+        meanF = meanOf(falsePts);
+        const diff = [meanT[0] - meanF[0], meanT[1] - meanF[1]];
+        mmUnit = unitOf(diff);
+      }
+
+      // Logistic-regression unit vector + boundary line, if weights given.
+      let lrUnit = null;
+      let boundary = null;
+      if (logregWeights) {
+        const { w1, w2, b } = logregWeights;
+        lrUnit = unitOf([w1, w2]);
+        boundary = boundaryFromWeights(w1, w2, b, PLOT_BOUNDS);
+      }
+
+      // Arrow geometry:
+      // - Mass-mean is the LITERAL connection between class means (false → true).
+      //   We trim it by 5% on each end so the arrow tip and X-marker don't
+      //   visually collide.
+      // - Log-reg is anchored at the midpoint of the means (which sits on
+      //   the decision boundary for symmetric data) and points along unit(w).
+      //   Length matches the mass-mean arrow so the two are comparable.
+      let mmArrowStart = null, mmArrowEnd = null;
+      let lrArrowStart = null, lrArrowEnd = null;
+      let lineLen = 0;
+      if (meanT && meanF) {
+        const dx = meanT[0] - meanF[0];
+        const dy = meanT[1] - meanF[1];
+        lineLen = Math.hypot(dx, dy);
+        const trim = 0.05;
+        mmArrowStart = [meanF[0] + dx * trim, meanF[1] + dy * trim];
+        mmArrowEnd   = [meanT[0] - dx * trim, meanT[1] - dy * trim];
+
+        const midpoint = [(meanF[0] + meanT[0]) / 2, (meanF[1] + meanT[1]) / 2];
+        if (lrUnit) {
+          // Half-length so the log-reg arrow starts at the midpoint and reaches
+          // similar territory as the F→T arrow ends — comparable visual scale.
+          lrArrowStart = midpoint;
+          lrArrowEnd = [
+            midpoint[0] + lrUnit[0] * lineLen * 0.5,
+            midpoint[1] + lrUnit[1] * lineLen * 0.5,
+          ];
+        }
+      }
+
+      const angleDeg = (showAngle && mmUnit && lrUnit) ? angleBetweenDeg(mmUnit, lrUnit) : null;
+
+      // What is visible right now?
+      const showBoundary    = lrStage >= 1 && boundary !== null;
+      const showLrArrow     = lrStage >= 2 && lrArrowEnd !== null;
+      const lrArrowGrowing  = lrStage === 2;
+      const showLrPerpFoot  = lrStage >= 2 && mmStage === 0;   // only on log-reg-solo beat
+
+      const showTrueX       = mmStage >= 1;
+      const showFalseX      = mmStage >= 2;
+      const showMmArrow     = mmStage >= 3 && mmArrowEnd !== null;
+      const mmArrowGrowing  = mmStage === 3;
+      const showMmLabel     = mmStage >= 4;
+      const showLrLabel     = lrStage >= 3;
+
+      // Dot dimming during the mass-mean focus acts.
+      const dimFalse = mmStage === 1;
+      const dimTrue  = mmStage === 2;
+
+      return html`
+        <svg
+          className="bp-plot__svg"
+          viewBox=${`0 0 ${P_W} ${P_H}`}
+          role="img"
+          aria-label="2D activation plot"
+        >
+          <defs>
+            <marker
+              id="bp-arrow-mass"
+              viewBox="0 0 10 10"
+              refX="9"
+              refY="5"
+              markerWidth="7"
+              markerHeight="7"
+              orient="auto-start-reverse"
+            >
+              <path d="M0,0 L10,5 L0,10 z" fill="#111827" />
+            </marker>
+            <marker
+              id="bp-arrow-lr"
+              viewBox="0 0 10 10"
+              refX="9"
+              refY="5"
+              markerWidth="7"
+              markerHeight="7"
+              orient="auto-start-reverse"
+            >
+              <path d="M0,0 L10,5 L0,10 z" fill="#111827" />
+            </marker>
+            <clipPath id="bp-plot-clip">
+              <rect x=${P_PAD.left} y=${P_PAD.top} width=${innerW} height=${innerH} />
+            </clipPath>
+          </defs>
+
+          {/* Plot background */}
+          <rect
+            x=${P_PAD.left}
+            y=${P_PAD.top}
+            width=${innerW}
+            height=${innerH}
+            fill="rgba(255, 255, 255, 0.55)"
+            stroke="rgba(17, 24, 39, 0.18)"
+          />
+
+          <g clipPath="url(#bp-plot-clip)">
+            {/* Origin crosshairs */}
+            <line
+              x1=${scale.sx(PLOT_BOUNDS.xMin)}
+              y1=${scale.sy(0)}
+              x2=${scale.sx(PLOT_BOUNDS.xMax)}
+              y2=${scale.sy(0)}
+              stroke="rgba(17, 24, 39, 0.12)"
+            />
+            <line
+              x1=${scale.sx(0)}
+              y1=${scale.sy(PLOT_BOUNDS.yMin)}
+              x2=${scale.sx(0)}
+              y2=${scale.sy(PLOT_BOUNDS.yMax)}
+              stroke="rgba(17, 24, 39, 0.12)"
+            />
+
+            {/* Decision boundary — visible from lrStage 1 onward */}
+            ${showBoundary && html`
+              <line
+                x1=${scale.sx(boundary[0][0])}
+                y1=${scale.sy(boundary[0][1])}
+                x2=${scale.sx(boundary[1][0])}
+                y2=${scale.sy(boundary[1][1])}
+                stroke="#52606a"
+                strokeWidth="1.5"
+                strokeDasharray="2 4"
+                opacity=${lrStage >= 2 ? 0.85 : 0.55}
+              />
+            `}
+
+            {/* Dropped dots. A dot lands "neutral" (grey) at phase 4 and then
+                fades to its label colour at phase 5 — the visual moment when
+                we ATTACH the truth label to the activation. CSS transitions
+                on fill and stroke smooth the colour shift. */}
+            ${droppedDots.map((d, i) => {
+              const sentenceIdx = droppedIdxs[i];
+              const isJust = i === justLandedIdx;
+              const isHovered = sentenceIdx === hoveredIdx;
+              const anyHovered = hoveredIdx !== null;
+              const dimmed = anyHovered && !isHovered;
+              const isLanding = isJust && landingPhase === 4;
+              const labelColor = LABEL_COLORS[d.label];
+              const dotFill = isLanding ? DOT_NEUTRAL : labelColor;
+              const dotStroke = isLanding
+                ? DOT_NEUTRAL
+                : ((isHovered || isJust) ? labelColor : "none");
+              const radius = isHovered ? 7 : (isJust ? 7 : 4);
+              // Mass-mean act dimming: stage 1 fades falses, stage 2 fades trues.
+              const mmDim = (dimFalse && d.label === "false") || (dimTrue && d.label === "true");
+              let baseOpacity = isHovered || isJust ? 1 : 0.55;
+              if (dimmed) baseOpacity = 0.18;
+              else if (mmDim) baseOpacity = 0.18;
+              return html`
+                <circle
+                  key=${"d" + i}
+                  cx=${scale.sx(d.x)}
+                  cy=${scale.sy(d.y)}
+                  r=${radius}
+                  fill=${dotFill}
+                  fillOpacity=${baseOpacity}
+                  stroke=${dotStroke}
+                  strokeWidth=${isHovered ? 2.5 : 2}
+                  style=${{
+                    transition: "r 0.18s ease, fill-opacity 0.35s ease, fill 0.32s ease, stroke 0.32s ease",
+                    cursor: onHover ? "pointer" : "default",
+                  }}
+                  onPointerEnter=${onHover ? () => onHover(sentenceIdx) : undefined}
+                  onPointerLeave=${onHover ? () => onHover(null) : undefined}
+                />
+              `;
+            })}
+
+            {/* Class-mean X markers, faded in progressively across mmStage 1→2. */}
+            ${meanF && showFalseX && html`
+              <g key="mean-false" style=${{ transition: "opacity 0.35s ease" }}>
+                <line
+                  x1=${scale.sx(meanF[0]) - 8}
+                  y1=${scale.sy(meanF[1]) - 8}
+                  x2=${scale.sx(meanF[0]) + 8}
+                  y2=${scale.sy(meanF[1]) + 8}
+                  stroke=${LABEL_COLORS.false}
+                  strokeWidth="3"
+                  strokeLinecap="round"
+                />
+                <line
+                  x1=${scale.sx(meanF[0]) - 8}
+                  y1=${scale.sy(meanF[1]) + 8}
+                  x2=${scale.sx(meanF[0]) + 8}
+                  y2=${scale.sy(meanF[1]) - 8}
+                  stroke=${LABEL_COLORS.false}
+                  strokeWidth="3"
+                  strokeLinecap="round"
+                />
+              </g>
+            `}
+            ${meanT && showTrueX && html`
+              <g key="mean-true" style=${{ transition: "opacity 0.35s ease" }}>
+                <line
+                  x1=${scale.sx(meanT[0]) - 8}
+                  y1=${scale.sy(meanT[1]) - 8}
+                  x2=${scale.sx(meanT[0]) + 8}
+                  y2=${scale.sy(meanT[1]) + 8}
+                  stroke=${LABEL_COLORS.true}
+                  strokeWidth="3"
+                  strokeLinecap="round"
+                />
+                <line
+                  x1=${scale.sx(meanT[0]) - 8}
+                  y1=${scale.sy(meanT[1]) + 8}
+                  x2=${scale.sx(meanT[0]) + 8}
+                  y2=${scale.sy(meanT[1]) - 8}
+                  stroke=${LABEL_COLORS.true}
+                  strokeWidth="3"
+                  strokeLinecap="round"
+                />
+              </g>
+            `}
+
+            {/* Static probe arrows (settled state). */}
+            ${showMmArrow && html`
+              <line
+                key="mm-arrow"
+                x1=${scale.sx(mmArrowStart[0])}
+                y1=${scale.sy(mmArrowStart[1])}
+                x2=${scale.sx(mmArrowEnd[0])}
+                y2=${scale.sy(mmArrowEnd[1])}
+                stroke="#111827"
+                strokeWidth="2.5"
+                markerEnd="url(#bp-arrow-mass)"
+              >
+                <animate attributeName="opacity" from="0" to="1" dur="0.45s" fill="freeze" />
+              </line>
+            `}
+            ${showLrArrow && html`
+              <line
+                key="lr-arrow"
+                x1=${scale.sx(lrArrowStart[0])}
+                y1=${scale.sy(lrArrowStart[1])}
+                x2=${scale.sx(lrArrowEnd[0])}
+                y2=${scale.sy(lrArrowEnd[1])}
+                stroke="#111827"
+                strokeWidth="2.5"
+                strokeDasharray="6 4"
+                markerEnd="url(#bp-arrow-lr)"
+              >
+                <animate attributeName="opacity" from="0" to="1" dur="0.45s" fill="freeze" />
+              </line>
+            `}
+
+            {/* 90° corner marker at the foot of the log-reg probe — shown on
+                Beat 5 (log-reg solo) so perpendicularity is unmistakable. */}
+            ${showLrPerpFoot && lrArrowStart && lrUnit && html`
+              <g key="lr-perp-corner">
+                <line
+                  x1=${scale.sx(lrArrowStart[0]) + lrUnit[0] * 11}
+                  y1=${scale.sy(lrArrowStart[1]) - lrUnit[1] * 11}
+                  x2=${scale.sx(lrArrowStart[0]) + (lrUnit[0] + lrUnit[1]) * 11}
+                  y2=${scale.sy(lrArrowStart[1]) - lrUnit[1] * 11 + lrUnit[0] * 11}
+                  stroke="rgba(17,24,39,0.55)"
+                  strokeWidth="1.25"
+                />
+                <line
+                  x1=${scale.sx(lrArrowStart[0]) + lrUnit[1] * 11}
+                  y1=${scale.sy(lrArrowStart[1]) + lrUnit[0] * 11}
+                  x2=${scale.sx(lrArrowStart[0]) + (lrUnit[0] + lrUnit[1]) * 11}
+                  y2=${scale.sy(lrArrowStart[1]) - lrUnit[1] * 11 + lrUnit[0] * 11}
+                  stroke="rgba(17,24,39,0.55)"
+                  strokeWidth="1.25"
+                />
+              </g>
+            `}
+          </g>
+
+          {/* Axis labels */}
+          <text
+            x=${P_PAD.left + innerW / 2}
+            y=${P_H - 10}
+            fontSize="10"
+            fill="rgba(17, 24, 39, 0.5)"
+            textAnchor="middle"
+          >activation dim 1 →</text>
+          <text
+            x=${14}
+            y=${P_PAD.top + innerH / 2}
+            fontSize="10"
+            fill="rgba(17, 24, 39, 0.5)"
+            textAnchor="middle"
+            transform=${`rotate(-90, 14, ${P_PAD.top + innerH / 2})`}
+          >activation dim 2 →</text>
+
+          {/* Probe text labels */}
+          ${showMmLabel && mmArrowEnd && html`
+            <text
+              x=${scale.sx(mmArrowEnd[0])}
+              y=${scale.sy(mmArrowEnd[1]) - 8}
+              fontSize="10"
+              fill="#111827"
+              textAnchor="middle"
+            >mass-mean</text>
+          `}
+          ${showLrLabel && lrArrowEnd && html`
+            <text
+              x=${scale.sx(lrArrowEnd[0])}
+              y=${scale.sy(lrArrowEnd[1]) + 14}
+              fontSize="10"
+              fill="#111827"
+              textAnchor="middle"
+            >log-reg</text>
+          `}
+
+          {/* Angle readout (beat 5) */}
+          ${angleDeg !== null && html`
+            <g>
+              <rect
+                x=${P_PAD.left + 8}
+                y=${P_PAD.top + 8}
+                width=${110}
+                height=${28}
+                rx="6"
+                fill="rgba(17, 24, 39, 0.85)"
+              />
+              <text
+                x=${P_PAD.left + 16}
+                y=${P_PAD.top + 26}
+                fontSize="11"
+                fill="#fdf6e3"
+              >angle: <tspan fontWeight="600">${angleDeg.toFixed(1)}°</tspan></text>
+            </g>
+          `}
+
+          {/* Empty state hint */}
+          ${droppedDots.length === 0 && beat <= 1 && html`
+            <text
+              x=${P_W / 2}
+              y=${P_H / 2}
+              fontSize="11"
+              fill="rgba(17, 24, 39, 0.32)"
+              textAnchor="middle"
+              fontStyle="italic"
+            >dots will land here</text>
+          `}
+
+          {/* Tiny on-plot legend (top-right). Hidden when the angle readout
+              owns the corner space, since the angle readout sits in roughly
+              the same upper area. */}
+          ${showLegend && html`
+            <g transform=${`translate(${P_PAD.left + innerW - 112 - 6}, ${P_PAD.top + 6})`}>
+              <rect
+                x="0"
+                y="0"
+                width="112"
+                height="22"
+                rx="5"
+                fill="rgba(255, 255, 255, 0.92)"
+                stroke="rgba(17, 24, 39, 0.18)"
+                strokeWidth="0.75"
+              />
+              <circle cx="10" cy="11" r="3.5" fill=${LABEL_COLORS.true} />
+              <text x="18" y="14" fontSize="10" fill="rgba(17, 24, 39, 0.72)">true</text>
+              <circle cx="58" cy="11" r="3.5" fill=${LABEL_COLORS.false} />
+              <text x="66" y="14" fontSize="10" fill="rgba(17, 24, 39, 0.72)">false</text>
+            </g>
+          `}
+
+          {/* Hover tooltip — sentence text near the hovered dot */}
+          ${(() => {
+            if (hoveredIdx === null) return null;
+            const hoveredDot = BAKED[hoveredIdx];
+            if (!droppedIdxs.includes(hoveredIdx)) return null;
+            const dx = scale.sx(hoveredDot.x);
+            const dy = scale.sy(hoveredDot.y);
+            const above = dy > P_PAD.top + 36;
+            const ttCharW = 6.4;
+            const ttPadX = 10;
+            const ttH = 22;
+            const ttW = hoveredDot.text.length * ttCharW + ttPadX * 2;
+            let ttCx = dx;
+            const ttHalfW = ttW / 2;
+            const leftEdge = P_PAD.left + 4;
+            const rightEdge = P_PAD.left + innerW - 4;
+            if (ttCx - ttHalfW < leftEdge) ttCx = leftEdge + ttHalfW;
+            if (ttCx + ttHalfW > rightEdge) ttCx = rightEdge - ttHalfW;
+            const ttCy = above ? dy - 20 : dy + 22;
+            return html`
+              <g style=${{ pointerEvents: "none" }}>
+                <rect
+                  x=${ttCx - ttHalfW}
+                  y=${ttCy - ttH / 2}
+                  width=${ttW}
+                  height=${ttH}
+                  rx="5"
+                  fill="#1a1a2e"
+                  opacity="0.95"
+                />
+                <text
+                  x=${ttCx}
+                  y=${ttCy + 3.5}
+                  fontSize="11"
+                  fontFamily="inherit"
+                  fill="#fdf6e3"
+                  textAnchor="middle"
+                >${hoveredDot.text}</text>
+              </g>
+            `;
+          })()}
+        </svg>
+      `;
+    }
+
+    // ==================================================================
+    // 9. Main app component
+    // ==================================================================
+
+    function BuildingAProbe() {
+      const [beat, setBeat] = useState(0);
+      const [droppedIdxs, setDroppedIdxs] = useState([]);
+      const [activeSentenceIdx, setActiveSentenceIdx] = useState(null);
+      const [phase, setPhase] = useState(0);
+      const [autoPlaying, setAutoPlaying] = useState(false);
+      const [logregFrameIdx, setLogregFrameIdx] = useState(0);
+      const [hoveredIdx, setHoveredIdx] = useState(null);
+      const [detailedView, setDetailedView] = useState(false);
+
+      // Mass-mean construction stages (Beat 4 / display 4):
+      //   0 = hidden (beat < 3)
+      //   1 = highlight true dots, fade in X-marker at true mean
+      //   2 = highlight false dots, fade in X-marker at false mean
+      //   3 = both dots normal, arrow grows F-mean → T-mean
+      //   4 = settled (also used on Beat 6 / display 6 for the comparison view)
+      const [mmStage, setMmStage] = useState(0);
+      const mmTimersRef = useRef([]);
+
+      // Log-reg construction stages (Beat 5 / display 5):
+      //   0 = hidden
+      //   1 = decision boundary line wobbles into place
+      //   2 = line settled, perpendicular probe arrow grows
+      //   3 = settled (also used on Beat 6 for the comparison view)
+      const [lrStage, setLrStage] = useState(0);
+      const lrTimersRef = useRef([]);
+
+      // Mirror detailedView into a ref so the autoplay closure can read the
+      // current value without being torn down/recreated when the user toggles
+      // mid-cascade. The currently-running sentence keeps its scheduled
+      // timings; the NEXT sentence uses the freshly-toggled mode.
+      const detailedViewRef = useRef(detailedView);
+      useEffect(() => { detailedViewRef.current = detailedView; }, [detailedView]);
+
+      const phaseTimers = useRef([]);
+      const autoPlayTimer = useRef(null);
+      const logregTimer = useRef(null);
+      const autoStartTimer = useRef(null);
+
+      // Clear pending timers on unmount or beat change
+      useEffect(() => {
+        return () => {
+          phaseTimers.current.forEach(clearTimeout);
+          mmTimersRef.current.forEach(clearTimeout);
+          lrTimersRef.current.forEach(clearTimeout);
+          if (autoPlayTimer.current) clearTimeout(autoPlayTimer.current);
+          if (logregTimer.current) clearTimeout(logregTimer.current);
+          if (autoStartTimer.current) clearTimeout(autoStartTimer.current);
+        };
+      }, []);
+
+      // Pre-compute logistic regression snapshots from ALL 16 dots.
+      const logregResult = useMemo(() => {
+        const truePts  = BAKED.filter((d) => d.label === "true").map((d) => [d.x, d.y]);
+        const falsePts = BAKED.filter((d) => d.label === "false").map((d) => [d.x, d.y]);
+        return trainLogRegWithSnapshots(truePts, falsePts);
+      }, []);
+
+      // Mass-mean 3-act animation: highlight true (X appears) →
+      // highlight false (X appears) → arrow grows F→T.
+      const playMassMeanAnimation = useCallback(() => {
+        mmTimersRef.current.forEach(clearTimeout);
+        mmTimersRef.current = [];
+        setMmStage(0);
+        mmTimersRef.current.push(setTimeout(() => setMmStage(1), 120));
+        mmTimersRef.current.push(setTimeout(() => setMmStage(2), 900));
+        mmTimersRef.current.push(setTimeout(() => setMmStage(3), 1700));
+        mmTimersRef.current.push(setTimeout(() => setMmStage(4), 2500));
+      }, []);
+
+      // Log-reg 2-act animation: line wobbles into place →
+      // perpendicular probe arrow grows out from the line.
+      const playLogRegAnimation = useCallback(() => {
+        lrTimersRef.current.forEach(clearTimeout);
+        lrTimersRef.current = [];
+        if (logregTimer.current) clearTimeout(logregTimer.current);
+        setLrStage(1);
+        setLogregFrameIdx(0);
+        const totalSnaps = logregResult.snapshots.length;
+        const advance = (i) => {
+          if (i >= totalSnaps - 1) {
+            setLogregFrameIdx(totalSnaps - 1);
+            return;
+          }
+          setLogregFrameIdx(i);
+          logregTimer.current = setTimeout(() => advance(i + 1), 70);
+        };
+        advance(0);
+        const lineDuration = totalSnaps * 70;
+        lrTimersRef.current.push(setTimeout(() => setLrStage(2), lineDuration + 150));
+        lrTimersRef.current.push(setTimeout(() => setLrStage(3), lineDuration + 850));
+      }, [logregResult]);
+
+      const dropOne = useCallback((sentenceIdx) => {
+        phaseTimers.current.forEach(clearTimeout);
+        phaseTimers.current = [];
+        setActiveSentenceIdx(sentenceIdx);
+        setPhase(0);
+
+        const timings = detailedViewRef.current ? PHASE_TIMINGS_DETAILED : PHASE_TIMINGS_SIMPLE;
+        timings.forEach(({ phase: p, at }) => {
+          const t = setTimeout(() => {
+            setPhase(p);
+            if (p === 4) {
+              setDroppedIdxs((prev) => prev.includes(sentenceIdx) ? prev : [...prev, sentenceIdx]);
+            }
+          }, at);
+          phaseTimers.current.push(t);
+        });
+      }, []);
+
+      // Variable-speed auto-play: first 4 sentences slow (savor the pattern),
+      // remaining fast (visible cascade). Detailed view runs slower overall
+      // because the layered interior takes longer to read. Delays are tuned
+      // so the dot-land phase always fires before the next sentence starts.
+      const startAutoPlay = useCallback(() => {
+        if (autoPlaying) return;
+        const remaining = SENTENCES.map((_, i) => i).filter((i) => !droppedIdxs.includes(i));
+        if (remaining.length === 0) return;
+        setAutoPlaying(true);
+
+        const startCount = droppedIdxs.length;
+        const playNext = (queue, count) => {
+          if (queue.length === 0) {
+            setAutoPlaying(false);
+            return;
+          }
+          const [nextIdx, ...rest] = queue;
+          dropOne(nextIdx);
+          const isSlow = count < 4;
+          const delay = detailedViewRef.current
+            ? (isSlow ? 1450 : 980)
+            : (isSlow ? 1150 : 780);
+          autoPlayTimer.current = setTimeout(() => playNext(rest, count + 1), delay);
+        };
+        playNext(remaining, startCount);
+      }, [autoPlaying, droppedIdxs, dropOne]);
+
+      // Keep a ref to the latest startAutoPlay so deferred callers (replay,
+      // beat-change auto-start) always invoke the fresh version. Without
+      // this, a setTimeout scheduled before a state-changing re-render
+      // would fire the stale closure and see outdated droppedIdxs.
+      const startAutoPlayRef = useRef(startAutoPlay);
+      useEffect(() => { startAutoPlayRef.current = startAutoPlay; });
+
+      const pauseAutoPlay = useCallback(() => {
+        if (autoPlayTimer.current) clearTimeout(autoPlayTimer.current);
+        setAutoPlaying(false);
+      }, []);
+
+      const skipToEnd = useCallback(() => {
+        if (autoPlayTimer.current) clearTimeout(autoPlayTimer.current);
+        phaseTimers.current.forEach(clearTimeout);
+        setAutoPlaying(false);
+        setActiveSentenceIdx(null);
+        setPhase(0);
+        setDroppedIdxs(SENTENCES.map((_, i) => i));
+      }, []);
+
+      const replay = useCallback(() => {
+        if (autoPlayTimer.current) clearTimeout(autoPlayTimer.current);
+        phaseTimers.current.forEach(clearTimeout);
+        if (autoStartTimer.current) clearTimeout(autoStartTimer.current);
+        setAutoPlaying(false);
+        setActiveSentenceIdx(null);
+        setPhase(0);
+        setDroppedIdxs([]);
+        autoStartTimer.current = setTimeout(() => {
+          if (startAutoPlayRef.current) startAutoPlayRef.current();
+        }, 400);
+      }, []);
+
+      // Beat-change side effects
+      useEffect(() => {
+        // Stop autoplay if leaving beat 1 (internal index for display "Beat 2")
+        if (beat !== 1 && autoPlaying) {
+          if (autoPlayTimer.current) clearTimeout(autoPlayTimer.current);
+          phaseTimers.current.forEach(clearTimeout);
+          setAutoPlaying(false);
+        }
+        if (autoStartTimer.current) clearTimeout(autoStartTimer.current);
+
+        // Entering beat 1: auto-start the cascade after a 500ms grace
+        // so the caption has time to register. (Uses the ref to grab the
+        // latest startAutoPlay regardless of intervening re-renders.)
+        if (beat === 1 && droppedIdxs.length === 0 && !autoPlaying) {
+          autoStartTimer.current = setTimeout(() => {
+            if (startAutoPlayRef.current) startAutoPlayRef.current();
+          }, 500);
+        }
+
+        // Beat 2+ requires all dots dropped — silently auto-fill if needed
+        if (beat >= 2 && droppedIdxs.length < SENTENCES.length) {
+          setDroppedIdxs(SENTENCES.map((_, i) => i));
+          setActiveSentenceIdx(null);
+          setPhase(0);
+        }
+
+        // Clear hover state on beat change
+        setHoveredIdx(null);
+
+        // Mass-mean: animate on Beat 4 (internal 3), settled on Beat 6,
+        // hidden elsewhere.
+        mmTimersRef.current.forEach(clearTimeout);
+        mmTimersRef.current = [];
+        if (beat === 3) {
+          playMassMeanAnimation();
+        } else if (beat >= 5) {
+          setMmStage(4);
+        } else {
+          setMmStage(0);
+        }
+
+        // Log-reg: animate on Beat 5 (internal 4), settled on Beat 6,
+        // hidden elsewhere. Note that Beat 5 hides mass-mean entirely so
+        // the perpendicular probe pedagogy can stand on its own.
+        lrTimersRef.current.forEach(clearTimeout);
+        lrTimersRef.current = [];
+        if (logregTimer.current) clearTimeout(logregTimer.current);
+        if (beat === 4) {
+          playLogRegAnimation();
+        } else if (beat >= 5) {
+          setLogregFrameIdx(logregResult.snapshots.length - 1);
+          setLrStage(3);
+        } else {
+          setLrStage(0);
+        }
+      }, [beat]);  // intentionally omits other deps
+
+      // Derived render data
+      const droppedDots = droppedIdxs.map((i) => BAKED[i]);
+      const activeSentence = activeSentenceIdx != null ? BAKED[activeSentenceIdx] : null;
+      const justLandedIdx = (phase >= 4 && activeSentenceIdx != null)
+        ? droppedIdxs.indexOf(activeSentenceIdx)
+        : -1;
+
+      const trueSentences  = SENTENCES.map((s, i) => ({ ...s, i })).filter((s) => s.label === "true");
+      const falseSentences = SENTENCES.map((s, i) => ({ ...s, i })).filter((s) => s.label === "false");
+
+      const showAngle = beat >= 5;
+      // Show weights (so PlotPanel can draw the boundary line) any time the
+      // log-reg story has started, including the line-settling animation.
+      const currentLogregWeights = lrStage >= 1
+        ? logregResult.snapshots[Math.min(logregFrameIdx, logregResult.snapshots.length - 1)]
+        : null;
+
+      const currentBeat = BEATS[beat];
+      const phaseCaptionMap = detailedView ? PHASE_CAPTIONS_DETAILED : PHASE_CAPTIONS_SIMPLE;
+      const phaseCaption = phaseCaptionMap[phase] || "";
+
+      return html`
+        <div className="bp-app">
+          <div className="bp-nav">
+            <button
+              type="button"
+              className="bp-nav__btn"
+              disabled=${beat === 0}
+              onClick=${() => setBeat(Math.max(0, beat - 1))}
+            >← Prev</button>
+            <button
+              type="button"
+              className="bp-nav__btn"
+              disabled=${beat === BEATS.length - 1}
+              onClick=${() => setBeat(Math.min(BEATS.length - 1, beat + 1))}
+            >Next →</button>
+            <span className="bp-nav__title">
+              Beat ${beat + 1} of ${BEATS.length}<strong>${currentBeat.title}</strong>
+            </span>
+            <div className="bp-nav__dots" role="tablist" aria-label="Beat selector">
+              ${BEATS.map((b) => html`
+                <button
+                  key=${b.id}
+                  type="button"
+                  className=${"bp-nav__dot" + (b.id === beat ? " bp-nav__dot--active" : "")}
+                  onClick=${() => setBeat(b.id)}
+                  aria-label=${"Go to beat " + (b.id + 1) + ": " + b.title}
+                >${b.id + 1}</button>
+              `)}
+            </div>
+          </div>
+
+          <p className="bp-caption">${currentBeat.caption}</p>
+
+          ${beat === 0 && html`
+            <div className="bp-stage bp-stage--dataset">
+              <div className="bp-dataset__columns">
+                <div className="bp-dataset__col bp-dataset__col--true">
+                  <h4>True (8 sentences)</h4>
+                  <ul className="bp-dataset__list">
+                    ${trueSentences.map((s) => html`
+                      <li key=${s.i} className="bp-dataset__item">${s.text}</li>
+                    `)}
+                  </ul>
+                </div>
+                <div className="bp-dataset__col bp-dataset__col--false">
+                  <h4>False (8 sentences)</h4>
+                  <ul className="bp-dataset__list">
+                    ${falseSentences.map((s) => html`
+                      <li key=${s.i} className="bp-dataset__item">${s.text}</li>
+                    `)}
+                  </ul>
+                </div>
+              </div>
+            </div>
+          `}
+
+          ${beat === 1 && html`
+            <div className="bp-stage bp-stage--drop">
+              <div className="bp-model">
+                <div className="bp-model__header">
+                  <span>The model (toy)</span>
+                  <button
+                    type="button"
+                    className=${"bp-model__toggle" + (detailedView ? " bp-model__toggle--active" : "")}
+                    onClick=${() => setDetailedView(!detailedView)}
+                    aria-pressed=${detailedView}
+                    aria-label=${detailedView ? "Hide model details" : "Look inside the model"}
+                    title=${detailedView ? "Hide model details" : "Look inside the model"}
+                  >🔍 ${detailedView ? "simple view" : "look inside"}</button>
+                </div>
+                ${detailedView
+                  ? html`<${ModelInteriorDetailed} activeSentence=${activeSentence} phase=${phase} />`
+                  : html`<${ModelInteriorSimple} activeSentence=${activeSentence} phase=${phase} />`}
+                ${detailedView && html`<div className="bp-model__step">${phaseCaption}</div>`}
+              </div>
+
+              <div className="bp-plot">
+                <div className="bp-plot__header">
+                  <span>Step 4. Link activations to label</span>
+                  <span>${droppedDots.length} / ${SENTENCES.length}</span>
+                </div>
+                <${PlotPanel}
+                  droppedDots=${droppedDots}
+                  droppedIdxs=${droppedIdxs}
+                  justLandedIdx=${justLandedIdx}
+                  landingPhase=${phase}
+                  mmStage=${0}
+                  logregWeights=${null}
+                  lrStage=${0}
+                  showAngle=${false}
+                  beat=${beat}
+                  hoveredIdx=${hoveredIdx}
+                  onHover=${setHoveredIdx}
+                  showLegend=${true}
+                />
+                <div className="bp-plot__caption">
+                  ${droppedDots.length === 0
+                      ? "Dots will start landing in a moment…"
+                      : `${droppedDots.length} of ${SENTENCES.length} sentences plotted · hover any dot to see its sentence.`}
+                </div>
+              </div>
+            </div>
+
+            <div className="bp-controls" role="group" aria-label="Auto-play controls">
+              <span className="bp-controls__status">${droppedDots.length} / ${SENTENCES.length}</span>
+              ${autoPlaying
+                ? html`<button type="button" className="bp-controls__btn" onClick=${pauseAutoPlay}>⏸ Pause</button>`
+                : (droppedIdxs.length < SENTENCES.length
+                    ? html`<button type="button" className="bp-controls__btn" onClick=${startAutoPlay}>▶ Play</button>`
+                    : null)}
+              <button
+                type="button"
+                className="bp-controls__btn"
+                onClick=${skipToEnd}
+                disabled=${droppedIdxs.length === SENTENCES.length}
+              >⏭ Skip to end</button>
+              <button type="button" className="bp-controls__btn" onClick=${replay}>↻ Replay</button>
+            </div>
+          `}
+
+          ${beat >= 2 && html`
+            <div className="bp-stage bp-stage--plot-only">
+              <div className="bp-plot">
+                <div className="bp-plot__header">
+                  <span>Activation cloud (squished to 2D)</span>
+                  <span>${droppedDots.length} sentences · hover any dot</span>
+                </div>
+                <${PlotPanel}
+                  droppedDots=${droppedDots}
+                  droppedIdxs=${droppedIdxs}
+                  justLandedIdx=${-1}
+                  landingPhase=${0}
+                  mmStage=${mmStage}
+                  logregWeights=${currentLogregWeights}
+                  lrStage=${lrStage}
+                  showAngle=${showAngle}
+                  beat=${beat}
+                  hoveredIdx=${hoveredIdx}
+                  onHover=${setHoveredIdx}
+                  showLegend=${true}
+                />
+                <div className="bp-plot__caption">
+                  ${beat === 2 && "Trues cluster up, falses cluster down — but with overlap. Hover any dot to see its sentence."}
+                  ${beat === 3 && html`
+                    <span>X markers = class means · solid arrow = mass-mean probe.</span>
+                    <button type="button" className="bp-plot__replay" onClick=${playMassMeanAnimation}>↻ Replay</button>
+                  `}
+                  ${beat === 4 && html`
+                    <span>Dotted line = decision boundary · dashed arrow = perpendicular probe · small corner = 90°.</span>
+                    <button type="button" className="bp-plot__replay" onClick=${playLogRegAnimation}>↻ Replay</button>
+                  `}
+                  ${beat === 5 && "Both probes shown. The angle between them is their disagreement."}
+                </div>
+              </div>
+            </div>
+          `}
+
+          <div className="bp-disclaimer">
+            <strong>Honesty note:</strong> the dots in this demo are illustrative — chosen to look like what real LLM activations look like when projected to 2D. The model interior is a stylized sketch, not a real transformer. The intuitions all carry over.
+          </div>
+
+          <section className="bp-notes">
+            <details>
+              <summary>Why "last token, middle layer"?</summary>
+              <p>In real probing research you have to <strong>pick</strong> which token's activation to extract and from which layer. The most common choices:</p>
+              <p><strong>Last token</strong> — by the time the model has read the whole sentence, the last token has accumulated all the context via attention, so its activation tends to encode "what the model now knows."</p>
+              <p><strong>Middle layer</strong> — early layers are still doing token-level work (parsing words, looking up embeddings); late layers specialize toward predicting the next token. Middle layers tend to hold the cleanest representations of high-level concepts like truth.</p>
+              <p>Different choices give different probes. The two-probes app shows what happens on the same data; this app holds those choices fixed and shows the pipeline.</p>
+            </details>
+            <details>
+              <summary>What does "squish to 2D" mean?</summary>
+              <p>A real LLM activation is typically a vector of <strong>~4,000 numbers</strong> (Llama-2-7B uses 4,096; GPT-2-medium uses 1,024; etc.). You can't plot 4,000-dimensional points. So we project them down to 2 dimensions for visualization.</p>
+              <p>The standard tool is <strong>PCA</strong> (principal component analysis), which finds the two directions in the high-dimensional space that capture the most variance. You can also use t-SNE, UMAP, or just two probe directions as your axes. The 2D picture you see is not the activation — it's a shadow of it, designed to preserve the most interesting structure.</p>
+              <p>Real probes work with the <em>full</em> high-dimensional vector, not the 2D projection. The 2D picture is for our eyes only.</p>
+            </details>
+            <details>
+              <summary>How does the iterative line-finding actually work?</summary>
+              <p>Logistic regression doesn't have a closed-form solution. You can't write down "the answer is this matrix product" the way you can for plain linear regression. So we solve it iteratively.</p>
+              <p>Concretely: we start with a random line. For every dot, the line gives a predicted probability ("80% true"). If the dot really is true, we score that as a small mistake; if it's false, a big one. We sum the mistakes across all dots — that's the <em>loss</em> (technically, <em>binary cross-entropy</em>). Then we nudge the line in whatever direction reduces the loss the most. Repeat ~1,500 times. The animation in beat 4 shows this process compressed into about 2 seconds.</p>
+              <p>Every real-world logistic regression library (scikit-learn, R's <code>glm</code>, etc.) does the same thing under the hood — they just use fancier optimizers than my hand-rolled gradient descent.</p>
+            </details>
+            <details>
+              <summary>Are these the methods researchers actually use?</summary>
+              <p>Yes, both are standard. <strong>Logistic regression</strong> was the dominant choice for probing in the 2016–2022 era — it's what people meant by "linear probe" by default.</p>
+              <p>More recently (2023+), the interpretability and activation-steering communities have been moving toward <strong>mass-mean probes</strong> (often called "difference of means" or "reading vectors") because they're less prone to picking up nuisance correlations. Papers worth knowing: Marks &amp; Tegmark 2023 ("The Geometry of Truth"), Zou et al. 2023 ("Representation Engineering"), Panickssery et al. 2023 ("Contrastive Activation Addition").</p>
+              <p>Other methods exist too — LDA, CCS (Burns et al. 2022), PCA-based probes, sparse probes — but mass-mean and logistic regression are the canonical pair to know.</p>
+            </details>
+          </section>
+
+          ${beat >= 5 && html`
+            <div className="bp-next">
+              <h2>Now go play</h2>
+              <p>You've seen one fixed dataset and two probes built on it. The next page lets you change the data and watch the probes respond — that's where you can really feel the difference between the two methods.</p>
+              <a href="../probing/">Try the slider sandbox: Two probes, two directions →</a>
+            </div>
+          `}
+        </div>
+      `;
+    }
+
+    const root = createRoot(document.getElementById("root"));
+    root.render(html`<${BuildingAProbe} />`);
+  </script>
+</body>
+</html>

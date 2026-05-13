@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- DRAFT: keep this noindex meta until ready to publish; see ./README.md -->
+  <meta name="robots" content="noindex, nofollow">
+  <title>Neural networks, visually — Jacqueline Tay</title>
+  <meta name="description" content="Draft section: pedagogical visualizations for neural-net concepts.">
+  <link rel="icon" href="/assets/favicon.png" type="image/png">
+  <link rel="apple-touch-icon" href="/assets/favicon.png">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2.1.1/css/pico.min.css">
+  <link rel="stylesheet" href="/assets/site.css">
+  <style>
+    .nn-hub {
+      margin: 2rem 0 2.5rem;
+    }
+    .nn-hub__list {
+      list-style: none;
+      padding: 0;
+      margin: 1.5rem 0 0;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 1rem;
+    }
+    .nn-hub__card {
+      display: block;
+      padding: 1rem 1.1rem;
+      border-radius: 12px;
+      background: rgba(255, 250, 240, 0.72);
+      border: 1px solid rgba(92, 74, 52, 0.14);
+      text-decoration: none;
+      color: inherit;
+      transition: transform 0.12s ease, border-color 0.12s ease;
+    }
+    .nn-hub__card:hover {
+      transform: translateY(-1px);
+      border-color: rgba(17, 24, 39, 0.32);
+    }
+    .nn-hub__card h2 {
+      margin: 0 0 0.35rem;
+      font-size: 1.05rem;
+    }
+    .nn-hub__card p {
+      margin: 0;
+      font-size: 0.9rem;
+      color: var(--pico-muted-color);
+      line-height: 1.45;
+    }
+    .nn-hub__note {
+      font-size: 0.875rem;
+      color: var(--pico-muted-color);
+      margin-top: 2rem;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <nav class="container">
+      <ul>
+        <li>
+          <strong class="site-brand">
+            <a href="/shelf/" aria-label="Jacqueline Tay — shelf">
+              <img class="site-logo" src="/assets/logo-home.png" alt="" width="1036" height="191" decoding="async">
+            </a>
+          </strong>
+        </li>
+      </ul>
+    </nav>
+  </header>
+  <main class="container nn-hub">
+    <p class="breadcrumb"><a href="/shelf/">Shelf</a> · Apps · Draft</p>
+    <h1>Neural networks, visually</h1>
+    <p class="lead chart-page-lead">
+      A pedagogical playground for ideas in interpretability and neural-net behavior.
+    </p>
+    <div class="chart-page-prose">
+      <p>Drafts in progress — explore the structure underneath ideas like probing, training dynamics, and feature geometry.</p>
+    </div>
+
+    <ul class="nn-hub__list">
+      <li>
+        <a class="nn-hub__card" href="./building-a-probe/">
+          <h2>Building a probe: from sentences to a direction</h2>
+          <p>A step-by-step walkthrough: how a labeled dataset of sentences becomes a probe direction in an LLM's activation space.</p>
+        </a>
+      </li>
+      <li>
+        <a class="nn-hub__card" href="./probing/">
+          <h2>Two probes, two directions</h2>
+          <p>Why a mass-mean probe and a logistic-regression probe can point different ways, even when both separate true from false.</p>
+        </a>
+      </li>
+      <li>
+        <a class="nn-hub__card" href="./dot-product/">
+          <h2>The dot product: a probe meets an activation</h2>
+          <p>Drag a probe and an activation. Watch the dot product as the length of the activation's shadow on the probe.</p>
+        </a>
+      </li>
+    </ul>
+
+    <p class="nn-hub__note">
+      Drafts live under <code>/_wip/</code> and are not linked from the shelf. See <code>README.md</code> in this folder for the publish recipe.
+    </p>
+  </main>
+</body>
+</html>

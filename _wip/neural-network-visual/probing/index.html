@@ -1,0 +1,920 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- DRAFT: keep this noindex meta until ready to publish; see ../README.md -->
+  <meta name="robots" content="noindex, nofollow">
+  <title>Two probes, two directions — Jacqueline Tay</title>
+  <meta name="description" content="An interactive sketch: why a mass-mean probe and a logistic-regression probe can point in different directions, even when both separate true from false.">
+  <link rel="icon" href="/assets/favicon.png" type="image/png">
+  <link rel="apple-touch-icon" href="/assets/favicon.png">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2.1.1/css/pico.min.css">
+  <link rel="stylesheet" href="/assets/site.css">
+  <style>
+    /* Local styles for the probing app. Scoped to .probe-app to avoid leaking. */
+    .probe-app {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+      margin: 1.5rem 0 2rem;
+    }
+    .probe-app__controls {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.1rem 1.75rem;
+      padding: 0.25rem 0 0.75rem;
+      background: transparent;
+      border: none;
+      border-radius: 0;
+      align-items: end;
+    }
+    .probe-app__viz {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 240px;
+      gap: 1.25rem;
+      align-items: start;
+    }
+    @media (max-width: 920px) {
+      .probe-app__viz { grid-template-columns: 1fr; }
+    }
+    .probe-app__plot { min-width: 0; }
+    .probe-svg {
+      display: block;
+      width: 100%;
+      height: auto;
+      max-width: 760px;
+      background: transparent;
+    }
+    .probe-app__sidebar {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+    .probe-legend, .probe-stats {
+      padding: 0.85rem 1rem;
+      background: rgba(255, 250, 240, 0.72);
+      border: 1px solid rgba(92, 74, 52, 0.14);
+      border-radius: 10px;
+    }
+    .probe-legend h3, .probe-stats h3 {
+      margin: 0 0 0.5rem;
+      font-size: 0.95rem;
+      letter-spacing: 0.02em;
+    }
+    .probe-legend ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      font-size: 0.85rem;
+    }
+    .probe-legend li {
+      display: flex;
+      align-items: center;
+      gap: 0.55rem;
+      padding: 0.22rem 0;
+    }
+    .legend-swatch {
+      flex: 0 0 22px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      height: 14px;
+    }
+    .legend-dot {
+      display: inline-block;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      opacity: 0.7;
+    }
+    .legend-dot--false { background: #e5731f; }
+    .legend-dot--true  { background: #1f6feb; }
+    .legend-x {
+      position: relative;
+      display: inline-block;
+      width: 14px;
+      height: 14px;
+    }
+    .legend-x::before, .legend-x::after {
+      content: "";
+      position: absolute;
+      top: 6px;
+      left: 0;
+      width: 14px;
+      height: 2px;
+      border-radius: 2px;
+    }
+    .legend-x::before { transform: rotate(45deg); }
+    .legend-x::after  { transform: rotate(-45deg); }
+    .legend-x--false::before, .legend-x--false::after { background: #e5731f; }
+    .legend-x--true::before,  .legend-x--true::after  { background: #1f6feb; }
+    .legend-line {
+      display: inline-block;
+      width: 22px;
+      height: 0;
+      border-top: 2.5px solid #111827;
+    }
+    .legend-line--dashed { border-top-style: dashed; }
+    .legend-line--dotted { border-top: 1.6px dotted #52606a; }
+    .legend-line--faint  { border-top: 1.25px solid rgba(17, 24, 39, 0.32); }
+    .probe-stats dl {
+      margin: 0;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 0.28rem 0.85rem;
+      font-size: 0.82rem;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    }
+    .probe-stats dt { color: var(--pico-muted-color); font-weight: 500; }
+    .probe-stats dd { margin: 0; text-align: right; font-variant-numeric: tabular-nums; }
+    .probe-stats__angle {
+      margin-top: 0.6rem;
+      padding-top: 0.55rem;
+      border-top: 1px dashed rgba(92, 74, 52, 0.22);
+      display: flex;
+      justify-content: space-between;
+      gap: 0.5rem;
+      font-size: 0.85rem;
+    }
+    .probe-stats__angle strong { font-variant-numeric: tabular-nums; }
+    .probe-slider {
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+      font-size: 0.78rem;
+      position: relative;
+      overflow: visible;
+    }
+    .probe-slider__row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .probe-slider__label {
+      color: rgba(17, 24, 39, 0.58);
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      letter-spacing: 0.01em;
+    }
+    .probe-slider__value {
+      font-variant-numeric: tabular-nums;
+      font-weight: 500;
+      color: rgba(17, 24, 39, 0.82);
+    }
+    .probe-slider input[type="range"] {
+      width: 100%;
+      accent-color: rgba(17, 24, 39, 0.72);
+      margin: 0;
+    }
+    .probe-info {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      font-family: Georgia, "Times New Roman", serif;
+      font-style: italic;
+      font-size: 8px;
+      font-weight: 600;
+      line-height: 1;
+      background: rgba(17, 24, 39, 0.07);
+      color: rgba(17, 24, 39, 0.5);
+      cursor: help;
+      user-select: none;
+      position: relative;
+      outline: none;
+      transition: background 0.12s ease, color 0.12s ease;
+    }
+    .probe-info:hover,
+    .probe-info:focus-visible {
+      background: rgba(17, 24, 39, 0.16);
+      color: rgba(17, 24, 39, 0.85);
+    }
+    .probe-info__bubble {
+      position: absolute;
+      bottom: calc(100% + 7px);
+      left: 50%;
+      transform: translateX(-50%);
+      background: #1a1a2e;
+      color: #f3eee0;
+      font-family: var(--font-body);
+      font-style: normal;
+      font-weight: 400;
+      font-size: 0.76rem;
+      line-height: 1.45;
+      padding: 0.55rem 0.7rem;
+      border-radius: 6px;
+      width: 240px;
+      max-width: 60vw;
+      pointer-events: none;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.12s ease, visibility 0.12s ease;
+      z-index: 20;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+      text-align: left;
+      white-space: normal;
+    }
+    .probe-info__bubble::after {
+      content: "";
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      border: 6px solid transparent;
+      border-top-color: #1a1a2e;
+    }
+    .probe-info:hover .probe-info__bubble,
+    .probe-info:focus-visible .probe-info__bubble {
+      opacity: 1;
+      visibility: visible;
+    }
+    .probe-info__bubble strong { color: #ffe1a0; font-weight: 600; }
+    .probe-info__bubble em { font-style: italic; color: #ffe1a0; }
+    .probe-slider input[type="range"] {
+      width: 100%;
+      accent-color: var(--pico-primary);
+    }
+    .probe-reset {
+      font-size: 0.7rem;
+      padding: 0.4rem 0.75rem;
+      border-radius: 6px;
+      align-self: end;
+      justify-self: start;
+      background: transparent;
+      color: rgba(17, 24, 39, 0.6);
+      border: 1px solid rgba(17, 24, 39, 0.18);
+      cursor: pointer;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+    }
+    .probe-reset:hover {
+      background: rgba(17, 24, 39, 0.04);
+      color: rgba(17, 24, 39, 0.9);
+      border-color: rgba(17, 24, 39, 0.34);
+    }
+    .probe-app__notes {
+      max-width: 64ch;
+      display: flex;
+      flex-direction: column;
+      gap: 0.55rem;
+    }
+    .probe-app__notes p { margin: 0; font-size: 0.95rem; line-height: 1.55; }
+    .probe-app__notes em.callout {
+      background: rgba(235, 188, 88, 0.22);
+      font-style: normal;
+      padding: 0 0.2rem;
+      border-radius: 3px;
+    }
+    .probe-app__notes code {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 0.9em;
+      background: rgba(17, 24, 39, 0.06);
+      padding: 0 0.25rem;
+      border-radius: 3px;
+    }
+    .probe-app__notes details {
+      margin-top: 0.5rem;
+      padding: 0.7rem 0.9rem;
+      background: rgba(255, 250, 240, 0.72);
+      border: 1px solid rgba(92, 74, 52, 0.14);
+      border-radius: 10px;
+    }
+    .probe-app__notes details > summary {
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.92rem;
+    }
+    .probe-app__notes details[open] > summary { margin-bottom: 0.5rem; }
+    .probe-app__notes details p { font-size: 0.9rem; margin-bottom: 0.4rem; }
+    .probe-app__notes details p:last-child { margin-bottom: 0; }
+    .draft-flag {
+      font-size: 0.75rem;
+      color: var(--pico-muted-color);
+      margin-top: 1.5rem;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <nav class="container">
+      <ul>
+        <li>
+          <strong class="site-brand">
+            <a href="/shelf/" aria-label="Jacqueline Tay — shelf">
+              <img class="site-logo" src="/assets/logo-home.png" alt="" width="1036" height="191" decoding="async">
+            </a>
+          </strong>
+        </li>
+      </ul>
+    </nav>
+  </header>
+  <main class="container">
+    <p class="breadcrumb"><a href="/shelf/">Shelf</a> · <a href="../">Neural networks, visually</a> · Draft</p>
+    <h1>Two probes, two directions</h1>
+    <p class="lead chart-page-lead">
+      Each dot below is a pretend model activation. Sliders change the data; the visualization shows two ways of reading a "truth" direction off it — and how they can disagree.
+    </p>
+    <div class="chart-page-prose">
+      <p>
+        The y-axis lines up with whether something is true; the x-axis is a <em>nuisance</em> feature like topic, template, wording, or number size. Blue dots are true examples, orange dots are false. Two probe directions are drawn as arrows, plus the logistic classifier's decision boundary.
+      </p>
+      <p>
+        Tip: hover the small <span aria-hidden="true" style="display:inline-flex;align-items:center;justify-content:center;width:12px;height:12px;border-radius:50%;background:rgba(17,24,39,0.07);color:rgba(17,24,39,0.5);font-family:Georgia,serif;font-style:italic;font-size:8px;font-weight:600;line-height:1;vertical-align:middle;">i</span> next to any slider for an explanation. The axes are <em>fixed</em>, so the points really do move as you change the sliders.
+      </p>
+    </div>
+
+    <div id="root"></div>
+
+    <p class="draft-flag">Draft sketch — not linked from the shelf.</p>
+  </main>
+
+  <!--
+    Implementation notes:
+    - React + htm via esm.sh (no build step). When this folder graduates to /apps/,
+      no code change required — just relocate and remove the noindex meta.
+    - All math (PRNG, Box-Muller, Cholesky, gradient descent for logistic regression)
+      is implemented inline. Keep it that way for portability.
+    - See ../README.md for the publish recipe.
+  -->
+  <script type="module">
+    import React, { useMemo, useState, useCallback } from "https://esm.sh/react@18.3.1";
+    import { createRoot } from "https://esm.sh/react-dom@18.3.1/client?deps=react@18.3.1";
+    import htm from "https://esm.sh/htm@3.1.1";
+
+    const html = htm.bind(React.createElement);
+
+    // ------------------------------------------------------------------
+    // Random number generation: seeded so plots are stable per seed value
+    // ------------------------------------------------------------------
+    function mulberry32(seed) {
+      let a = (seed | 0) || 1;
+      return function () {
+        a = (a + 0x6D2B79F5) >>> 0;
+        let t = a;
+        t = Math.imul(t ^ (t >>> 15), t | 1);
+        t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+        return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+      };
+    }
+
+    function gaussianPair(rng) {
+      let u1 = 0;
+      while (u1 === 0) u1 = rng();
+      const u2 = rng();
+      const r = Math.sqrt(-2 * Math.log(u1));
+      const theta = 2 * Math.PI * u2;
+      return [r * Math.cos(theta), r * Math.sin(theta)];
+    }
+
+    // Cholesky for the 2x2 covariance [[a, b], [b, c]].
+    // Returns lower-triangular L such that L L^T = cov.
+    function chol2x2(a, b, c) {
+      const safeA = Math.max(a, 1e-9);
+      const l11 = Math.sqrt(safeA);
+      const l21 = b / l11;
+      const inner = c - l21 * l21;
+      const l22 = Math.sqrt(Math.max(inner, 1e-9));
+      return { l11, l21, l22 };
+    }
+
+    function sigmoid(z) {
+      // Numerically stable form to avoid overflow on large |z|.
+      if (z >= 0) {
+        const ez = Math.exp(-z);
+        return 1 / (1 + ez);
+      }
+      const ez = Math.exp(z);
+      return ez / (1 + ez);
+    }
+
+    // ------------------------------------------------------------------
+    // Pipeline: generate data, compute mass-mean probe, train logistic regression
+    // ------------------------------------------------------------------
+    function generateData(params) {
+      const { truthSeparation, xVariance, yVariance, correlation, nPerClass, seed } = params;
+      // Clamp correlation strictly inside (-1, 1) so Cholesky stays valid.
+      const rho = Math.max(-0.999, Math.min(0.999, correlation));
+      const sx2 = Math.max(xVariance, 1e-6);
+      const sy2 = Math.max(yVariance, 1e-6);
+      const cov12 = rho * Math.sqrt(sx2 * sy2);
+      const L = chol2x2(sx2, cov12, sy2);
+
+      const muFalse = [0, -truthSeparation / 2];
+      const muTrue  = [0,  truthSeparation / 2];
+      const rng = mulberry32(seed);
+
+      const falsePts = new Array(nPerClass);
+      const truePts = new Array(nPerClass);
+      for (let i = 0; i < nPerClass; i++) {
+        const [z1, z2] = gaussianPair(rng);
+        falsePts[i] = [
+          muFalse[0] + L.l11 * z1,
+          muFalse[1] + L.l21 * z1 + L.l22 * z2
+        ];
+      }
+      for (let i = 0; i < nPerClass; i++) {
+        const [z1, z2] = gaussianPair(rng);
+        truePts[i] = [
+          muTrue[0] + L.l11 * z1,
+          muTrue[1] + L.l21 * z1 + L.l22 * z2
+        ];
+      }
+      return { falsePts, truePts, muFalse, muTrue };
+    }
+
+    function meanOf(points) {
+      let sx = 0, sy = 0;
+      for (const [x, y] of points) { sx += x; sy += y; }
+      return [sx / points.length, sy / points.length];
+    }
+
+    function unitOf(v) {
+      const n = Math.hypot(v[0], v[1]);
+      if (n < 1e-12) return [0, 0];
+      return [v[0] / n, v[1] / n];
+    }
+
+    function computeMassMean(data) {
+      const meanFalse = meanOf(data.falsePts);
+      const meanTrue  = meanOf(data.truePts);
+      const diff = [meanTrue[0] - meanFalse[0], meanTrue[1] - meanFalse[1]];
+      const unit = unitOf(diff);
+      return { meanFalse, meanTrue, diff, unit };
+    }
+
+    // Train binary logistic regression with batch gradient descent + small L2.
+    // Variables: x1 = nuisance coord, x2 = truth coord, y in {0, 1} = class label.
+    function trainLogReg(data, opts) {
+      const { learningRate = 0.05, steps = 1500, l2 = 0.001 } = opts || {};
+      const N = data.falsePts.length + data.truePts.length;
+      const X1 = new Float64Array(N);
+      const X2 = new Float64Array(N);
+      const Y  = new Float64Array(N);
+      let i = 0;
+      for (const [x1, x2] of data.falsePts) { X1[i] = x1; X2[i] = x2; Y[i] = 0; i++; }
+      for (const [x1, x2] of data.truePts)  { X1[i] = x1; X2[i] = x2; Y[i] = 1; i++; }
+
+      let wNuisance = 0, wTruth = 0, b = 0;
+      for (let s = 0; s < steps; s++) {
+        let g1 = 0, g2 = 0, gb = 0;
+        for (let k = 0; k < N; k++) {
+          const z = wNuisance * X1[k] + wTruth * X2[k] + b;
+          const p = sigmoid(z);
+          const e = p - Y[k];
+          g1 += e * X1[k];
+          g2 += e * X2[k];
+          gb += e;
+        }
+        g1 = g1 / N + l2 * wNuisance;
+        g2 = g2 / N + l2 * wTruth;
+        gb = gb / N;
+        wNuisance -= learningRate * g1;
+        wTruth    -= learningRate * g2;
+        b         -= learningRate * gb;
+      }
+      const vec = [wNuisance, wTruth];
+      return { wNuisance, wTruth, b, vec, unit: unitOf(vec) };
+    }
+
+    function angleBetweenDeg(u, v) {
+      const dot = Math.max(-1, Math.min(1, u[0] * v[0] + u[1] * v[1]));
+      return (Math.acos(dot) * 180) / Math.PI;
+    }
+
+    // ------------------------------------------------------------------
+    // Plot scaffolding — fixed bounds so points move within a stable frame.
+    // Range matches plot aspect (1.5:1) to keep dots round and angles honest.
+    // ------------------------------------------------------------------
+    const FIXED_BOUNDS = { xMin: -7.5, xMax: 7.5, yMin: -5, yMax: 5 };
+
+    function makeScale(bounds, plotW, plotH, padLeft, padTop) {
+      const w = bounds.xMax - bounds.xMin || 1;
+      const h = bounds.yMax - bounds.yMin || 1;
+      return {
+        sx: (x) => padLeft + ((x - bounds.xMin) / w) * plotW,
+        sy: (y) => padTop + plotH - ((y - bounds.yMin) / h) * plotH,
+      };
+    }
+
+    // Decision boundary: w1*x1 + w2*x2 + b = 0.
+    // Returns two endpoints inside the data bounds, handling near-vertical case.
+    function boundaryLine(logreg, bounds) {
+      const { wNuisance: w1, wTruth: w2, b } = logreg;
+      const eps = 1e-6;
+      if (Math.abs(w2) > eps) {
+        const x1L = bounds.xMin;
+        const x1R = bounds.xMax;
+        return [
+          [x1L, -(w1 * x1L + b) / w2],
+          [x1R, -(w1 * x1R + b) / w2],
+        ];
+      }
+      if (Math.abs(w1) > eps) {
+        const x = -b / w1;
+        return [[x, bounds.yMin], [x, bounds.yMax]];
+      }
+      return null;
+    }
+
+    // ------------------------------------------------------------------
+    // React component
+    // ------------------------------------------------------------------
+    const DEFAULTS = {
+      truthSeparation: 2.0,
+      xVariance: 3.0,
+      yVariance: 1.0,
+      correlation: 0.85,
+      nPerClass: 500,
+      seed: 7,
+    };
+
+    function fmtSliderValue(value, step) {
+      if (step >= 1) return String(Math.round(value));
+      if (step >= 0.1) return value.toFixed(1);
+      if (step >= 0.01) return value.toFixed(2);
+      return value.toFixed(3);
+    }
+
+    function fmtVec(v) {
+      return `[${v[0].toFixed(2)}, ${v[1].toFixed(2)}]`;
+    }
+
+    function Slider({ label, value, min, max, step, onChange, info }) {
+      return html`
+        <label className="probe-slider">
+          <div className="probe-slider__row">
+            <span className="probe-slider__label">
+              ${label}
+              ${info && html`
+                <span
+                  className="probe-info"
+                  tabIndex="0"
+                  role="button"
+                  aria-label=${"More about " + label}
+                >
+                  i
+                  <span className="probe-info__bubble" role="tooltip">${info}</span>
+                </span>
+              `}
+            </span>
+            <span className="probe-slider__value">${fmtSliderValue(value, step)}</span>
+          </div>
+          <input
+            type="range"
+            min=${min}
+            max=${max}
+            step=${step}
+            value=${value}
+            onChange=${(e) => onChange(parseFloat(e.target.value))}
+          />
+        </label>
+      `;
+    }
+
+    // Tooltip content per slider. Tight, audience-first, accurate in both
+    // population and finite-sample regimes.
+    const SLIDER_INFO = {
+      truthSeparation: "How far apart the average true and false activations are on the truth axis. Bigger gap → easier classification.",
+      xVariance: "How spread out points are along the nuisance axis within a single class. Wider spread → the probes agree more.",
+      yVariance: "How spread out points are along the truth axis within a single class. Wider spread → the probes disagree more.",
+      correlation: "How tilted the clouds are within each class. At 0 the clouds are upright; the further from 0 (positive or negative), the more the probes disagree.",
+      nPerClass: "How many fake activations are drawn per class. More dots → smoother, more reliable probe estimates.",
+      seed: "Resets the random sampler. Same parameters + different seed = a different random draw of the same process.",
+    };
+
+    function ProbeGeometryDemo() {
+      const [params, setParams] = useState(DEFAULTS);
+      const set = useCallback((key) => (val) => setParams((p) => ({ ...p, [key]: val })), []);
+
+      const result = useMemo(() => {
+        const data = generateData(params);
+        const mass = computeMassMean(data);
+        const logreg = trainLogReg(data);
+        const angle = angleBetweenDeg(mass.unit, logreg.unit);
+        return { data, mass, logreg, angle };
+      }, [params]);
+
+      const { data, mass, logreg, angle } = result;
+
+      // SVG geometry
+      const SVG_W = 760;
+      const SVG_H = 520;
+      const PAD_LEFT = 56;
+      const PAD_RIGHT = 16;
+      const PAD_TOP = 16;
+      const PAD_BOTTOM = 44;
+      const plotW = SVG_W - PAD_LEFT - PAD_RIGHT;
+      const plotH = SVG_H - PAD_TOP - PAD_BOTTOM;
+
+      // Fixed bounds — axes do not auto-rescale. This way the audience sees
+      // points literally getting wider / tilting as they move the sliders.
+      const bounds = FIXED_BOUNDS;
+      const dataDiag = Math.hypot(
+        bounds.xMax - bounds.xMin,
+        bounds.yMax - bounds.yMin
+      );
+      const arrowLen = dataDiag * 0.22;
+
+      const start = [
+        (mass.meanFalse[0] + mass.meanTrue[0]) / 2,
+        (mass.meanFalse[1] + mass.meanTrue[1]) / 2,
+      ];
+      const massEnd = [
+        start[0] + mass.unit[0] * arrowLen,
+        start[1] + mass.unit[1] * arrowLen,
+      ];
+      const lrEnd = [
+        start[0] + logreg.unit[0] * arrowLen,
+        start[1] + logreg.unit[1] * arrowLen,
+      ];
+
+      const scale = makeScale(bounds, plotW, plotH, PAD_LEFT, PAD_TOP);
+      const boundary = boundaryLine(logreg, bounds);
+
+      const sliderDefs = [
+        { key: "truthSeparation", label: "Truth separation",    min: 0.2,   max: 5.0,  step: 0.1 },
+        { key: "xVariance",       label: "Nuisance variance",   min: 0.2,   max: 6.0,  step: 0.1 },
+        { key: "yVariance",       label: "Truth variance",      min: 0.2,   max: 4.0,  step: 0.1 },
+        { key: "correlation",     label: "Feature correlation", min: -0.95, max: 0.95, step: 0.05 },
+        { key: "nPerClass",       label: "Points per class",    min: 20,    max: 500,  step: 10 },
+        { key: "seed",            label: "Random seed",         min: 1,     max: 100,  step: 1 },
+      ];
+
+      return html`
+        <div className="probe-app">
+          <section className="probe-app__controls" aria-label="Controls">
+            ${sliderDefs.map(
+              (d) => html`
+                <${Slider}
+                  key=${d.key}
+                  label=${d.label}
+                  value=${params[d.key]}
+                  min=${d.min}
+                  max=${d.max}
+                  step=${d.step}
+                  onChange=${set(d.key)}
+                  info=${SLIDER_INFO[d.key]}
+                />
+              `
+            )}
+            <button type="button" className="probe-reset" onClick=${() => setParams(DEFAULTS)}>
+              Reset to defaults
+            </button>
+          </section>
+
+          <section className="probe-app__viz">
+            <div className="probe-app__plot">
+              <svg
+                className="probe-svg"
+                viewBox=${`0 0 ${SVG_W} ${SVG_H}`}
+                role="img"
+                aria-label="Two probe directions on fake 2D activation data"
+              >
+                <defs>
+                  <marker
+                    id="probe-arrowhead"
+                    viewBox="0 0 10 10"
+                    refX="9"
+                    refY="5"
+                    markerWidth="7"
+                    markerHeight="7"
+                    orient="auto-start-reverse"
+                  >
+                    <path d="M0,0 L10,5 L0,10 z" fill="#111827" />
+                  </marker>
+                  <clipPath id="probe-plot-clip">
+                    <rect x=${PAD_LEFT} y=${PAD_TOP} width=${plotW} height=${plotH} />
+                  </clipPath>
+                </defs>
+
+                <rect
+                  x=${PAD_LEFT}
+                  y=${PAD_TOP}
+                  width=${plotW}
+                  height=${plotH}
+                  fill="rgba(255, 250, 240, 0.65)"
+                  stroke="rgba(17, 24, 39, 0.18)"
+                />
+
+                <g clipPath="url(#probe-plot-clip)">
+                  <line
+                    x1=${scale.sx(bounds.xMin)}
+                    y1=${scale.sy(0)}
+                    x2=${scale.sx(bounds.xMax)}
+                    y2=${scale.sy(0)}
+                    stroke="rgba(17, 24, 39, 0.18)"
+                    strokeWidth="1"
+                  />
+                  <line
+                    x1=${scale.sx(0)}
+                    y1=${scale.sy(bounds.yMin)}
+                    x2=${scale.sx(0)}
+                    y2=${scale.sy(bounds.yMax)}
+                    stroke="rgba(17, 24, 39, 0.18)"
+                    strokeWidth="1"
+                  />
+
+                  ${data.falsePts.map(
+                    ([x, y], i) => html`
+                      <circle
+                        key=${"f" + i}
+                        cx=${scale.sx(x)}
+                        cy=${scale.sy(y)}
+                        r="3"
+                        fill="#e5731f"
+                        fillOpacity="0.42"
+                      />
+                    `
+                  )}
+                  ${data.truePts.map(
+                    ([x, y], i) => html`
+                      <circle
+                        key=${"t" + i}
+                        cx=${scale.sx(x)}
+                        cy=${scale.sy(y)}
+                        r="3"
+                        fill="#1f6feb"
+                        fillOpacity="0.42"
+                      />
+                    `
+                  )}
+
+                  <line
+                    x1=${scale.sx(mass.meanFalse[0])}
+                    y1=${scale.sy(mass.meanFalse[1])}
+                    x2=${scale.sx(mass.meanTrue[0])}
+                    y2=${scale.sy(mass.meanTrue[1])}
+                    stroke="#111827"
+                    strokeOpacity="0.22"
+                    strokeWidth="1.25"
+                  />
+
+                  ${boundary &&
+                  html`
+                    <line
+                      x1=${scale.sx(boundary[0][0])}
+                      y1=${scale.sy(boundary[0][1])}
+                      x2=${scale.sx(boundary[1][0])}
+                      y2=${scale.sy(boundary[1][1])}
+                      stroke="#52606a"
+                      strokeWidth="1.6"
+                      strokeDasharray="2 4"
+                    />
+                  `}
+
+                  ${[mass.meanFalse, mass.meanTrue].map((pt, i) => {
+                    const cx = scale.sx(pt[0]);
+                    const cy = scale.sy(pt[1]);
+                    const r = 9;
+                    const color = i === 0 ? "#e5731f" : "#1f6feb";
+                    return html`
+                      <g key=${"mean" + i}>
+                        <line
+                          x1=${cx - r}
+                          y1=${cy - r}
+                          x2=${cx + r}
+                          y2=${cy + r}
+                          stroke=${color}
+                          strokeWidth="3"
+                          strokeLinecap="round"
+                        />
+                        <line
+                          x1=${cx - r}
+                          y1=${cy + r}
+                          x2=${cx + r}
+                          y2=${cy - r}
+                          stroke=${color}
+                          strokeWidth="3"
+                          strokeLinecap="round"
+                        />
+                      </g>
+                    `;
+                  })}
+
+                  <line
+                    x1=${scale.sx(start[0])}
+                    y1=${scale.sy(start[1])}
+                    x2=${scale.sx(massEnd[0])}
+                    y2=${scale.sy(massEnd[1])}
+                    stroke="#111827"
+                    strokeWidth="2.5"
+                    markerEnd="url(#probe-arrowhead)"
+                  />
+                  <line
+                    x1=${scale.sx(start[0])}
+                    y1=${scale.sy(start[1])}
+                    x2=${scale.sx(lrEnd[0])}
+                    y2=${scale.sy(lrEnd[1])}
+                    stroke="#111827"
+                    strokeWidth="2.5"
+                    strokeDasharray="6 4"
+                    markerEnd="url(#probe-arrowhead)"
+                  />
+                </g>
+
+                <text
+                  x=${scale.sx(massEnd[0])}
+                  y=${scale.sy(massEnd[1]) - 10}
+                  fontSize="11"
+                  fill="#111827"
+                  textAnchor="middle"
+                  pointerEvents="none"
+                >mass-mean probe</text>
+                <text
+                  x=${scale.sx(lrEnd[0])}
+                  y=${scale.sy(lrEnd[1]) + 18}
+                  fontSize="11"
+                  fill="#111827"
+                  textAnchor="middle"
+                  pointerEvents="none"
+                >logistic-regression probe</text>
+
+                <text
+                  x=${PAD_LEFT + plotW / 2}
+                  y=${SVG_H - 14}
+                  fontSize="12"
+                  fill="#52606a"
+                  textAnchor="middle"
+                >Nuisance feature direction →</text>
+                <text
+                  x=${18}
+                  y=${PAD_TOP + plotH / 2}
+                  fontSize="12"
+                  fill="#52606a"
+                  textAnchor="middle"
+                  transform=${`rotate(-90, 18, ${PAD_TOP + plotH / 2})`}
+                >Truth feature direction →</text>
+              </svg>
+            </div>
+
+            <aside className="probe-app__sidebar">
+              <div className="probe-legend">
+                <h3>Legend</h3>
+                <ul>
+                  <li><span className="legend-swatch"><span className="legend-dot legend-dot--false"></span></span>false examples</li>
+                  <li><span className="legend-swatch"><span className="legend-dot legend-dot--true"></span></span>true examples</li>
+                  <li><span className="legend-swatch"><span className="legend-x legend-x--false"></span></span>mean false</li>
+                  <li><span className="legend-swatch"><span className="legend-x legend-x--true"></span></span>mean true</li>
+                  <li><span className="legend-swatch"><span className="legend-line legend-line--faint"></span></span>line through both means</li>
+                  <li><span className="legend-swatch"><span className="legend-line"></span></span>mass-mean probe</li>
+                  <li><span className="legend-swatch"><span className="legend-line legend-line--dashed"></span></span>logistic-regression probe</li>
+                  <li><span className="legend-swatch"><span className="legend-line legend-line--dotted"></span></span>logistic decision boundary</li>
+                </ul>
+              </div>
+
+              <div className="probe-stats">
+                <h3>Calculations</h3>
+                <dl>
+                  <dt>mean false</dt><dd>${fmtVec(mass.meanFalse)}</dd>
+                  <dt>mean true</dt><dd>${fmtVec(mass.meanTrue)}</dd>
+                  <dt>true − false</dt><dd>${fmtVec(mass.diff)}</dd>
+                  <dt>mass-mean unit</dt><dd>${fmtVec(mass.unit)}</dd>
+                  <dt>log-reg unit</dt><dd>${fmtVec(logreg.unit)}</dd>
+                </dl>
+                <div className="probe-stats__angle">
+                  <span>Angle between probes</span>
+                  <strong>${angle.toFixed(1)}°</strong>
+                </div>
+              </div>
+            </aside>
+          </section>
+
+          <section className="probe-app__notes">
+            <p><strong>Mass-mean probe:</strong> points from the average false activation to the average true activation. The faint line through both X markers shows this direction exactly — the solid arrow is the same direction, just drawn from the midpoint at a fixed length so the two probes can be compared.</p>
+            <p><strong>Logistic-regression probe:</strong> points in the direction that best helps a classifier separate true from false examples.</p>
+            <p>When the data cloud is slanted (a nuisance feature is correlated with truth), logistic regression may tilt toward a direction that improves classification. That can make it a good classifier but a less clean estimate of the underlying concept direction.</p>
+            <p>Try the <em className="callout">feature correlation</em> slider: a nuisance feature can pull the logistic-regression probe away from the mass-mean probe, even when both still separate the classes.</p>
+
+            <details>
+              <summary>How is the logistic decision boundary calculated?</summary>
+              <p>Logistic regression assigns each point a probability of being "true":</p>
+              <p><code>p(x) = σ(w₁·x + w₂·y + b)</code>, where <code>σ</code> is the logistic (sigmoid) function.</p>
+              <p>The <strong>decision boundary</strong> is the locus of points where the classifier is 50/50, i.e. <code>p(x) = 0.5</code>. That simplifies to the straight line:</p>
+              <p><code>w₁·x + w₂·y + b = 0</code>&nbsp;&nbsp;⇒&nbsp;&nbsp;<code>y = -(w₁·x + b) / w₂</code></p>
+              <p>By construction this boundary is <strong>perpendicular</strong> to the logistic-regression probe arrow: the probe is the direction in which probability increases fastest, and the boundary is the direction in which it's constant.</p>
+            </details>
+
+            <details>
+              <summary>Why does increasing nuisance variance bring the two probes closer?</summary>
+              <p>It's counterintuitive: bigger noise on the nuisance axis pulls the logistic probe <em>toward</em> the mass-mean probe, not away from it.</p>
+              <p>The mass-mean probe only cares about the difference of class means, which is always straight up the truth axis by construction. Logistic regression, by contrast, weights a feature by its <em>signal-to-noise ratio</em>. The nuisance axis looks tempting only because of correlation — but its usefulness shrinks as its variance grows.</p>
+              <p>For shared-covariance Gaussians (what we're sampling here), the optimal logistic direction reduces to:</p>
+              <p><code>logreg ∝ [ -ρ · σ_y , σ_x ]</code></p>
+              <p>As <code>σ_x</code> (nuisance variance) grows, the second component dominates and the direction approaches <code>[0, 1]</code> — the same direction as the mass-mean probe. As <code>σ_x</code> shrinks, even a small correlation makes the nuisance axis highly informative, and the logistic probe tilts off-axis.</p>
+            </details>
+          </section>
+        </div>
+      `;
+    }
+
+    const root = createRoot(document.getElementById("root"));
+    root.render(html`<${ProbeGeometryDemo} />`);
+  </script>
+</body>
+</html>

@@ -6,3 +6,9 @@
   from = "/"
   to = "/shelf/"
   status = 301
+
+# Draft projects under `_wip/` are not linked from the shelf; discourage indexing if deployed.
+[[headers]]
+  for = "/_wip/*"
+  [headers.values]
+    X-Robots-Tag = "noindex, nofollow"

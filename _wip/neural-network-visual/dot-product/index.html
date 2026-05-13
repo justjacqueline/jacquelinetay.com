@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- DRAFT: keep this noindex meta until ready to publish; see ../README.md -->
+  <meta name="robots" content="noindex, nofollow">
+  <title>The dot product: a probe meets an activation — Jacqueline Tay</title>
+  <meta name="description" content="An interactive sketch: drag a probe and a model activation in 2D and watch the dot product as the shadow of the activation on the probe.">
+  <link rel="icon" href="/assets/favicon.png" type="image/png">
+  <link rel="apple-touch-icon" href="/assets/favicon.png">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2.1.1/css/pico.min.css">
+  <link rel="stylesheet" href="/assets/site.css">
+  <style>
+    /* Local styles for the dot-product app. Scoped to .dot-app to avoid leaking. */
+    .dot-app {
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+      margin: 1.5rem 0 2rem;
+    }
+    .dot-app__viz {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 260px;
+      gap: 1.25rem;
+      align-items: start;
+    }
+    @media (max-width: 940px) {
+      .dot-app__viz { grid-template-columns: 1fr; }
+    }
+    .dot-app__plot { min-width: 0; }
+    .dot-svg {
+      display: block;
+      width: 100%;
+      height: auto;
+      max-width: 720px;
+      background: transparent;
+      touch-action: none;
+      user-select: none;
+    }
+    .dot-handle-grp { cursor: grab; }
+    .dot-handle-grp:active { cursor: grabbing; }
+    .dot-app__sidebar {
+      display: flex;
+      flex-direction: column;
+      gap: 0.85rem;
+    }
+    .dot-inline-row {
+      font-size: 0.93rem;
+      line-height: 1.9;
+      color: rgba(17, 24, 39, 0.78);
+      margin-bottom: 0.25rem;
+    }
+    .dot-inline-btn {
+      display: inline-flex;
+      align-items: center;
+      margin: 0 0.15rem;
+      padding: 0.15rem 0.55rem;
+      font-size: 0.82rem;
+      font-weight: 500;
+      font-family: inherit;
+      background: rgba(17, 24, 39, 0.04);
+      color: rgba(17, 24, 39, 0.78);
+      border: 1px solid rgba(17, 24, 39, 0.16);
+      border-radius: 4px;
+      cursor: pointer;
+      letter-spacing: 0.01em;
+      transition: background 0.12s ease, color 0.12s ease, border-color 0.12s ease;
+      white-space: nowrap;
+    }
+    .dot-inline-btn:hover {
+      background: rgba(17, 24, 39, 0.1);
+      color: rgba(17, 24, 39, 0.95);
+      border-color: rgba(17, 24, 39, 0.32);
+    }
+    .dot-inline-btn--reset {
+      font-size: 0.7rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: rgba(17, 24, 39, 0.55);
+    }
+    .dot-stats, .dot-legend {
+      padding: 0.85rem 1rem;
+      background: rgba(255, 250, 240, 0.72);
+      border: 1px solid rgba(92, 74, 52, 0.14);
+      border-radius: 10px;
+    }
+    .dot-legend h3 {
+      margin: 0 0 0.5rem;
+      font-size: 0.95rem;
+      letter-spacing: 0.02em;
+    }
+    .dot-stats__details {
+      margin: 0;
+      margin-top: 0.7rem;
+      padding-top: 0.65rem;
+      border-top: 1px dashed rgba(92, 74, 52, 0.24);
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 0.28rem 0.85rem;
+      font-size: 0.8rem;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    }
+    .dot-stats__details dt { color: var(--pico-muted-color); font-weight: 500; }
+    .dot-stats__details dd { margin: 0; text-align: right; font-variant-numeric: tabular-nums; }
+    .dot-stats__headline {
+      margin: 0;
+    }
+    .dot-stats__headline-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 0.5rem;
+      margin-bottom: 0.45rem;
+      font-size: 0.88rem;
+    }
+    .dot-stats__headline-label {
+      color: rgba(17, 24, 39, 0.72);
+      letter-spacing: 0.01em;
+    }
+    .dot-stats__headline-value {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-variant-numeric: tabular-nums;
+      font-weight: 600;
+      font-size: 1.15rem;
+    }
+    .dot-bar {
+      position: relative;
+      height: 12px;
+      border-radius: 6px;
+      background: rgba(17, 24, 39, 0.07);
+      overflow: hidden;
+    }
+    .dot-bar__zero {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 50%;
+      width: 1px;
+      background: rgba(17, 24, 39, 0.35);
+      z-index: 1;
+    }
+    .dot-bar__fill {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      border-radius: 4px;
+      transition: background 0.12s ease;
+    }
+    .dot-bar__fill--positive { background: #0e7490; }
+    .dot-bar__fill--negative { background: #9a3412; }
+    .dot-legend ul { list-style: none; padding: 0; margin: 0; font-size: 0.82rem; }
+    .dot-legend li { display: flex; align-items: center; gap: 0.55rem; padding: 0.18rem 0; }
+    .dot-swatch {
+      flex: 0 0 22px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      height: 14px;
+    }
+    .dot-swatch-line {
+      display: inline-block;
+      width: 22px;
+      height: 0;
+      border-top: 2.5px solid #0e7490;
+    }
+    .dot-swatch-line--probe       { border-top: 2.5px solid #0e7490; }
+    .dot-swatch-line--activation  { border-top: 2.5px solid #d97706; }
+    .dot-swatch-line--projection  { border-top: 4px solid #a16207; }
+    .dot-swatch-line--perpendicular { border-top: 1.5px dashed rgba(17, 24, 39, 0.5); }
+    .dot-swatch-circle {
+      display: inline-block;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      border: 1.5px dashed rgba(14, 116, 144, 0.45);
+    }
+    .dot-app__notes {
+      max-width: 64ch;
+      display: flex;
+      flex-direction: column;
+      gap: 0.55rem;
+    }
+    .dot-app__notes p { margin: 0; font-size: 0.95rem; line-height: 1.55; }
+    .dot-app__notes code {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 0.9em;
+      background: rgba(17, 24, 39, 0.06);
+      padding: 0 0.25rem;
+      border-radius: 3px;
+    }
+    .dot-app__notes details {
+      margin-top: 0.5rem;
+      padding: 0.7rem 0.9rem;
+      background: rgba(255, 250, 240, 0.72);
+      border: 1px solid rgba(92, 74, 52, 0.14);
+      border-radius: 10px;
+    }
+    .dot-app__notes details > summary {
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.92rem;
+    }
+    .dot-app__notes details[open] > summary { margin-bottom: 0.5rem; }
+    .dot-app__notes details p { font-size: 0.9rem; margin-bottom: 0.4rem; }
+    .dot-app__notes details p:last-child { margin-bottom: 0; }
+    .draft-flag {
+      font-size: 0.75rem;
+      color: var(--pico-muted-color);
+      margin-top: 1.5rem;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <nav class="container">
+      <ul>
+        <li>
+          <strong class="site-brand">
+            <a href="/shelf/" aria-label="Jacqueline Tay — shelf">
+              <img class="site-logo" src="/assets/logo-home.png" alt="" width="1036" height="191" decoding="async">
+            </a>
+          </strong>
+        </li>
+      </ul>
+    </nav>
+  </header>
+  <main class="container">
+    <p class="breadcrumb"><a href="/shelf/">Shelf</a> · <a href="../">Neural networks, visually</a> · Draft</p>
+    <h1>The dot product: a probe meets an activation</h1>
+    <p class="lead chart-page-lead">
+      Once you have a probe (a direction in activation space), how do you actually <em>use</em> it on a model activation? You compute the dot product. Geometrically, that's how much of the activation lines up with the probe — the length of its shadow on the probe direction.
+    </p>
+    <div class="chart-page-prose">
+      <p>
+        The probe is constrained to unit length (it's a direction, not a magnitude). The gold segment is the activation's shadow on the probe — and its signed length is the dot product. Inspired by <a href="https://www.falstad.com/dotproduct/" target="_blank" rel="noopener noreferrer">Falstad's classic dot product applet</a>.
+      </p>
+    </div>
+
+    <div id="root"></div>
+
+    <p class="draft-flag">Draft sketch — not linked from the shelf.</p>
+  </main>
+
+  <!--
+    Implementation notes:
+    - Same single-file React + htm pattern as ../probing/index.html.
+    - Drag handles use Pointer Events (mouse + touch) with pointer capture on the
+      SVG so drags survive when the cursor leaves a handle.
+    - Probe is constrained to unit length so dot product = scalar projection of
+      activation onto probe — keeping the language clean.
+    - Inspired by https://www.falstad.com/dotproduct/ (linked above).
+    - When publishing, see ../README.md for the recipe (same steps as probing/,
+      just with this folder as the slug).
+  -->
+  <script type="module">
+    import React, { useState, useRef } from "https://esm.sh/react@18.3.1";
+    import { createRoot } from "https://esm.sh/react-dom@18.3.1/client?deps=react@18.3.1";
+    import htm from "https://esm.sh/htm@3.1.1";
+
+    const html = htm.bind(React.createElement);
+
+    // ----------- Plot geometry (constants) -----------
+    const SVG_W = 720;
+    const SVG_H = 520;
+    const PAD_LEFT = 48;
+    const PAD_RIGHT = 16;
+    const PAD_TOP = 16;
+    const PAD_BOTTOM = 40;
+    const plotW = SVG_W - PAD_LEFT - PAD_RIGHT;
+    const plotH = SVG_H - PAD_TOP - PAD_BOTTOM;
+
+    // Fixed data bounds; aspect chosen to match the plot's aspect.
+    const BOUNDS = { xMin: -3.5, xMax: 3.5, yMin: -2.5, yMax: 2.5 };
+    const xRange = BOUNDS.xMax - BOUNDS.xMin;
+    const yRange = BOUNDS.yMax - BOUNDS.yMin;
+
+    // Data ↔ SVG coordinate transforms.
+    const sx = (x) => PAD_LEFT + ((x - BOUNDS.xMin) / xRange) * plotW;
+    const sy = (y) => PAD_TOP + plotH - ((y - BOUNDS.yMin) / yRange) * plotH;
+    const svgToDataX = (svgX) => BOUNDS.xMin + ((svgX - PAD_LEFT) / plotW) * xRange;
+    const svgToDataY = (svgY) => BOUNDS.yMax - ((svgY - PAD_TOP) / plotH) * yRange;
+
+    // Colors — same hue family as the probing demo (blue/orange) but distinctly
+    // shifted (deep cyan / deep amber) so the audience reads this as a separate
+    // teaching unit, not another configuration of the probing experiment.
+    const C_PROBE = "#0e7490";       // cyan-700
+    const C_ACTIVATION = "#d97706";  // amber-600
+    const C_PROJECTION = "#a16207";  // amber-800 (the shadow)
+    const C_PERP = "rgba(17, 24, 39, 0.45)";
+    const C_ORIGIN = "rgba(17, 24, 39, 0.22)";
+    const C_GRID = "rgba(17, 24, 39, 0.06)";
+    const C_UNIT_CIRCLE = "rgba(14, 116, 144, 0.22)";
+
+    // ----------- Math helpers -----------
+    function normalizeToUnit(v) {
+      const n = Math.hypot(v.x, v.y);
+      if (n < 1e-9) return { x: 1, y: 0 };
+      return { x: v.x / n, y: v.y / n };
+    }
+    function fmt(n, decimals = 2) { return n.toFixed(decimals); }
+    function fmtVec(v) { return `[${fmt(v.x)}, ${fmt(v.y)}]`; }
+
+    const DEFAULTS = {
+      probe: { x: Math.cos(Math.PI / 6), y: Math.sin(Math.PI / 6) },
+      activation: { x: 1.0, y: 2.0 },
+    };
+
+    function DotProductDemo() {
+      const [probe, setProbe] = useState(DEFAULTS.probe);
+      const [activation, setActivation] = useState(DEFAULTS.activation);
+
+      const svgRef = useRef(null);
+      const dragRef = useRef({ which: null, pointerId: null });
+
+      // ----- Derived geometry -----
+      const dot = activation.x * probe.x + activation.y * probe.y;
+      const projectionFoot = { x: dot * probe.x, y: dot * probe.y };
+      const aLen = Math.hypot(activation.x, activation.y);
+      let theta = 0;
+      let cosTheta = 0;
+      if (aLen > 1e-9) {
+        cosTheta = Math.max(-1, Math.min(1, dot / aLen));
+        theta = (Math.acos(cosTheta) * 180) / Math.PI;
+      }
+
+      const probeAngle = Math.atan2(probe.y, probe.x);
+      const actAngle = aLen > 1e-9 ? Math.atan2(activation.y, activation.x) : probeAngle;
+
+      // Long faint line through origin in probe direction (extends past probe tip).
+      const lineExt = 5;
+      const probeLineA = { x: -probe.x * lineExt, y: -probe.y * lineExt };
+      const probeLineB = { x:  probe.x * lineExt, y:  probe.y * lineExt };
+
+      // Angle arc: a small arc at origin between probe and activation directions,
+      // taking the shorter path.
+      const arcRadiusData = 0.45;
+      let dTheta = actAngle - probeAngle;
+      while (dTheta > Math.PI) dTheta -= 2 * Math.PI;
+      while (dTheta <= -Math.PI) dTheta += 2 * Math.PI;
+      // In SVG (y-down), sweep-flag 1 means "increasing angle" which visually
+      // matches clockwise. dTheta > 0 (CCW in math) is visually CCW too, so we
+      // want sweep-flag 0 in that case.
+      const arcSweep = dTheta > 0 ? 0 : 1;
+      const arcStart = {
+        x: arcRadiusData * Math.cos(probeAngle),
+        y: arcRadiusData * Math.sin(probeAngle),
+      };
+      const arcEnd = {
+        x: arcRadiusData * Math.cos(actAngle),
+        y: arcRadiusData * Math.sin(actAngle),
+      };
+      const arcRx = arcRadiusData * (plotW / xRange);
+      const arcRy = arcRadiusData * (plotH / yRange);
+      const showArc = aLen > 0.15 && Math.abs(dTheta) > 0.02;
+      const arcPath = showArc
+        ? `M ${sx(arcStart.x)} ${sy(arcStart.y)} A ${arcRx} ${arcRy} 0 0 ${arcSweep} ${sx(arcEnd.x)} ${sy(arcEnd.y)}`
+        : null;
+      const labelAngle = probeAngle + dTheta / 2;
+      const labelPos = {
+        x: arcRadiusData * 1.75 * Math.cos(labelAngle),
+        y: arcRadiusData * 1.75 * Math.sin(labelAngle),
+      };
+
+      // Dot-product bar: visualize signed magnitude.
+      const DOT_MAX = 4.0;
+      const dotFrac = Math.max(-1, Math.min(1, dot / DOT_MAX));
+      const barFillWidthPct = Math.abs(dotFrac) * 50;
+      const barFillLeftPct = dotFrac >= 0 ? 50 : 50 - barFillWidthPct;
+
+      // ----- Drag handlers -----
+      const beginDrag = (which) => (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        const svg = svgRef.current;
+        if (!svg) return;
+        try { svg.setPointerCapture(e.pointerId); } catch (_) {}
+        dragRef.current = { which, pointerId: e.pointerId };
+      };
+
+      const onSvgPointerMove = (e) => {
+        if (!dragRef.current.which) return;
+        const svg = svgRef.current;
+        if (!svg) return;
+        const pt = svg.createSVGPoint();
+        pt.x = e.clientX;
+        pt.y = e.clientY;
+        const ctm = svg.getScreenCTM();
+        if (!ctm) return;
+        const svgPt = pt.matrixTransform(ctm.inverse());
+        const dx = svgToDataX(svgPt.x);
+        const dy = svgToDataY(svgPt.y);
+        if (dragRef.current.which === "probe") {
+          setProbe(normalizeToUnit({ x: dx, y: dy }));
+        } else {
+          setActivation({
+            x: Math.max(BOUNDS.xMin, Math.min(BOUNDS.xMax, dx)),
+            y: Math.max(BOUNDS.yMin, Math.min(BOUNDS.yMax, dy)),
+          });
+        }
+      };
+
+      const endDrag = (e) => {
+        if (dragRef.current.which) {
+          try { svgRef.current?.releasePointerCapture(dragRef.current.pointerId); } catch (_) {}
+          dragRef.current = { which: null, pointerId: null };
+        }
+      };
+
+      // ----- Presets (relative to the current probe direction) -----
+      const PRESET_MAG = 2.0;
+      const presetAligned     = () => setActivation({ x:  probe.x * PRESET_MAG, y:  probe.y * PRESET_MAG });
+      const presetPerp        = () => setActivation({ x: -probe.y * PRESET_MAG, y:  probe.x * PRESET_MAG });
+      const presetAntiAligned = () => setActivation({ x: -probe.x * PRESET_MAG, y: -probe.y * PRESET_MAG });
+      const resetAll = () => { setProbe(DEFAULTS.probe); setActivation(DEFAULTS.activation); };
+
+      return html`
+        <div className="dot-app">
+          <p className="dot-inline-row">
+            Drag the <strong style=${{ color: C_PROBE }}>probe</strong> and the <strong style=${{ color: C_ACTIVATION }}>activation</strong> arrows, or jump to
+            <button type="button" className="dot-inline-btn" onClick=${presetAligned}>aligned</button>
+            <button type="button" className="dot-inline-btn" onClick=${presetPerp}>perpendicular</button>
+            <button type="button" className="dot-inline-btn" onClick=${presetAntiAligned}>anti-aligned</button>
+            · <button type="button" className="dot-inline-btn dot-inline-btn--reset" onClick=${resetAll}>reset</button>
+          </p>
+          <section className="dot-app__viz">
+            <div className="dot-app__plot">
+              <svg
+                className="dot-svg"
+                ref=${svgRef}
+                viewBox=${`0 0 ${SVG_W} ${SVG_H}`}
+                role="img"
+                aria-label="Interactive dot product between a probe and a model activation"
+                onPointerMove=${onSvgPointerMove}
+                onPointerUp=${endDrag}
+                onPointerCancel=${endDrag}
+                onPointerLeave=${endDrag}
+              >
+                <defs>
+                  <marker id="dot-arrow-probe" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+                    <path d="M0,0 L10,5 L0,10 z" fill=${C_PROBE} />
+                  </marker>
+                  <marker id="dot-arrow-activation" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+                    <path d="M0,0 L10,5 L0,10 z" fill=${C_ACTIVATION} />
+                  </marker>
+                </defs>
+
+                <rect
+                  x=${PAD_LEFT}
+                  y=${PAD_TOP}
+                  width=${plotW}
+                  height=${plotH}
+                  fill="rgba(255, 250, 240, 0.65)"
+                  stroke="rgba(17, 24, 39, 0.18)"
+                />
+
+                {/* Faint integer gridlines */}
+                ${[-3, -2, -1, 1, 2, 3].map(g => html`
+                  <line key=${"gx" + g} x1=${sx(g)} y1=${sy(BOUNDS.yMin)} x2=${sx(g)} y2=${sy(BOUNDS.yMax)} stroke=${C_GRID} />
+                `)}
+                ${[-2, -1, 1, 2].map(g => html`
+                  <line key=${"gy" + g} x1=${sx(BOUNDS.xMin)} y1=${sy(g)} x2=${sx(BOUNDS.xMax)} y2=${sy(g)} stroke=${C_GRID} />
+                `)}
+
+                {/* Origin axes */}
+                <line x1=${sx(BOUNDS.xMin)} y1=${sy(0)} x2=${sx(BOUNDS.xMax)} y2=${sy(0)} stroke=${C_ORIGIN} strokeWidth="1" />
+                <line x1=${sx(0)} y1=${sy(BOUNDS.yMin)} x2=${sx(0)} y2=${sy(BOUNDS.yMax)} stroke=${C_ORIGIN} strokeWidth="1" />
+
+                {/* Unit circle (constrains the probe) */}
+                <circle
+                  cx=${sx(0)}
+                  cy=${sy(0)}
+                  r=${plotW / xRange}
+                  fill="none"
+                  stroke=${C_UNIT_CIRCLE}
+                  strokeWidth="1"
+                  strokeDasharray="3 5"
+                />
+
+                {/* Probe direction line (long, faint, dashed) */}
+                <line
+                  x1=${sx(probeLineA.x)} y1=${sy(probeLineA.y)}
+                  x2=${sx(probeLineB.x)} y2=${sy(probeLineB.y)}
+                  stroke=${C_PROBE}
+                  strokeOpacity="0.22"
+                  strokeWidth="1"
+                  strokeDasharray="5 6"
+                />
+
+                {/* Projection segment (the "shadow") on the probe line */}
+                <line
+                  x1=${sx(0)} y1=${sy(0)}
+                  x2=${sx(projectionFoot.x)} y2=${sy(projectionFoot.y)}
+                  stroke=${C_PROJECTION}
+                  strokeWidth="6"
+                  strokeLinecap="round"
+                  strokeOpacity="0.9"
+                />
+
+                {/* Perpendicular drop from activation tip to projection foot */}
+                <line
+                  x1=${sx(activation.x)} y1=${sy(activation.y)}
+                  x2=${sx(projectionFoot.x)} y2=${sy(projectionFoot.y)}
+                  stroke=${C_PERP}
+                  strokeWidth="1.3"
+                  strokeDasharray="3 4"
+                />
+
+                {/* Angle arc + label */}
+                ${arcPath && html`
+                  <path d=${arcPath} fill="none" stroke="rgba(17, 24, 39, 0.55)" strokeWidth="1.3" />
+                `}
+                ${showArc && html`
+                  <text
+                    x=${sx(labelPos.x)}
+                    y=${sy(labelPos.y)}
+                    fontSize="11"
+                    fill="rgba(17, 24, 39, 0.75)"
+                    textAnchor="middle"
+                    dominantBaseline="middle"
+                    pointerEvents="none"
+                  >θ = ${fmt(theta, 0)}°</text>
+                `}
+
+                {/* Probe arrow */}
+                <line
+                  x1=${sx(0)} y1=${sy(0)}
+                  x2=${sx(probe.x)} y2=${sy(probe.y)}
+                  stroke=${C_PROBE}
+                  strokeWidth="3"
+                  markerEnd="url(#dot-arrow-probe)"
+                />
+
+                {/* Activation arrow */}
+                ${aLen > 1e-6 && html`
+                  <line
+                    x1=${sx(0)} y1=${sy(0)}
+                    x2=${sx(activation.x)} y2=${sy(activation.y)}
+                    stroke=${C_ACTIVATION}
+                    strokeWidth="3"
+                    markerEnd="url(#dot-arrow-activation)"
+                  />
+                `}
+
+                {/* Drag handles — outer ring + inner dot */}
+                <g className="dot-handle-grp" onPointerDown=${beginDrag("probe")}>
+                  <circle cx=${sx(probe.x)} cy=${sy(probe.y)} r="14" fill="#fff" fillOpacity="0.85" stroke=${C_PROBE} strokeWidth="2" />
+                  <circle cx=${sx(probe.x)} cy=${sy(probe.y)} r="4"  fill=${C_PROBE} pointerEvents="none" />
+                </g>
+                <g className="dot-handle-grp" onPointerDown=${beginDrag("activation")}>
+                  <circle cx=${sx(activation.x)} cy=${sy(activation.y)} r="14" fill="#fff" fillOpacity="0.85" stroke=${C_ACTIVATION} strokeWidth="2" />
+                  <circle cx=${sx(activation.x)} cy=${sy(activation.y)} r="4"  fill=${C_ACTIVATION} pointerEvents="none" />
+                </g>
+
+                {/* Tip labels — placed slightly beyond each handle */}
+                <text
+                  x=${sx(probe.x) + 22 * Math.cos(probeAngle)}
+                  y=${sy(probe.y) - 22 * Math.sin(probeAngle)}
+                  fontSize="12"
+                  fontWeight="600"
+                  fill=${C_PROBE}
+                  textAnchor="middle"
+                  dominantBaseline="middle"
+                  pointerEvents="none"
+                >probe</text>
+                ${aLen > 0.2 && html`
+                  <text
+                    x=${sx(activation.x) + 26 * Math.cos(actAngle)}
+                    y=${sy(activation.y) - 26 * Math.sin(actAngle)}
+                    fontSize="12"
+                    fontWeight="600"
+                    fill=${C_ACTIVATION}
+                    textAnchor="middle"
+                    dominantBaseline="middle"
+                    pointerEvents="none"
+                  >activation</text>
+                `}
+
+                {/* Axis labels (corners) */}
+                <text x=${sx(BOUNDS.xMax) + 6} y=${sy(0) + 4}  fontSize="12" fill="rgba(17, 24, 39, 0.55)">x</text>
+                <text x=${sx(0) + 6}            y=${sy(BOUNDS.yMax) - 2} fontSize="12" fill="rgba(17, 24, 39, 0.55)">y</text>
+                <text
+                  x=${PAD_LEFT + plotW / 2}
+                  y=${SVG_H - 12}
+                  fontSize="11"
+                  fill="rgba(17, 24, 39, 0.5)"
+                  textAnchor="middle"
+                >(x, y) coordinates of activation space</text>
+              </svg>
+            </div>
+
+            <aside className="dot-app__sidebar">
+              <div className="dot-stats">
+                <div className="dot-stats__headline">
+                  <div className="dot-stats__headline-row">
+                    <span className="dot-stats__headline-label">probe · activation</span>
+                    <span className="dot-stats__headline-value">${fmt(dot)}</span>
+                  </div>
+                  <div className="dot-bar" aria-hidden="true">
+                    <div
+                      className=${`dot-bar__fill ${dot >= 0 ? "dot-bar__fill--positive" : "dot-bar__fill--negative"}`}
+                      style=${{ left: `${barFillLeftPct}%`, width: `${barFillWidthPct}%` }}
+                    ></div>
+                    <div className="dot-bar__zero"></div>
+                  </div>
+                </div>
+                <dl className="dot-stats__details">
+                  <dt>probe</dt><dd>${fmtVec(probe)}</dd>
+                  <dt>activation</dt><dd>${fmtVec(activation)}</dd>
+                  <dt>|activation|</dt><dd>${fmt(aLen)}</dd>
+                  <dt>angle θ</dt><dd>${fmt(theta, 1)}°</dd>
+                  <dt>cos θ</dt><dd>${fmt(cosTheta)}</dd>
+                </dl>
+              </div>
+
+              <div className="dot-legend">
+                <h3>Legend</h3>
+                <ul>
+                  <li><span className="dot-swatch"><span className="dot-swatch-line dot-swatch-line--probe"></span></span>probe (unit length)</li>
+                  <li><span className="dot-swatch"><span className="dot-swatch-line dot-swatch-line--activation"></span></span>activation</li>
+                  <li><span className="dot-swatch"><span className="dot-swatch-line dot-swatch-line--projection"></span></span>shadow on probe = dot product</li>
+                  <li><span className="dot-swatch"><span className="dot-swatch-line dot-swatch-line--perpendicular"></span></span>perpendicular drop</li>
+                  <li><span className="dot-swatch"><span className="dot-swatch-circle"></span></span>unit circle (probe lives here)</li>
+                </ul>
+              </div>
+            </aside>
+          </section>
+
+          <section className="dot-app__notes">
+            <p><strong>The dot product, in words:</strong> imagine the probe as an infinite direction-line. Drop a perpendicular from the activation tip onto that line. The length of the shadow, with a sign, <em>is</em> the dot product. Same direction as the probe → positive. Opposite direction → negative. Perpendicular → zero.</p>
+            <p><strong>Why this is the natural way to "apply" a probe:</strong> a probe is just a direction. It has no magnitude story to tell. The dot product asks: "how much does this activation point in the probe's direction?" — and answers with one number. That single number is what becomes a prediction (via thresholding or a sigmoid).</p>
+            <p><strong>Real activations live in thousands of dimensions.</strong> The picture is 2D so you can see what's happening, but every formula on this page works identically in higher dimensions: <code>probe · activation = Σᵢ probeᵢ × activationᵢ</code>. Geometrically, it's still "length of the activation's shadow on the probe direction."</p>
+
+            <details>
+              <summary>Why is the probe constrained to unit length?</summary>
+              <p>If the probe could be any length, the dot product would mix two things at once: how aligned the vectors are <em>and</em> how long the probe is. By fixing the probe to length 1, <code>probe · activation</code> is exactly the (signed) projection length — the same number you'd compute by hand by dropping a perpendicular and measuring.</p>
+              <p>This matches reality: mass-mean and logistic-regression probes are normalized to unit length in practice.</p>
+            </details>
+
+            <details>
+              <summary>Connection to the two-probes demo</summary>
+              <p>In <a href="../probing/">Two probes, two directions</a>, each cloud of activations gets a probe direction. To predict whether a new activation is "true" or "false", you take the dot product of the probe with the activation. The sign (or a threshold around zero) gives the prediction.</p>
+              <p>This page is the underlying primitive: one probe, one activation, one number. Imagine running this operation for every dot in the probing demo's cloud — that's how a 2D cloud of activations becomes a 1D score per point that the classifier can threshold.</p>
+            </details>
+          </section>
+        </div>
+      `;
+    }
+
+    const root = createRoot(document.getElementById("root"));
+    root.render(html`<${DotProductDemo} />`);
+  </script>
+</body>
+</html>
