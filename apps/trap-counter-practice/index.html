@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Trap Counter Practice — Jacqueline Tay</title>
+  <meta name="description" content="A trial microscopy point-review page for practicing add, delete, and move annotations.">
+  <link rel="canonical" href="https://jacquelinetay.com/apps/trap-counter-practice/">
+  <link rel="icon" href="/assets/favicon.png" type="image/png">
+  <link rel="apple-touch-icon" href="/assets/favicon.png">
+  <meta property="og:site_name" content="Jacqueline Tay">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Trap Counter Practice — Jacqueline Tay">
+  <meta property="og:description" content="A trial microscopy point-review page.">
+  <meta property="og:url" content="https://jacquelinetay.com/apps/trap-counter-practice/">
+  <meta property="og:image" content="https://jacquelinetay.com/assets/logo-home.png">
+  <meta property="og:image:alt" content="Jacqueline Tay">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Trap Counter Practice — Jacqueline Tay">
+  <meta name="twitter:description" content="A trial microscopy point-review page.">
+  <meta name="twitter:image" content="https://jacquelinetay.com/assets/logo-home.png">
+  <link rel="stylesheet" href="/assets/site.css">
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <main class="review-shell">
+    <section class="review-topbar" aria-label="Review controls">
+      <div>
+        <a class="back-link" href="/shelf/">Shelf</a>
+        <h1>Trap Counter Practice</h1>
+      </div>
+      <div class="counts" aria-live="polite">
+        <span>Predicted <strong id="predictedCount">0</strong></span>
+        <span>Reviewed <strong id="reviewedCount">0</strong></span>
+      </div>
+      <div class="actions">
+        <button id="resetBtn" type="button">Reset</button>
+        <button id="exportBtn" type="button">Export JSON</button>
+      </div>
+    </section>
+
+    <section class="review-workspace">
+      <div class="image-stage" id="stage">
+        <img id="sampleImage" src="./sample.jpg" alt="Microscopy sample for trap annotation practice" draggable="false">
+        <svg id="markerLayer" aria-label="Trap markers"></svg>
+      </div>
+      <aside class="review-panel">
+        <h2>Practice Review</h2>
+        <p>This trial page is static. Click the image to add a marker, drag a marker to move it, select one and press Delete or Backspace to remove it.</p>
+        <label>
+          Notes
+          <textarea id="notes" rows="5" placeholder="Optional notes for practice"></textarea>
+        </label>
+        <label class="checkbox-row">
+          <input id="uncertain" type="checkbox">
+          Mark image uncertain
+        </label>
+        <div class="selected-readout" id="selectedReadout">No marker selected</div>
+      </aside>
+    </section>
+  </main>
+  <script src="./app.js"></script>
+</body>
+</html>
