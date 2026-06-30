@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Nematode Trap Counter</title>
+  <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+  <header class="topbar">
+    <div>
+      <h1>Nematode Trap Counter</h1>
+      <p>Weekly microscopy review with auditable trap counts.</p>
+    </div>
+    <div class="status" id="status">Ready</div>
+  </header>
+
+  <main class="layout">
+    <aside class="sidebar">
+      <section class="panel">
+        <h2>Upload Batch</h2>
+        <form id="uploadForm">
+          <label>
+            Batch name
+            <input name="batch_name" type="text" placeholder="2026-06-29 plate A" required>
+          </label>
+          <label>
+            TIFF images
+            <input name="files" type="file" accept=".tif,.tiff,image/tiff" multiple required>
+          </label>
+          <button type="submit">Upload and Detect</button>
+        </form>
+      </section>
+
+      <section class="panel">
+        <div class="section-title">
+          <h2>Batches</h2>
+          <button id="refreshBatches" class="ghost" type="button">Refresh</button>
+        </div>
+        <div id="batchList" class="list"></div>
+      </section>
+
+      <section class="panel">
+        <h2>Images</h2>
+        <div id="imageList" class="list"></div>
+      </section>
+    </aside>
+
+    <section class="review">
+      <div class="review-toolbar">
+        <div>
+          <h2 id="imageTitle">No image selected</h2>
+          <p id="imageMeta">Upload or select a batch to begin.</p>
+        </div>
+        <div class="toolbar-actions">
+          <button id="deletePoint" type="button" disabled>Delete Point</button>
+          <button id="rerunPrediction" type="button" disabled>Rerun Detection</button>
+          <button id="saveReview" type="button" disabled>Save Review</button>
+        </div>
+      </div>
+
+      <div class="workspace">
+        <div class="image-stage" id="imageStage">
+          <img id="preview" alt="">
+          <svg id="overlay" aria-label="Trap point annotations"></svg>
+          <div class="empty-state" id="emptyState">Select an image to review.</div>
+        </div>
+      </div>
+
+      <div class="review-footer">
+        <label class="checkline">
+          <input id="uncertain" type="checkbox">
+          Uncertain image
+        </label>
+        <label class="notes">
+          Reviewer notes
+          <textarea id="notes" rows="2" placeholder="Optional note for audit trail"></textarea>
+        </label>
+        <div class="counts">
+          <span>Predicted <strong id="predictedCount">0</strong></span>
+          <span class="high-count">High <strong id="highConfidenceCount">0</strong></span>
+          <span class="check-count">Check <strong id="checkConfidenceCount">0</strong></span>
+          <span class="low-count">Low <strong id="lowConfidenceCount">0</strong></span>
+          <span class="extra-low-count">Extra Low <strong id="extraLowConfidenceCount">0</strong></span>
+          <span>Reviewed <strong id="reviewedCount">0</strong></span>
+        </div>
+      </div>
+
+      <div class="exports" id="exports" hidden>
+        <a id="exportCounts" href="#">weekly_counts.csv</a>
+        <a id="exportCoords" href="#">per_trap_coordinates.csv</a>
+        <a id="exportExcel" href="#">weekly_review.xlsx</a>
+        <a id="exportJson" href="#">reviewed_annotations.json</a>
+        <a id="exportAnnotated" href="#">annotated_images.zip</a>
+      </div>
+    </section>
+  </main>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>
