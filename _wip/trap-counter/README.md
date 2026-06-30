@@ -145,9 +145,239 @@ The app supports three detection modes:
 
 - `fallback`: old image-processing heuristic only.
 - `ilastik`: ilastik trap probability map only.
-- `hybrid`: current default.
+- `hybrid`: current default; old/local component candidates scored by ilastik support.
+- `ilastik_blobs`: ilastik probability map first, then trap-sized blob post-processing.
+- `classical_ring`: experimental raw grayscale local-contrast ring baseline.
 
 Current default:
+
+```text
+TRAP_DETECTION_MODE=hybrid
+```
+
+## Current Default: Hybrid Detector
+
+The active app default is the version 3 hybrid detector.
+
+How it works:
+
+```text
+raw TIFF
+-> old/local image-processing candidate generator
+-> run ilastik headless on grayscale TIFF
+-> read the trap probability channel
+-> for each old candidate, measure nearby ilastik trap support
+-> keep supported candidates and use support as confidence
+-> merge/display review arrows
+```
+
+Why this is the default now:
+
+- It was the best-looking option in the 2/3/4/5 diagnostic comparison.
+- It is less chaotic than direct ilastik-only points.
+- It is more stable than the later probability-island and ring/woven experiments.
+- It keeps the human review workflow usable while we decide what to improve next.
+
+Known weakness:
+
+The old/local candidate generator is still the bottleneck. If it never proposes
+a plausible trap, ilastik support cannot recover that missed trap. It can also
+still propose conidia/tiny specks that happen to have local contrast.
+
+If we revisit this version later, the next useful work is to improve the
+first-pass candidate generator without replacing the whole pipeline. In
+practice, that means adding local-contrast candidate proposals that catch lighter
+or smaller swirl/ring traps, while adding explicit size/filled-center filters to
+reduce conidia and tiny specks before ilastik scoring.
+
+## Classical Ring Baseline
+
+`classical_ring` is an experimental raw-image-first baseline. It does not use ilastik.
+
+Pipeline:
+
+```text
+raw grayscale TIFF
+-> normalize
+-> invert so dark structures become bright
+-> subtract Gaussian background
+-> score trap-sized ring/annulus candidates
+-> reject filled centers, flat regions, weak edges, and weak texture
+-> merge nearby candidates
+-> show review arrows
+```
+
+The baseline is intentionally simple and debuggable. It tries to find visible
+dark-ish ring/woven structures in the raw image and avoids relying on ilastik
+probability when ilastik over/under-scores confusing regions.
+
+Useful tuning knobs:
+
+```text
+TRAP_CLASSICAL_BACKGROUND_SIGMA=35
+TRAP_CLASSICAL_RADII=7,10,13,16,20,24,28
+TRAP_CLASSICAL_SCORE_THRESHOLD=0.14
+TRAP_CLASSICAL_MIN_SCORE=0.09
+TRAP_CLASSICAL_MIN_RINGNESS=0.08
+TRAP_CLASSICAL_MAX_CENTER_RING_RATIO=0.60
+TRAP_CLASSICAL_MAX_COHERENCE=0.50
+TRAP_CLASSICAL_MIN_EDGE_DENSITY=0.012
+TRAP_CLASSICAL_MIN_TEXTURE=0.025
+TRAP_CLASSICAL_MIN_ACTIVE_FRACTION=0.08
+TRAP_CLASSICAL_SUPPRESSION_RADIUS=35
+TRAP_CLASSICAL_MERGE_RADIUS=65
+TRAP_CLASSICAL_MAX_POINTS=200
+```
+
+Debug output:
+
+```bash
+python scripts/debug_classical.py 7
+```
+
+This writes raw grayscale, enhanced local-contrast image, accepted-candidate
+overlay, a rejected/accepted debug overlay, and candidate stats.
+
+Debug overlay colors:
+
+- green: accepted candidate
+- blue: rejected as too line-like
+- purple: rejected as filled-center/conidia-like
+- yellow: weak ring score
+- red: weak local image evidence
+
+## ilastik Blob Detector
+
+`ilastik_blobs` addresses the main weakness of `hybrid`: the old first pass can
+miss plausible traps before ilastik ever sees them. In this mode, ilastik is the
+primary proposal source.
+
+Blob mode works like this:
+
+1. Run ilastik and read all probability channels.
+2. Build a trap score map from the trap channel and competing labels.
+3. Threshold the raw score map into islands.
+4. Reject islands that are too small, too large, too compact, too sparse, or too elongated.
+5. Reject islands without enough raw-image evidence at that location:
+   local contrast, edge density, and texture.
+6. Place one marker at the probability-weighted center of each accepted island.
+7. Merge nearby islands into one review marker.
+8. Use the score values for confidence bands.
+
+The current score mode subtracts competing labels from the trap channel:
+
+```text
+score = traps
+        - 0.4 * conidia
+        - 0.3 * other
+        - 0.5 * filaments
+```
+
+This helps suppress regions that look trap-like in the trap channel but are also
+strongly labeled as conidia, background/other, or filament.
+
+Useful tuning knobs:
+
+```text
+TRAP_SCORE_MODE=trap_minus_competing
+TRAP_PROBABILITY_CHANNEL=0
+TRAP_CONIDIA_CHANNEL=1
+TRAP_OTHER_CHANNEL=2
+TRAP_FILAMENT_CHANNEL=3
+TRAP_CONIDIA_WEIGHT=0.4
+TRAP_OTHER_WEIGHT=0.3
+TRAP_FILAMENT_WEIGHT=0.5
+TRAP_BLOB_THRESHOLD=0.60
+TRAP_BLOB_SMOOTH_RADIUS=0
+TRAP_BLOB_MIN_AREA=80
+TRAP_BLOB_MAX_AREA=30000
+TRAP_BLOB_MIN_DIAMETER=12
+TRAP_BLOB_MAX_DIAMETER=280
+TRAP_BLOB_MAX_ELONGATION=3.5
+TRAP_BLOB_MIN_FILL_RATIO=0.015
+TRAP_BLOB_COMPACT_DIAMETER=50
+TRAP_BLOB_COMPACT_FILL_RATIO=0.72
+TRAP_BLOB_CONFIDENCE_PERCENTILE=50
+TRAP_BLOB_MERGE_RADIUS=90
+TRAP_BLOB_MAX_POINTS=250
+TRAP_BLOB_REQUIRE_IMAGE_EVIDENCE=1
+TRAP_BLOB_EVIDENCE_RADIUS=18
+TRAP_BLOB_EVIDENCE_SURROUND_RADIUS=55
+TRAP_BLOB_EVIDENCE_PERCENTILE=70
+TRAP_BLOB_MIN_LOCAL_CONTRAST=2.0
+TRAP_BLOB_MIN_EDGE_DENSITY=3.5
+TRAP_BLOB_MIN_TEXTURE=2.8
+```
+
+If it undercounts, lower `TRAP_BLOB_THRESHOLD` or `TRAP_BLOB_MIN_AREA`. If it
+marks tiny specks or conidia, raise `TRAP_BLOB_MIN_AREA`,
+`TRAP_BLOB_MIN_DIAMETER`, or `TRAP_BLOB_COMPACT_DIAMETER`. If it marks long
+filaments, lower `TRAP_BLOB_MAX_ELONGATION`. If it marks blank/smooth areas
+with high ilastik probability, raise `TRAP_BLOB_MIN_LOCAL_CONTRAST`,
+`TRAP_BLOB_MIN_EDGE_DENSITY`, or `TRAP_BLOB_MIN_TEXTURE`.
+
+The debug script writes probability maps, accepted/rejected overlays, and a
+`components.csv` with rejection reasons including `low_local_image_contrast`,
+`low_edge_density`, and `low_texture`:
+
+```bash
+python scripts/debug_blobs.py 7
+```
+
+## Experimental Paths Tried
+
+These experiments are kept in scripts/debug outputs for reference, but they are
+not considered the best current direction.
+
+### Ring/Woven Score
+
+`scripts/debug_ring_score.py` tested a local ring-shaped neighborhood score for
+woven/hollow traps. The idea was to look for trap probability around a center,
+allowing an empty center and penalizing conidia/filament channels.
+
+Result: not good enough. It still selected visibly flat/empty regions unless a
+strict raw-image evidence gate was added. With the evidence gate, it removed many
+flat regions but did not reliably outperform simpler candidate detection. Treat
+this as a dead-end experiment unless it is redesigned.
+
+### ilastik-First Blob Scoring
+
+`ilastik_blobs` showed that ilastik probability maps contain useful signal, but
+the trap channel also lights up filaments/background in ways that are hard to
+separate with threshold/shape filters alone. Competing-channel subtraction helps,
+but can become too strict and undercount.
+
+Takeaway: ilastik remains useful for debugging/training signal, but the next
+candidate generator should start from the raw microscope image rather than
+depending primarily on ilastik probability islands.
+
+## Candidate Generator Improvement Path
+
+If hybrid undercounts, the next direction to discuss/build is a smaller
+improvement to the first-pass candidate generator:
+
+```text
+raw image
+-> local contrast enhancement
+-> blob/ring candidate detection
+-> size/shape filtering
+-> overlay candidates
+-> reviewer accepts/rejects/adds missed traps
+-> export reviewed count
+```
+
+Design intent:
+
+- Find visible trap-like structures from the actual microscope image.
+- Use local contrast rather than whole-image contrast, so lighter traps can be found.
+- Prefer trap-sized circular/woven candidates.
+- Reject flat/smooth regions as a hard rule.
+- Reject tiny specks/conidia and long straight filaments.
+- Keep the human-in-the-loop review as the scientific source of truth.
+
+## Hybrid Detector Details
+
+The active detector can be selected explicitly with:
 
 ```text
 TRAP_DETECTION_MODE=hybrid
