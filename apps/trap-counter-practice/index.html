@@ -29,6 +29,10 @@
         <a class="back-link" href="/shelf/">Shelf</a>
         <h1>Trap Counter Practice</h1>
       </div>
+      <label class="example-picker">
+        <span>Image</span>
+        <select id="exampleSelect"></select>
+      </label>
       <div class="counts" aria-live="polite">
         <span>Predicted <strong id="predictedCount">0</strong></span>
         <span>Reviewed <strong id="reviewedCount">0</strong></span>
@@ -46,6 +50,7 @@
       </div>
       <aside class="review-panel">
         <h2>Practice Review</h2>
+        <p class="filename" id="filenameReadout"></p>
         <p>This trial page is static. Click the image to add a marker, drag a marker to move it, select one and press Delete or Backspace to remove it.</p>
         <label>
           Notes

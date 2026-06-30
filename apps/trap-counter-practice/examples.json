@@ -1,0 +1,1344 @@
+[
+  {
+    "id": "image-2",
+    "label": "Example 2",
+    "filename": "2026-06-11_TrapQuant_N2_009.tif",
+    "src": "./example-2.jpg",
+    "width": 2560,
+    "height": 1920,
+    "points": [
+      {
+        "id": "pt_02dbaca95840",
+        "x": 0.812902,
+        "y": 0.011596,
+        "source": "predicted",
+        "confidence": 0.49
+      },
+      {
+        "id": "pt_7b84a47d80b2",
+        "x": 0.90604,
+        "y": 0.022095,
+        "source": "predicted",
+        "confidence": 0.4
+      },
+      {
+        "id": "pt_b1cd318224f6",
+        "x": 0.304917,
+        "y": 0.030997,
+        "source": "predicted",
+        "confidence": 0.8
+      },
+      {
+        "id": "pt_ab974004d515",
+        "x": 0.836011,
+        "y": 0.044676,
+        "source": "predicted",
+        "confidence": 0.23
+      },
+      {
+        "id": "pt_224b3844efb7",
+        "x": 0.486713,
+        "y": 0.07731,
+        "source": "predicted",
+        "confidence": 0.71
+      },
+      {
+        "id": "pt_d5e2e2a71eec",
+        "x": 0.296918,
+        "y": 0.091478,
+        "source": "predicted",
+        "confidence": 0.74
+      },
+      {
+        "id": "pt_918f6bfbb91a",
+        "x": 0.403072,
+        "y": 0.131882,
+        "source": "predicted",
+        "confidence": 0.46
+      },
+      {
+        "id": "pt_f6ab0c4b2f80",
+        "x": 0.266277,
+        "y": 0.159289,
+        "source": "predicted",
+        "confidence": 0.76
+      },
+      {
+        "id": "pt_74ddc9729238",
+        "x": 0.387777,
+        "y": 0.160651,
+        "source": "predicted",
+        "confidence": 0.37
+      },
+      {
+        "id": "pt_f17f9669334d",
+        "x": 0.251568,
+        "y": 0.172376,
+        "source": "predicted",
+        "confidence": 0.77
+      },
+      {
+        "id": "pt_e4781b88d4aa",
+        "x": 0.462301,
+        "y": 0.20256,
+        "source": "predicted",
+        "confidence": 0.73
+      },
+      {
+        "id": "pt_64ea76a878f5",
+        "x": 0.045654,
+        "y": 0.214478,
+        "source": "predicted",
+        "confidence": 0.73
+      },
+      {
+        "id": "pt_ff18f389e362",
+        "x": 0.948886,
+        "y": 0.246297,
+        "source": "predicted",
+        "confidence": 0.44
+      },
+      {
+        "id": "pt_19907f9639ae",
+        "x": 0.158397,
+        "y": 0.271211,
+        "source": "predicted",
+        "confidence": 0.75
+      },
+      {
+        "id": "pt_4bab96e2d775",
+        "x": 0.423528,
+        "y": 0.288866,
+        "source": "predicted",
+        "confidence": 0.73
+      },
+      {
+        "id": "pt_611619a1c649",
+        "x": 0.126864,
+        "y": 0.284825,
+        "source": "predicted",
+        "confidence": 0.75
+      },
+      {
+        "id": "pt_b0a45d417aa6",
+        "x": 0.965516,
+        "y": 0.317423,
+        "source": "predicted",
+        "confidence": 0.75
+      },
+      {
+        "id": "pt_72ea0c9a9bbf",
+        "x": 0.227352,
+        "y": 0.306728,
+        "source": "predicted",
+        "confidence": 0.71
+      },
+      {
+        "id": "pt_d50b8335b867",
+        "x": 0.934674,
+        "y": 0.310111,
+        "source": "predicted",
+        "confidence": 0.4
+      },
+      {
+        "id": "pt_2db2298c3030",
+        "x": 0.458013,
+        "y": 0.308809,
+        "source": "predicted",
+        "confidence": 0.6
+      },
+      {
+        "id": "pt_17c00bf084c2",
+        "x": 0.504528,
+        "y": 0.318861,
+        "source": "predicted",
+        "confidence": 0.62
+      },
+      {
+        "id": "pt_7bc1eefa4bfe",
+        "x": 0.610413,
+        "y": 0.335236,
+        "source": "predicted",
+        "confidence": 0.67
+      },
+      {
+        "id": "pt_9c30886a417b",
+        "x": 0.608569,
+        "y": 0.415376,
+        "source": "predicted",
+        "confidence": 0.6
+      },
+      {
+        "id": "pt_ebd1b948604a",
+        "x": 0.934037,
+        "y": 0.438852,
+        "source": "predicted",
+        "confidence": 0.31
+      },
+      {
+        "id": "pt_d26a82b75ffb",
+        "x": 0.214247,
+        "y": 0.462303,
+        "source": "predicted",
+        "confidence": 0.72
+      },
+      {
+        "id": "pt_867832724ece",
+        "x": 0.638079,
+        "y": 0.541498,
+        "source": "predicted",
+        "confidence": 0.6
+      },
+      {
+        "id": "pt_1c0c055d3812",
+        "x": 0.689142,
+        "y": 0.581051,
+        "source": "predicted",
+        "confidence": 0.76
+      },
+      {
+        "id": "pt_cd6565e92080",
+        "x": 0.511872,
+        "y": 0.590466,
+        "source": "predicted",
+        "confidence": 0.61
+      },
+      {
+        "id": "pt_8dc14d5adfba",
+        "x": 0.603936,
+        "y": 0.636304,
+        "source": "predicted",
+        "confidence": 0.65
+      },
+      {
+        "id": "pt_00b178557ff8",
+        "x": 0.051085,
+        "y": 0.651793,
+        "source": "predicted",
+        "confidence": 0.74
+      },
+      {
+        "id": "pt_750a5c625a81",
+        "x": 0.056108,
+        "y": 0.681202,
+        "source": "predicted",
+        "confidence": 0.77
+      },
+      {
+        "id": "pt_5a040027c974",
+        "x": 0.759865,
+        "y": 0.682637,
+        "source": "predicted",
+        "confidence": 0.79
+      },
+      {
+        "id": "pt_755944afd510",
+        "x": 0.49709,
+        "y": 0.713208,
+        "source": "predicted",
+        "confidence": 0.65
+      },
+      {
+        "id": "pt_a2c50a38fd69",
+        "x": 0.628612,
+        "y": 0.726099,
+        "source": "predicted",
+        "confidence": 0.75
+      },
+      {
+        "id": "pt_db0b24f41f3b",
+        "x": 0.481436,
+        "y": 0.755607,
+        "source": "predicted",
+        "confidence": 0.68
+      },
+      {
+        "id": "pt_81fb0287a0a4",
+        "x": 0.465611,
+        "y": 0.776685,
+        "source": "predicted",
+        "confidence": 0.71
+      },
+      {
+        "id": "pt_f2ddd4fed5e6",
+        "x": 0.826642,
+        "y": 0.814743,
+        "source": "predicted",
+        "confidence": 0.82
+      },
+      {
+        "id": "pt_874e7c4ddb12",
+        "x": 0.414111,
+        "y": 0.808074,
+        "source": "predicted",
+        "confidence": 0.19
+      },
+      {
+        "id": "pt_a96e055ad9b0",
+        "x": 0.677692,
+        "y": 0.81193,
+        "source": "predicted",
+        "confidence": 0.29
+      },
+      {
+        "id": "pt_987b46879706",
+        "x": 0.464318,
+        "y": 0.823214,
+        "source": "predicted",
+        "confidence": 0.78
+      },
+      {
+        "id": "pt_ff1289a370ae",
+        "x": 0.70542,
+        "y": 0.882677,
+        "source": "predicted",
+        "confidence": 0.27
+      },
+      {
+        "id": "pt_6ab4a4083d99",
+        "x": 0.311261,
+        "y": 0.954984,
+        "source": "predicted",
+        "confidence": 0.81
+      },
+      {
+        "id": "pt_37be2204ceb0",
+        "x": 0.748597,
+        "y": 0.964027,
+        "source": "predicted",
+        "confidence": 0.86
+      },
+      {
+        "id": "pt_02da2991fa40",
+        "x": 0.027345,
+        "y": 0.982596,
+        "source": "predicted",
+        "confidence": 0.56
+      },
+      {
+        "id": "pt_fd0db4732ff2",
+        "x": 0.062042,
+        "y": 0.995236,
+        "source": "predicted",
+        "confidence": 0.5
+      },
+      {
+        "id": "pt_77635c83171e",
+        "x": 0.20566,
+        "y": 0.996155,
+        "source": "predicted",
+        "confidence": 0.78
+      },
+      {
+        "id": "pt_a8457a046b51",
+        "x": 0.613131,
+        "y": 0.680243,
+        "source": "predicted",
+        "confidence": 0.69
+      }
+    ]
+  },
+  {
+    "id": "image-5",
+    "label": "Example 5",
+    "filename": "2026-06-11_TrapQuant_drd-5AddDrd-5line1_001.tif",
+    "src": "./example-5.jpg",
+    "width": 2560,
+    "height": 1920,
+    "points": [
+      {
+        "id": "pt_6cf9a8993f43",
+        "x": 0.070443,
+        "y": 0.013536,
+        "source": "predicted",
+        "confidence": 0.82
+      },
+      {
+        "id": "pt_d28e710e4fd6",
+        "x": 0.322446,
+        "y": 0.069261,
+        "source": "predicted",
+        "confidence": 0.79
+      },
+      {
+        "id": "pt_f6248ef9cd34",
+        "x": 0.378859,
+        "y": 0.062636,
+        "source": "predicted",
+        "confidence": 0.61
+      },
+      {
+        "id": "pt_340198b91eed",
+        "x": 0.795522,
+        "y": 0.064992,
+        "source": "predicted",
+        "confidence": 0.5
+      },
+      {
+        "id": "pt_54507f922ce8",
+        "x": 0.483014,
+        "y": 0.074697,
+        "source": "predicted",
+        "confidence": 0.22
+      },
+      {
+        "id": "pt_6f6e70b05c96",
+        "x": 0.096381,
+        "y": 0.157255,
+        "source": "predicted",
+        "confidence": 0.64
+      },
+      {
+        "id": "pt_a88de8d9ddc4",
+        "x": 0.459662,
+        "y": 0.181297,
+        "source": "predicted",
+        "confidence": 0.35
+      },
+      {
+        "id": "pt_6c8b4acc0d73",
+        "x": 0.347507,
+        "y": 0.201814,
+        "source": "predicted",
+        "confidence": 0.63
+      },
+      {
+        "id": "pt_695b9617cf23",
+        "x": 0.720929,
+        "y": 0.231879,
+        "source": "predicted",
+        "confidence": 0.68
+      },
+      {
+        "id": "pt_c98df16ae460",
+        "x": 0.687369,
+        "y": 0.227762,
+        "source": "predicted",
+        "confidence": 0.55
+      },
+      {
+        "id": "pt_9ba79000bbf6",
+        "x": 0.811844,
+        "y": 0.282539,
+        "source": "predicted",
+        "confidence": 0.51
+      },
+      {
+        "id": "pt_60ffc4fb2f7d",
+        "x": 0.264756,
+        "y": 0.335456,
+        "source": "predicted",
+        "confidence": 0.6
+      },
+      {
+        "id": "pt_267a1887decf",
+        "x": 0.410292,
+        "y": 0.3521,
+        "source": "predicted",
+        "confidence": 0.7
+      },
+      {
+        "id": "pt_3d6f33e21847",
+        "x": 0.050624,
+        "y": 0.371569,
+        "source": "predicted",
+        "confidence": 0.63
+      },
+      {
+        "id": "pt_90b0c5a1eb80",
+        "x": 0.45821,
+        "y": 0.376233,
+        "source": "predicted",
+        "confidence": 0.5
+      },
+      {
+        "id": "pt_c55067dabb69",
+        "x": 0.072563,
+        "y": 0.401982,
+        "source": "predicted",
+        "confidence": 0.54
+      },
+      {
+        "id": "pt_8e78f7349893",
+        "x": 0.820162,
+        "y": 0.453405,
+        "source": "predicted",
+        "confidence": 0.56
+      },
+      {
+        "id": "pt_e2842e155d6d",
+        "x": 0.203523,
+        "y": 0.489909,
+        "source": "predicted",
+        "confidence": 0.62
+      },
+      {
+        "id": "pt_ec9c47cb6fa1",
+        "x": 0.833408,
+        "y": 0.495089,
+        "source": "predicted",
+        "confidence": 0.47
+      },
+      {
+        "id": "pt_e677f3baf8a6",
+        "x": 0.367796,
+        "y": 0.534375,
+        "source": "predicted",
+        "confidence": 0.66
+      },
+      {
+        "id": "pt_c6fb6fcd3ade",
+        "x": 0.995384,
+        "y": 0.550258,
+        "source": "predicted",
+        "confidence": 0.65
+      },
+      {
+        "id": "pt_2ec587180156",
+        "x": 0.160533,
+        "y": 0.543728,
+        "source": "predicted",
+        "confidence": 0.6
+      },
+      {
+        "id": "pt_08fb50457d69",
+        "x": 0.375803,
+        "y": 0.560774,
+        "source": "predicted",
+        "confidence": 0.58
+      },
+      {
+        "id": "pt_1fb3122b6bb4",
+        "x": 0.846032,
+        "y": 0.675299,
+        "source": "predicted",
+        "confidence": 0.51
+      },
+      {
+        "id": "pt_c467862623be",
+        "x": 0.379898,
+        "y": 0.72079,
+        "source": "predicted",
+        "confidence": 0.74
+      },
+      {
+        "id": "pt_665aaf138955",
+        "x": 0.269077,
+        "y": 0.730848,
+        "source": "predicted",
+        "confidence": 0.69
+      },
+      {
+        "id": "pt_c1e9150e7595",
+        "x": 0.082774,
+        "y": 0.768029,
+        "source": "predicted",
+        "confidence": 0.7
+      },
+      {
+        "id": "pt_9eb9c82eeb07",
+        "x": 0.365064,
+        "y": 0.787311,
+        "source": "predicted",
+        "confidence": 0.76
+      },
+      {
+        "id": "pt_0321bb9e281e",
+        "x": 0.039391,
+        "y": 0.762884,
+        "source": "predicted",
+        "confidence": 0.62
+      },
+      {
+        "id": "pt_e6d0cba0c690",
+        "x": 0.84705,
+        "y": 0.772864,
+        "source": "predicted",
+        "confidence": 0.64
+      },
+      {
+        "id": "pt_906ef2d18017",
+        "x": 0.108519,
+        "y": 0.786722,
+        "source": "predicted",
+        "confidence": 0.64
+      },
+      {
+        "id": "pt_3123c2d34f7c",
+        "x": 0.830796,
+        "y": 0.81982,
+        "source": "predicted",
+        "confidence": 0.22
+      },
+      {
+        "id": "pt_66c2436eaf4d",
+        "x": 0.368123,
+        "y": 0.824373,
+        "source": "predicted",
+        "confidence": 0.61
+      },
+      {
+        "id": "pt_c28df3c18d46",
+        "x": 0.35276,
+        "y": 0.885608,
+        "source": "predicted",
+        "confidence": 0.2
+      },
+      {
+        "id": "pt_b40422e069a5",
+        "x": 0.353165,
+        "y": 0.920746,
+        "source": "predicted",
+        "confidence": 0.09
+      },
+      {
+        "id": "pt_619035a7951a",
+        "x": 0.617793,
+        "y": 0.948846,
+        "source": "predicted",
+        "confidence": 0.66
+      },
+      {
+        "id": "pt_2a305ff78be2",
+        "x": 0.349694,
+        "y": 0.953936,
+        "source": "predicted",
+        "confidence": 0.31
+      },
+      {
+        "id": "pt_a7e5c225cc5a",
+        "x": 0.491732,
+        "y": 0.967894,
+        "source": "predicted",
+        "confidence": 0.49
+      },
+      {
+        "id": "pt_d299312f9d25",
+        "x": 0.75218,
+        "y": 0.973464,
+        "source": "predicted",
+        "confidence": 0.64
+      },
+      {
+        "id": "pt_17d0b6715b40",
+        "x": 0.706356,
+        "y": 0.159235,
+        "source": "predicted",
+        "confidence": 0.65
+      },
+      {
+        "id": "pt_fb3051a7f0f9",
+        "x": 0.344834,
+        "y": 0.255357,
+        "source": "predicted",
+        "confidence": 0.65
+      },
+      {
+        "id": "pt_cd678a6f5dc8",
+        "x": 0.418033,
+        "y": 0.308153,
+        "source": "predicted",
+        "confidence": 0.29
+      },
+      {
+        "id": "pt_8a5d3bfba55d",
+        "x": 0.44172,
+        "y": 0.460182,
+        "source": "predicted",
+        "confidence": 0.36
+      },
+      {
+        "id": "pt_a841e2c9bf80",
+        "x": 0.372777,
+        "y": 0.764898,
+        "source": "predicted",
+        "confidence": 0.57
+      },
+      {
+        "id": "pt_4a94dd956818",
+        "x": 0.081132,
+        "y": 0.066307,
+        "source": "predicted",
+        "confidence": 0.61
+      }
+    ]
+  },
+  {
+    "id": "image-6",
+    "label": "Example 6",
+    "filename": "2026-06-11_TrapQuant_drd-5AddDrd-5line1_002.tif",
+    "src": "./example-6.jpg",
+    "width": 2560,
+    "height": 1920,
+    "points": [
+      {
+        "id": "pt_d184d79c34e0",
+        "x": 0.015636,
+        "y": 0.033476,
+        "source": "predicted",
+        "confidence": 0.36
+      },
+      {
+        "id": "pt_d2cf1500e267",
+        "x": 0.984962,
+        "y": 0.022148,
+        "source": "predicted",
+        "confidence": 0.72
+      },
+      {
+        "id": "pt_5e02e391cec5",
+        "x": 0.412777,
+        "y": 0.038687,
+        "source": "predicted",
+        "confidence": 0.29
+      },
+      {
+        "id": "pt_f6862e8fe96a",
+        "x": 0.15462,
+        "y": 0.064763,
+        "source": "predicted",
+        "confidence": 0.71
+      },
+      {
+        "id": "pt_d2865b4341af",
+        "x": 0.063981,
+        "y": 0.110702,
+        "source": "predicted",
+        "confidence": 0.65
+      },
+      {
+        "id": "pt_6086b41cf32d",
+        "x": 0.010452,
+        "y": 0.13715,
+        "source": "predicted",
+        "confidence": 0.71
+      },
+      {
+        "id": "pt_58f51f865073",
+        "x": 0.546514,
+        "y": 0.160896,
+        "source": "predicted",
+        "confidence": 0.59
+      },
+      {
+        "id": "pt_19537c74b337",
+        "x": 0.061934,
+        "y": 0.173061,
+        "source": "predicted",
+        "confidence": 0.76
+      },
+      {
+        "id": "pt_e9c877031b76",
+        "x": 0.235877,
+        "y": 0.178151,
+        "source": "predicted",
+        "confidence": 0.72
+      },
+      {
+        "id": "pt_83d9b81abd1f",
+        "x": 0.987232,
+        "y": 0.199385,
+        "source": "predicted",
+        "confidence": 0.64
+      },
+      {
+        "id": "pt_fff00c4ffd50",
+        "x": 0.481984,
+        "y": 0.195582,
+        "source": "predicted",
+        "confidence": 0.1
+      },
+      {
+        "id": "pt_0b3088d42fe5",
+        "x": 0.561392,
+        "y": 0.20528,
+        "source": "predicted",
+        "confidence": 0.5
+      },
+      {
+        "id": "pt_0bddaf0ef17a",
+        "x": 0.402471,
+        "y": 0.259806,
+        "source": "predicted",
+        "confidence": 0.66
+      },
+      {
+        "id": "pt_a9457927d7c2",
+        "x": 0.479734,
+        "y": 0.30189,
+        "source": "predicted",
+        "confidence": 0.66
+      },
+      {
+        "id": "pt_91165e6770da",
+        "x": 0.313593,
+        "y": 0.312508,
+        "source": "predicted",
+        "confidence": 0.61
+      },
+      {
+        "id": "pt_4fcc6fd4a749",
+        "x": 0.10555,
+        "y": 0.336556,
+        "source": "predicted",
+        "confidence": 0.62
+      },
+      {
+        "id": "pt_9ea8483c22cb",
+        "x": 0.691578,
+        "y": 0.343061,
+        "source": "predicted",
+        "confidence": 0.51
+      },
+      {
+        "id": "pt_427262015109",
+        "x": 0.439425,
+        "y": 0.354775,
+        "source": "predicted",
+        "confidence": 0.6
+      },
+      {
+        "id": "pt_395d3eded8dc",
+        "x": 0.101025,
+        "y": 0.373829,
+        "source": "predicted",
+        "confidence": 0.71
+      },
+      {
+        "id": "pt_966986d5a65d",
+        "x": 0.455887,
+        "y": 0.423574,
+        "source": "predicted",
+        "confidence": 0.61
+      },
+      {
+        "id": "pt_4beb5bb7cbb9",
+        "x": 0.129714,
+        "y": 0.444563,
+        "source": "predicted",
+        "confidence": 0.65
+      },
+      {
+        "id": "pt_472f0b371988",
+        "x": 0.201177,
+        "y": 0.574309,
+        "source": "predicted",
+        "confidence": 0.63
+      },
+      {
+        "id": "pt_ca9aa9afe350",
+        "x": 0.038258,
+        "y": 0.59668,
+        "source": "predicted",
+        "confidence": 0.68
+      },
+      {
+        "id": "pt_165fa73d7693",
+        "x": 0.457591,
+        "y": 0.593969,
+        "source": "predicted",
+        "confidence": 0.56
+      },
+      {
+        "id": "pt_9cf69149b8b5",
+        "x": 0.063898,
+        "y": 0.628623,
+        "source": "predicted",
+        "confidence": 0.69
+      },
+      {
+        "id": "pt_0a36ba6768fe",
+        "x": 0.192072,
+        "y": 0.648325,
+        "source": "predicted",
+        "confidence": 0.63
+      },
+      {
+        "id": "pt_707f0359413b",
+        "x": 0.09706,
+        "y": 0.65765,
+        "source": "predicted",
+        "confidence": 0.63
+      },
+      {
+        "id": "pt_e7e980fc9b9f",
+        "x": 0.540694,
+        "y": 0.66338,
+        "source": "predicted",
+        "confidence": 0.49
+      },
+      {
+        "id": "pt_cc1441e08d52",
+        "x": 0.674927,
+        "y": 0.695381,
+        "source": "predicted",
+        "confidence": 0.52
+      },
+      {
+        "id": "pt_75fb9194ae42",
+        "x": 0.74958,
+        "y": 0.739558,
+        "source": "predicted",
+        "confidence": 0.57
+      },
+      {
+        "id": "pt_21816efe9b23",
+        "x": 0.433773,
+        "y": 0.771925,
+        "source": "predicted",
+        "confidence": 0.18
+      },
+      {
+        "id": "pt_73b8e9233a15",
+        "x": 0.322627,
+        "y": 0.770658,
+        "source": "predicted",
+        "confidence": 0.54
+      },
+      {
+        "id": "pt_19292f28f6c7",
+        "x": 0.428869,
+        "y": 0.81568,
+        "source": "predicted",
+        "confidence": 0.4
+      },
+      {
+        "id": "pt_a2138f63d900",
+        "x": 0.830757,
+        "y": 0.819913,
+        "source": "predicted",
+        "confidence": 0.48
+      },
+      {
+        "id": "pt_f7031aa05645",
+        "x": 0.56633,
+        "y": 0.837747,
+        "source": "predicted",
+        "confidence": 0.22
+      },
+      {
+        "id": "pt_4cfbc7a131c9",
+        "x": 0.731307,
+        "y": 0.849149,
+        "source": "predicted",
+        "confidence": 0.53
+      },
+      {
+        "id": "pt_fe7d0db8e98e",
+        "x": 0.308411,
+        "y": 0.868749,
+        "source": "predicted",
+        "confidence": 0.7
+      },
+      {
+        "id": "pt_d6df73afe9a8",
+        "x": 0.268336,
+        "y": 0.865414,
+        "source": "predicted",
+        "confidence": 0.43
+      },
+      {
+        "id": "pt_633639fc3ae1",
+        "x": 0.322388,
+        "y": 0.897539,
+        "source": "predicted",
+        "confidence": 0.68
+      },
+      {
+        "id": "pt_ee6d476d3c0c",
+        "x": 0.761817,
+        "y": 0.931429,
+        "source": "predicted",
+        "confidence": 0.59
+      }
+    ]
+  },
+  {
+    "id": "image-7",
+    "label": "Example 7",
+    "filename": "2026-06-11_TrapQuant_drd-5AddDrd-5line2_003.tif",
+    "src": "./example-7.jpg",
+    "width": 2560,
+    "height": 1920,
+    "points": [
+      {
+        "id": "pt_f29dec5705ee",
+        "x": 0.79726,
+        "y": 0.012313,
+        "source": "predicted",
+        "confidence": 0.76
+      },
+      {
+        "id": "pt_cf8dc9fb82b5",
+        "x": 0.675236,
+        "y": 0.032363,
+        "source": "predicted",
+        "confidence": 0.7
+      },
+      {
+        "id": "pt_cc293604f795",
+        "x": 0.542041,
+        "y": 0.053408,
+        "source": "predicted",
+        "confidence": 0.6
+      },
+      {
+        "id": "pt_d4663daaed54",
+        "x": 0.302498,
+        "y": 0.05789,
+        "source": "predicted",
+        "confidence": 0.71
+      },
+      {
+        "id": "pt_52ee65392764",
+        "x": 0.475139,
+        "y": 0.059129,
+        "source": "predicted",
+        "confidence": 0.69
+      },
+      {
+        "id": "pt_a2125e384808",
+        "x": 0.951766,
+        "y": 0.073116,
+        "source": "predicted",
+        "confidence": 0.67
+      },
+      {
+        "id": "pt_2b6e793ab171",
+        "x": 0.542836,
+        "y": 0.100234,
+        "source": "predicted",
+        "confidence": 0.66
+      },
+      {
+        "id": "pt_c9c7bd2c4f91",
+        "x": 0.825642,
+        "y": 0.09803,
+        "source": "predicted",
+        "confidence": 0.6
+      },
+      {
+        "id": "pt_1fcea9023faf",
+        "x": 0.759322,
+        "y": 0.132929,
+        "source": "predicted",
+        "confidence": 0.72
+      },
+      {
+        "id": "pt_9019935acc9b",
+        "x": 0.470914,
+        "y": 0.127175,
+        "source": "predicted",
+        "confidence": 0.61
+      },
+      {
+        "id": "pt_572db9a01815",
+        "x": 0.540281,
+        "y": 0.167776,
+        "source": "predicted",
+        "confidence": 0.78
+      },
+      {
+        "id": "pt_cdf1102daf43",
+        "x": 0.961592,
+        "y": 0.156024,
+        "source": "predicted",
+        "confidence": 0.65
+      },
+      {
+        "id": "pt_0de5ec8a4a63",
+        "x": 0.546841,
+        "y": 0.191043,
+        "source": "predicted",
+        "confidence": 0.73
+      },
+      {
+        "id": "pt_becaea9bf2cd",
+        "x": 0.873324,
+        "y": 0.202146,
+        "source": "predicted",
+        "confidence": 0.8
+      },
+      {
+        "id": "pt_55239d86f3eb",
+        "x": 0.679906,
+        "y": 0.209554,
+        "source": "predicted",
+        "confidence": 0.65
+      },
+      {
+        "id": "pt_e6ffdb535639",
+        "x": 0.550377,
+        "y": 0.221846,
+        "source": "predicted",
+        "confidence": 0.75
+      },
+      {
+        "id": "pt_2c3d645739d6",
+        "x": 0.888064,
+        "y": 0.229182,
+        "source": "predicted",
+        "confidence": 0.81
+      },
+      {
+        "id": "pt_9cf72eb752a2",
+        "x": 0.069155,
+        "y": 0.236825,
+        "source": "predicted",
+        "confidence": 0.6
+      },
+      {
+        "id": "pt_f7e84441803c",
+        "x": 0.138575,
+        "y": 0.229669,
+        "source": "predicted",
+        "confidence": 0.64
+      },
+      {
+        "id": "pt_9437ab62b446",
+        "x": 0.544116,
+        "y": 0.24442,
+        "source": "predicted",
+        "confidence": 0.72
+      },
+      {
+        "id": "pt_fd2b93b4a16e",
+        "x": 0.046025,
+        "y": 0.246452,
+        "source": "predicted",
+        "confidence": 0.72
+      },
+      {
+        "id": "pt_66d90273a0f7",
+        "x": 0.408738,
+        "y": 0.253838,
+        "source": "predicted",
+        "confidence": 0.61
+      },
+      {
+        "id": "pt_bfff17c74780",
+        "x": 0.009777,
+        "y": 0.262536,
+        "source": "predicted",
+        "confidence": 0.68
+      },
+      {
+        "id": "pt_1eaf93d653c0",
+        "x": 0.391854,
+        "y": 0.280533,
+        "source": "predicted",
+        "confidence": 0.62
+      },
+      {
+        "id": "pt_6306f7ebcc91",
+        "x": 0.431104,
+        "y": 0.283817,
+        "source": "predicted",
+        "confidence": 0.61
+      },
+      {
+        "id": "pt_bea35d9d60e1",
+        "x": 0.989132,
+        "y": 0.2866,
+        "source": "predicted",
+        "confidence": 0.73
+      },
+      {
+        "id": "pt_b200b3e82776",
+        "x": 0.309141,
+        "y": 0.293196,
+        "source": "predicted",
+        "confidence": 0.65
+      },
+      {
+        "id": "pt_c0ce7ddc0d2f",
+        "x": 0.318976,
+        "y": 0.346631,
+        "source": "predicted",
+        "confidence": 0.74
+      },
+      {
+        "id": "pt_d15f6407a46d",
+        "x": 0.731463,
+        "y": 0.367712,
+        "source": "predicted",
+        "confidence": 0.73
+      },
+      {
+        "id": "pt_e465ed7ae589",
+        "x": 0.406521,
+        "y": 0.395443,
+        "source": "predicted",
+        "confidence": 0.6
+      },
+      {
+        "id": "pt_29f4b41ca4a5",
+        "x": 0.881971,
+        "y": 0.403697,
+        "source": "predicted",
+        "confidence": 0.64
+      },
+      {
+        "id": "pt_380a38788890",
+        "x": 0.854575,
+        "y": 0.468355,
+        "source": "predicted",
+        "confidence": 0.73
+      },
+      {
+        "id": "pt_995f3ab6633b",
+        "x": 0.326588,
+        "y": 0.453883,
+        "source": "predicted",
+        "confidence": 0.73
+      },
+      {
+        "id": "pt_ee7240a4c2c1",
+        "x": 0.382051,
+        "y": 0.461605,
+        "source": "predicted",
+        "confidence": 0.58
+      },
+      {
+        "id": "pt_cf46b2bc11a2",
+        "x": 0.299069,
+        "y": 0.470687,
+        "source": "predicted",
+        "confidence": 0.69
+      },
+      {
+        "id": "pt_46411aa2a16e",
+        "x": 0.929958,
+        "y": 0.487551,
+        "source": "predicted",
+        "confidence": 0.7
+      },
+      {
+        "id": "pt_eff63d997575",
+        "x": 0.371192,
+        "y": 0.494764,
+        "source": "predicted",
+        "confidence": 0.58
+      },
+      {
+        "id": "pt_6e7255bcc9d8",
+        "x": 0.340538,
+        "y": 0.580476,
+        "source": "predicted",
+        "confidence": 0.65
+      },
+      {
+        "id": "pt_9be090c891a4",
+        "x": 0.082205,
+        "y": 0.583284,
+        "source": "predicted",
+        "confidence": 0.7
+      },
+      {
+        "id": "pt_cc8e9a21088a",
+        "x": 0.022099,
+        "y": 0.659207,
+        "source": "predicted",
+        "confidence": 0.75
+      },
+      {
+        "id": "pt_64bf88fcd43a",
+        "x": 0.697336,
+        "y": 0.702094,
+        "source": "predicted",
+        "confidence": 0.65
+      },
+      {
+        "id": "pt_d60d9167bb31",
+        "x": 0.036935,
+        "y": 0.72197,
+        "source": "predicted",
+        "confidence": 0.74
+      },
+      {
+        "id": "pt_5f7f5d23387d",
+        "x": 0.841807,
+        "y": 0.771173,
+        "source": "predicted",
+        "confidence": 0.64
+      },
+      {
+        "id": "pt_1637f8ce01d4",
+        "x": 0.400575,
+        "y": 0.792459,
+        "source": "predicted",
+        "confidence": 0.69
+      },
+      {
+        "id": "pt_3b786a86a42a",
+        "x": 0.0047,
+        "y": 0.808422,
+        "source": "predicted",
+        "confidence": 0.73
+      },
+      {
+        "id": "pt_2e6563624259",
+        "x": 0.443864,
+        "y": 0.818753,
+        "source": "predicted",
+        "confidence": 0.69
+      },
+      {
+        "id": "pt_c78b47b8fbe8",
+        "x": 0.375161,
+        "y": 0.859976,
+        "source": "predicted",
+        "confidence": 0.68
+      },
+      {
+        "id": "pt_cfaca2571a98",
+        "x": 0.373487,
+        "y": 0.888162,
+        "source": "predicted",
+        "confidence": 0.66
+      },
+      {
+        "id": "pt_12c3852e015a",
+        "x": 0.099596,
+        "y": 0.906656,
+        "source": "predicted",
+        "confidence": 0.75
+      },
+      {
+        "id": "pt_9ac51ac1afa1",
+        "x": 0.3749,
+        "y": 0.928417,
+        "source": "predicted",
+        "confidence": 0.66
+      },
+      {
+        "id": "pt_b9a13ca071ac",
+        "x": 0.564399,
+        "y": 0.98256,
+        "source": "predicted",
+        "confidence": 0.7
+      },
+      {
+        "id": "pt_43e73c59949c",
+        "x": 0.443901,
+        "y": 0.570031,
+        "source": "predicted",
+        "confidence": 0.45
+      },
+      {
+        "id": "pt_cefc4de02f2c",
+        "x": 0.096877,
+        "y": 0.230368,
+        "source": "predicted",
+        "confidence": 0.7
+      },
+      {
+        "id": "pt_3e05ef8310ca",
+        "x": 0.846253,
+        "y": 0.34363,
+        "source": "predicted",
+        "confidence": 0.58
+      }
+    ]
+  }
+]
