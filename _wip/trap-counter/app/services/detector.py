@@ -514,7 +514,11 @@ def hybrid_detect(original_path: Path, probability_map: np.ndarray) -> list[dict
     prob = np.asarray(probability_map, dtype=np.float32)
     if prob.max() > 1.0:
         prob = prob / prob.max()
-    support_threshold = float(os.getenv("TRAP_HYBRID_SUPPORT_THRESHOLD", "0.0"))
+    # Drop candidates whose local ilastik trap-support is below this. At 0.0
+    # every base candidate is kept (ilastik only tints confidence), which is the
+    # main source of over-counting conidia/specks. A positive default makes the
+    # reviewer add a few misses rather than delete many false positives.
+    support_threshold = float(os.getenv("TRAP_HYBRID_SUPPORT_THRESHOLD", "0.2"))
     support_radius = int(float(os.getenv("TRAP_HYBRID_SUPPORT_RADIUS", "35")))
     support_percentile = float(os.getenv("TRAP_HYBRID_SUPPORT_PERCENTILE", "90"))
     height, width = prob.shape

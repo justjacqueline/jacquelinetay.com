@@ -12,7 +12,7 @@ from fastapi.staticfiles import StaticFiles
 from .models import AnnotationPayload, BatchOut, ImageOut
 from .services.database import Database
 from .services.detector import detect_traps
-from .services.exports import write_annotated_zip, write_batch_exports
+from .services.exports import build_group_summary, write_annotated_zip, write_batch_exports
 from .services.images import make_preview
 
 
@@ -31,6 +31,7 @@ app.mount("/media/previews", StaticFiles(directory=PREVIEWS_DIR), name="previews
 
 
 @app.get("/")
+@app.get("/index.html")
 def index() -> FileResponse:
     return FileResponse(BASE_DIR / "static" / "index.html")
 
@@ -51,32 +52,45 @@ async def create_batch(
     batch_originals.mkdir(parents=True, exist_ok=True)
     batch_previews.mkdir(parents=True, exist_ok=True)
 
+    saved = 0
+    skipped: list[str] = []
     for upload in files:
-        suffix = Path(upload.filename or "image.tif").suffix or ".tif"
-        stored_name = f"{uuid.uuid4().hex}{suffix}"
+        stored_name = f"{uuid.uuid4().hex}{Path(upload.filename or 'image.tif').suffix or '.tif'}"
         original_path = batch_originals / stored_name
-        with original_path.open("wb") as fh:
-            shutil.copyfileobj(upload.file, fh)
-        preview_path = batch_previews / f"{Path(stored_name).stem}.jpg"
-        metadata = make_preview(original_path, preview_path)
-        predicted_points, model_version = detect_traps(original_path)
-        DB.create_image(
-            batch_id=batch_id,
-            filename=upload.filename or stored_name,
-            original_path=str(original_path),
-            preview_path=str(preview_path),
-            width=metadata["width"],
-            height=metadata["height"],
-            status="predicted",
-            predicted_points=predicted_points,
-            model_version=model_version,
-            metadata=metadata,
-        )
+        partial_path = original_path.with_name(original_path.name + ".part")
+        try:
+            # Write to a .part file then atomically rename, so an interrupted
+            # upload never leaves a truncated original in the store.
+            with partial_path.open("wb") as fh:
+                shutil.copyfileobj(upload.file, fh)
+            partial_path.replace(original_path)
+            preview_path = batch_previews / f"{Path(stored_name).stem}.jpg"
+            metadata = make_preview(original_path, preview_path)
+            predicted_points, model_version = detect_traps(original_path)
+            DB.create_image(
+                batch_id=batch_id,
+                filename=upload.filename or stored_name,
+                original_path=str(original_path),
+                preview_path=str(preview_path),
+                width=metadata["width"],
+                height=metadata["height"],
+                status="predicted",
+                predicted_points=predicted_points,
+                model_version=model_version,
+                metadata=metadata,
+            )
+            saved += 1
+        except Exception:
+            # One unreadable file must not abort the whole batch. Clean up any
+            # partial artifacts and keep going.
+            partial_path.unlink(missing_ok=True)
+            original_path.unlink(missing_ok=True)
+            skipped.append(upload.filename or stored_name)
 
     row = DB.get_batch(batch_id)
     if row is None:
         raise HTTPException(status_code=500, detail="Batch creation failed")
-    return {**dict(row), "image_count": len(files)}
+    return {**dict(row), "image_count": saved, "skipped": skipped}
 
 
 @app.get("/api/batches/{batch_id}/images", response_model=list[ImageOut])
@@ -115,13 +129,30 @@ def rerun_prediction(image_id: int) -> dict:
     return image_payload(updated)
 
 
-@app.get("/api/batches/{batch_id}/exports/{kind}")
-def export_batch(batch_id: int, kind: str) -> FileResponse:
+@app.get("/api/batches/{batch_id}/groups")
+def list_groups(batch_id: int) -> list[dict]:
     rows = DB.list_images(batch_id)
     if not rows:
         raise HTTPException(status_code=404, detail="Batch has no images")
+    return build_group_summary(rows)
+
+
+@app.get("/api/batches/{batch_id}/exports/{kind}")
+def export_batch(batch_id: int, kind: str, labels: str | None = None) -> FileResponse:
+    rows = DB.list_images(batch_id)
+    if not rows:
+        raise HTTPException(status_code=404, detail="Batch has no images")
+    label_map: dict[str, str] | None = None
+    if labels:
+        try:
+            parsed = json.loads(labels)
+        except json.JSONDecodeError:
+            raise HTTPException(status_code=400, detail="labels must be JSON")
+        if not isinstance(parsed, dict):
+            raise HTTPException(status_code=400, detail="labels must be a JSON object")
+        label_map = {str(key): str(value) for key, value in parsed.items() if str(value).strip()}
     export_dir = EXPORTS_DIR / str(batch_id)
-    paths = write_batch_exports(rows, export_dir)
+    paths = write_batch_exports(rows, export_dir, label_map)
     if kind == "annotated.zip":
         path = write_annotated_zip(rows, export_dir / "annotated_images.zip")
     else:

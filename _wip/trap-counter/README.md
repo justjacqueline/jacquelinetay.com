@@ -382,10 +382,30 @@ The active detector can be selected explicitly with:
 ```text
 TRAP_DETECTION_MODE=hybrid
 TRAP_HYBRID_METHOD=support
-TRAP_HYBRID_SUPPORT_THRESHOLD=0.0
+TRAP_HYBRID_SUPPORT_THRESHOLD=0.2
 TRAP_HYBRID_SUPPORT_RADIUS=35
 TRAP_HYBRID_SUPPORT_PERCENTILE=90
 ```
+
+`TRAP_HYBRID_SUPPORT_THRESHOLD` drops candidates whose local ilastik trap-support
+is below it. At `0.0` every base candidate is kept and ilastik only sets the
+confidence color. The default is now `0.2` as a mild precision bias.
+
+Important, measured on real data (`N2_009`, reviewer ground truth = 35):
+
+- base candidate generator proposes 47 points
+- ilastik supports almost all of them: support percentiles p10/p50/p90 = 0.35/0.71/0.78
+- count vs threshold: 0.0→47, 0.2→46, 0.3→43, 0.4→41, 0.5→36, 0.6→34, 0.7→24
+
+So the threshold is **not** an effective over-counting fix: the ilastik model (trained
+on admittedly rough labels) endorses most false positives with high support, so no
+single threshold cleanly separates traps from specks — 0.5 happens to land near 35
+here but would under-count other images. The real over-counting cause is the
+candidate generator plus a lenient model, i.e. a **training-data / model** problem,
+not a threshold. The reviewer's 69 hand-annotated images (dotted traps + handwritten
+totals) are the asset to fix this: use them to measure accuracy per image and to
+retrain. Until then, treat detection as a rough assist and rely on human review for
+the scientific count.
 
 Hybrid support mode works like this:
 

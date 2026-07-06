@@ -290,6 +290,91 @@ textarea {
   color: var(--accent);
 }
 
+.save-state {
+  align-self: center;
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 0.15rem 0.55rem;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+.save-state[data-state="saved"] {
+  color: var(--accent);
+  border-color: var(--accent);
+  background: rgba(29, 126, 83, 0.08);
+}
+
+.save-state[data-state="unsaved"],
+.save-state[data-state="saving"] {
+  color: var(--accent-2);
+  border-color: var(--accent-2);
+  background: rgba(232, 137, 36, 0.1);
+}
+
+.save-state[data-state="error"] {
+  color: var(--danger);
+  border-color: var(--danger);
+  background: rgba(175, 45, 45, 0.1);
+}
+
+.exports a.primary-export {
+  font-weight: 600;
+  color: var(--panel);
+  background: var(--accent);
+  padding: 0.35rem 0.7rem;
+  border-radius: 6px;
+  text-decoration: none;
+}
+
+.groups {
+  padding: 0.5rem 1rem 0.75rem;
+  border-top: 1px solid var(--line);
+}
+
+.group-help {
+  color: var(--muted);
+  font-size: 0.82rem;
+  margin: 0.25rem 0 0.6rem;
+}
+
+.group-help code {
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  padding: 0 0.25rem;
+  font-size: 0.78rem;
+}
+
+.group-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.group-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(140px, 220px);
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.group-caption {
+  color: var(--muted);
+  font-size: 0.8rem;
+  overflow-wrap: anywhere;
+}
+
+.group-row input {
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 0.35rem 0.5rem;
+  background: var(--panel);
+  color: var(--ink);
+}
+
 @media (max-width: 900px) {
   .layout {
     grid-template-columns: 1fr;

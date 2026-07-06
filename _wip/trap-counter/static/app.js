@@ -6,7 +6,14 @@ const state = {
   points: [],
   selectedId: null,
   draggingId: null,
+  dirty: false,
+  saving: false,
+  saveTimer: null,
+  lastSaveError: null,
 };
+
+const AUTOSAVE_DELAY = 900;
+const DRAFT_PREFIX = "trap-counter-draft:";
 
 const el = {
   status: document.querySelector("#status"),
@@ -23,6 +30,7 @@ const el = {
   deletePoint: document.querySelector("#deletePoint"),
   rerunPrediction: document.querySelector("#rerunPrediction"),
   saveReview: document.querySelector("#saveReview"),
+  saveState: document.querySelector("#saveState"),
   uncertain: document.querySelector("#uncertain"),
   notes: document.querySelector("#notes"),
   predictedCount: document.querySelector("#predictedCount"),
@@ -32,15 +40,153 @@ const el = {
   extraLowConfidenceCount: document.querySelector("#extraLowConfidenceCount"),
   reviewedCount: document.querySelector("#reviewedCount"),
   exports: document.querySelector("#exports"),
+  exportPrism: document.querySelector("#exportPrism"),
   exportCounts: document.querySelector("#exportCounts"),
   exportCoords: document.querySelector("#exportCoords"),
   exportExcel: document.querySelector("#exportExcel"),
   exportJson: document.querySelector("#exportJson"),
   exportAnnotated: document.querySelector("#exportAnnotated"),
+  groups: document.querySelector("#groups"),
+  groupList: document.querySelector("#groupList"),
+  refreshGroups: document.querySelector("#refreshGroups"),
 };
+
+state.groupLabels = {};
 
 function setStatus(message) {
   el.status.textContent = message;
+}
+
+// ---- Autosave: review edits are persisted automatically and mirrored to a
+// local draft so nothing is lost on a misclick, crash, or failed request. ----
+
+function setSaveState(name) {
+  const labels = {
+    idle: "No image",
+    saved: "All changes saved",
+    unsaved: "Unsaved changes",
+    saving: "Saving…",
+    error: "Save failed — kept locally, retrying",
+  };
+  el.saveState.dataset.state = name;
+  el.saveState.textContent = labels[name] || name;
+}
+
+function draftKey(imageId) {
+  return `${DRAFT_PREFIX}${imageId}`;
+}
+
+function writeDraft() {
+  if (!state.image) return;
+  try {
+    localStorage.setItem(
+      draftKey(state.image.id),
+      JSON.stringify({ points: state.points, uncertain: el.uncertain.checked, notes: el.notes.value, ts: Date.now() })
+    );
+  } catch (error) {
+    console.warn("Could not write local draft", error);
+  }
+}
+
+function readDraft(imageId) {
+  try {
+    return JSON.parse(localStorage.getItem(draftKey(imageId)) || "null");
+  } catch {
+    return null;
+  }
+}
+
+function clearDraft(imageId) {
+  try {
+    localStorage.removeItem(draftKey(imageId));
+  } catch {
+    /* ignore */
+  }
+}
+
+function reviewPayload() {
+  return {
+    points: state.points.map((point) => ({ ...point, source: point.source === "predicted" ? "reviewed" : point.source })),
+    uncertain: el.uncertain.checked,
+    notes: el.notes.value,
+  };
+}
+
+function markDirty() {
+  if (!state.image) return;
+  state.dirty = true;
+  writeDraft();
+  if (!state.saving) setSaveState("unsaved");
+  scheduleAutosave();
+}
+
+function scheduleAutosave() {
+  if (state.saveTimer) clearTimeout(state.saveTimer);
+  state.saveTimer = setTimeout(() => {
+    state.saveTimer = null;
+    persistReview();
+  }, AUTOSAVE_DELAY);
+}
+
+function persistReview() {
+  if (!state.image || state.saving || !state.dirty) return state.savePromise || Promise.resolve();
+  state.saving = true;
+  if (state.saveTimer) {
+    clearTimeout(state.saveTimer);
+    state.saveTimer = null;
+  }
+  state.savePromise = doPersist();
+  return state.savePromise;
+}
+
+async function doPersist() {
+  const imageId = state.image.id;
+  const payload = reviewPayload();
+  state.dirty = false; // optimistic; markDirty() re-sets it if edits arrive mid-flight
+  setSaveState("saving");
+  try {
+    const updated = await api(`/api/images/${imageId}/review`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+    state.images = state.images.map((image) => (image.id === imageId ? updated : image));
+    if (state.image && state.image.id === imageId) {
+      state.image = { ...state.image, ...updated };
+    }
+    if (!state.dirty) clearDraft(imageId); // draft only cleared once the server confirms and no newer edits exist
+    state.lastSaveError = null;
+    renderImageList();
+    loadGroups().catch((error) => console.error(error));
+    setSaveState(state.dirty ? "unsaved" : "saved");
+  } catch (error) {
+    state.dirty = true; // keep the local draft and retry
+    state.lastSaveError = error;
+    console.error("Save failed", error);
+    setSaveState("error");
+  } finally {
+    state.saving = false;
+    state.savePromise = null;
+    if (state.dirty && state.image && state.image.id === imageId) scheduleAutosave();
+  }
+}
+
+// Force any pending/in-flight save to complete (before switching images or unloading).
+async function flushPendingSave() {
+  if (state.saveTimer) {
+    clearTimeout(state.saveTimer);
+    state.saveTimer = null;
+  }
+  let guard = 0;
+  while (state.image && (state.dirty || state.saving) && guard++ < 6) {
+    if (state.saving && state.savePromise) {
+      await state.savePromise;
+    } else if (state.dirty) {
+      await persistReview();
+    } else {
+      break;
+    }
+  }
 }
 
 async function api(path, options = {}) {
@@ -68,15 +214,18 @@ async function loadBatches() {
 }
 
 async function selectBatch(batchId) {
+  await flushPendingSave(); // preserve unsaved edits before leaving the current image/batch
   state.batchId = batchId;
   state.image = null;
   state.points = [];
+  state.groupLabels = {};
   renderReview();
   renderExportLinks();
   await loadBatches();
   setStatus("Loading images");
   state.images = await api(`/api/batches/${batchId}/images`);
   renderImageList();
+  await loadGroups();
   if (state.images[0]) {
     await selectImage(state.images[0].id);
   }
@@ -97,15 +246,35 @@ function renderImageList() {
 }
 
 async function selectImage(imageId) {
+  // Never switch away with unsaved edits still in memory.
+  await flushPendingSave();
   state.image = await api(`/api/images/${imageId}`);
-  state.points = state.image.points.map((point) => ({ ...point }));
   state.selectedId = null;
   el.preview.onload = fitOverlay;
   el.preview.src = state.image.preview_url;
+
+  const draft = readDraft(imageId);
+  if (draft && Array.isArray(draft.points)) {
+    // A local draft exists that never made it to the server (crash / offline). Restore it.
+    state.points = draft.points.map((point) => ({ ...point }));
+    el.uncertain.checked = Boolean(draft.uncertain);
+    el.notes.value = draft.notes || "";
+    renderReview();
+    renderImageList();
+    state.dirty = true;
+    setSaveState("unsaved");
+    scheduleAutosave();
+    setStatus("Recovered unsaved edits for this image");
+    return;
+  }
+
+  state.points = state.image.points.map((point) => ({ ...point }));
   el.uncertain.checked = state.image.uncertain;
   el.notes.value = state.image.notes || "";
+  state.dirty = false;
   renderReview();
   renderImageList();
+  setSaveState("saved");
 }
 
 function renderReview() {
@@ -242,6 +411,7 @@ el.overlay.addEventListener("pointerdown", (event) => {
   state.points.push({ id, x: point.x, y: point.y, source: "manual", confidence: null });
   state.selectedId = id;
   renderReview();
+  markDirty();
 });
 
 el.overlay.addEventListener("pointermove", (event) => {
@@ -252,11 +422,14 @@ el.overlay.addEventListener("pointermove", (event) => {
   point.x = next.x;
   point.y = next.y;
   point.source = point.source === "predicted" ? "reviewed" : point.source;
+  state.dragMoved = true;
   renderReview();
 });
 
 el.overlay.addEventListener("pointerup", () => {
+  if (state.draggingId && state.dragMoved) markDirty();
   state.draggingId = null;
+  state.dragMoved = false;
 });
 
 el.deletePoint.addEventListener("click", () => {
@@ -276,36 +449,39 @@ function deleteSelectedPoint() {
   state.points = state.points.filter((point) => point.id !== state.selectedId);
   state.selectedId = null;
   renderReview();
+  markDirty();
 }
 
 el.saveReview.addEventListener("click", async () => {
   if (!state.image) return;
-  setStatus("Saving review");
-  state.image = await api(`/api/images/${state.image.id}/review`, {
-    method: "PUT",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      points: state.points.map((point) => ({ ...point, source: point.source === "predicted" ? "reviewed" : point.source })),
-      uncertain: el.uncertain.checked,
-      notes: el.notes.value,
-    }),
-  });
-  state.points = state.image.points.map((point) => ({ ...point }));
-  state.images = state.images.map((image) => (image.id === state.image.id ? state.image : image));
-  renderReview();
-  renderImageList();
-  setStatus("Saved");
+  state.dirty = true; // "Save now" always forces a write of the current state
+  await persistReview();
 });
+
+el.notes.addEventListener("input", markDirty);
+el.uncertain.addEventListener("change", markDirty);
 
 el.rerunPrediction.addEventListener("click", async () => {
   if (!state.image) return;
+  await flushPendingSave(); // don't discard hand edits when replacing with fresh predictions
   setStatus("Running detection");
   state.image = await api(`/api/images/${state.image.id}/predict`, { method: "POST" });
   state.points = state.image.points.map((point) => ({ ...point }));
   state.images = state.images.map((image) => (image.id === state.image.id ? state.image : image));
+  clearDraft(state.image.id);
+  state.dirty = false;
   renderReview();
   renderImageList();
+  setSaveState("saved");
   setStatus("Detection complete");
+});
+
+// Last line of defence: warn if the tab is closing with edits not yet on the server.
+window.addEventListener("beforeunload", (event) => {
+  if (state.dirty || state.saving) {
+    event.preventDefault();
+    event.returnValue = "";
+  }
 });
 
 el.uploadForm.addEventListener("submit", async (event) => {
@@ -319,7 +495,16 @@ el.uploadForm.addEventListener("submit", async (event) => {
 });
 
 el.refreshBatches.addEventListener("click", loadBatches);
+el.refreshGroups.addEventListener("click", () => loadGroups().catch((error) => console.error(error)));
 window.addEventListener("resize", fitOverlay);
+
+function labelsQuery() {
+  const labels = {};
+  for (const [key, value] of Object.entries(state.groupLabels)) {
+    if (value && value.trim() && value.trim() !== key) labels[key] = value.trim();
+  }
+  return Object.keys(labels).length ? `?labels=${encodeURIComponent(JSON.stringify(labels))}` : "";
+}
 
 function renderExportLinks() {
   if (!state.batchId) {
@@ -327,11 +512,44 @@ function renderExportLinks() {
     return;
   }
   el.exports.hidden = false;
-  el.exportCounts.href = `/api/batches/${state.batchId}/exports/counts`;
+  const suffix = labelsQuery();
+  el.exportPrism.href = `/api/batches/${state.batchId}/exports/prism${suffix}`;
+  el.exportExcel.href = `/api/batches/${state.batchId}/exports/excel${suffix}`;
+  el.exportCounts.href = `/api/batches/${state.batchId}/exports/counts${suffix}`;
   el.exportCoords.href = `/api/batches/${state.batchId}/exports/coordinates`;
-  el.exportExcel.href = `/api/batches/${state.batchId}/exports/excel`;
   el.exportJson.href = `/api/batches/${state.batchId}/exports/json`;
   el.exportAnnotated.href = `/api/batches/${state.batchId}/exports/annotated.zip`;
+}
+
+async function loadGroups() {
+  if (!state.batchId) {
+    el.groups.hidden = true;
+    return;
+  }
+  const groups = await api(`/api/batches/${state.batchId}/groups`);
+  el.groups.hidden = false;
+  el.groupList.innerHTML = "";
+  for (const group of groups) {
+    // Preserve any label the reviewer already typed this session.
+    if (!(group.key in state.groupLabels)) state.groupLabels[group.key] = group.label;
+    const row = document.createElement("label");
+    row.className = "group-row";
+    const total = group.counts.reduce((sum, count) => sum + Number(count || 0), 0);
+    const caption = document.createElement("span");
+    caption.className = "group-caption";
+    caption.textContent = `${group.filenames.length} image${group.filenames.length === 1 ? "" : "s"} · ${total} traps · ${escapeHtml(group.key)}`;
+    const input = document.createElement("input");
+    input.type = "text";
+    input.value = state.groupLabels[group.key];
+    input.placeholder = group.key;
+    input.addEventListener("input", () => {
+      state.groupLabels[group.key] = input.value;
+      renderExportLinks();
+    });
+    row.append(caption, input);
+    el.groupList.append(row);
+  }
+  renderExportLinks();
 }
 
 function formatDate(value) {

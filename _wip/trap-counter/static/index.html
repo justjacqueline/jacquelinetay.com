@@ -53,9 +53,10 @@
           <p id="imageMeta">Upload or select a batch to begin.</p>
         </div>
         <div class="toolbar-actions">
+          <span id="saveState" class="save-state" data-state="idle">No image</span>
           <button id="deletePoint" type="button" disabled>Delete Point</button>
           <button id="rerunPrediction" type="button" disabled>Rerun Detection</button>
-          <button id="saveReview" type="button" disabled>Save Review</button>
+          <button id="saveReview" type="button" disabled>Save now</button>
         </div>
       </div>
 
@@ -86,10 +87,24 @@
         </div>
       </div>
 
+      <div class="groups" id="groups" hidden>
+        <div class="section-title">
+          <h2>Genotype groups</h2>
+          <button id="refreshGroups" class="ghost" type="button">Refresh</button>
+        </div>
+        <p class="group-help">
+          One column per genotype in the Prism export. Rename a group to set its
+          column header (e.g. <code>2026-06-11_TrapQuant_N2</code> &rarr;
+          <code>N2</code>). Give two groups the same name to merge them.
+        </p>
+        <div id="groupList" class="group-list"></div>
+      </div>
+
       <div class="exports" id="exports" hidden>
+        <a id="exportPrism" href="#" class="primary-export">prism_counts.csv (per-genotype)</a>
+        <a id="exportExcel" href="#">weekly_review.xlsx</a>
         <a id="exportCounts" href="#">weekly_counts.csv</a>
         <a id="exportCoords" href="#">per_trap_coordinates.csv</a>
-        <a id="exportExcel" href="#">weekly_review.xlsx</a>
         <a id="exportJson" href="#">reviewed_annotations.json</a>
         <a id="exportAnnotated" href="#">annotated_images.zip</a>
       </div>

@@ -31,6 +31,10 @@ class Database:
 
     def init_schema(self) -> None:
         with self.connect() as conn:
+            # WAL keeps the DB readable during writes and survives an abrupt
+            # process exit without corrupting the review data.
+            conn.execute("PRAGMA journal_mode = WAL")
+            conn.execute("PRAGMA synchronous = NORMAL")
             conn.executescript(
                 """
                 CREATE TABLE IF NOT EXISTS batches (
