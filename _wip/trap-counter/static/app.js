@@ -10,6 +10,7 @@ const state = {
   saving: false,
   saveTimer: null,
   lastSaveError: null,
+  pollTimer: null,
 };
 
 const AUTOSAVE_DELAY = 900;
@@ -49,9 +50,27 @@ const el = {
   groups: document.querySelector("#groups"),
   groupList: document.querySelector("#groupList"),
   refreshGroups: document.querySelector("#refreshGroups"),
+  markerStyle: document.querySelector("#markerStyle"),
+  showLowConfidence: document.querySelector("#showLowConfidence"),
+  counts: document.querySelector("#counts"),
 };
 
 state.groupLabels = {};
+state.markerStyle = localStorage.getItem("trap-counter-marker-style") === "bubble" ? "bubble" : "arrow";
+state.showLowConfidence = localStorage.getItem("trap-counter-show-lowconf") === "1";
+
+// A point is shown/counted/saved when it is a reviewed or manual point, or a
+// high-confidence prediction. Low-confidence predictions (check/low/extra-low)
+// are hidden unless "show low-confidence" is on — they are mostly false positives.
+function passesConfidenceFilter(point) {
+  if (point.source !== "predicted") return true;
+  if (state.showLowConfidence) return true;
+  return confidenceBand(point) === "high";
+}
+
+function visiblePoints() {
+  return state.points.filter(passesConfidenceFilter);
+}
 
 function setStatus(message) {
   el.status.textContent = message;
@@ -105,8 +124,10 @@ function clearDraft(imageId) {
 }
 
 function reviewPayload() {
+  // Save only the points the reviewer actually sees; hidden low-confidence
+  // predictions are treated as rejected once the image is reviewed.
   return {
-    points: state.points.map((point) => ({ ...point, source: point.source === "predicted" ? "reviewed" : point.source })),
+    points: visiblePoints().map((point) => ({ ...point, source: point.source === "predicted" ? "reviewed" : point.source })),
     uncertain: el.uncertain.checked,
     notes: el.notes.value,
   };
@@ -230,6 +251,7 @@ async function selectBatch(batchId) {
     await selectImage(state.images[0].id);
   }
   setStatus("Ready");
+  scheduleBatchPoll();
 }
 
 function renderImageList() {
@@ -289,15 +311,16 @@ function renderReview() {
   el.imageMeta.textContent = hasImage
     ? `${state.image.width} x ${state.image.height}px · ${state.image.model_version}`
     : "Upload or select a batch to begin.";
+  const shown = hasImage ? visiblePoints() : [];
   el.predictedCount.textContent = hasImage ? state.image.predicted_count : "0";
-  const confidenceCounts = hasImage
-    ? predictedConfidenceCounts(state.points)
-    : { high: 0, check: 0, low: 0, extraLow: 0 };
+  const confidenceCounts = predictedConfidenceCounts(shown);
   el.highConfidenceCount.textContent = confidenceCounts.high;
   el.checkConfidenceCount.textContent = confidenceCounts.check;
   el.lowConfidenceCount.textContent = confidenceCounts.low;
   el.extraLowConfidenceCount.textContent = confidenceCounts.extraLow;
-  el.reviewedCount.textContent = hasImage ? state.points.length : "0";
+  el.reviewedCount.textContent = hasImage ? shown.length : "0";
+  // Hide the check/low/extra-low chips unless the reviewer opts into low-confidence.
+  el.counts.classList.toggle("hide-lowconf", !state.showLowConfidence);
   renderPoints();
 }
 
@@ -350,38 +373,44 @@ function fitOverlay() {
 function renderPoints() {
   el.overlay.innerHTML = "";
   if (!state.image) return;
-  for (const point of state.points) {
+  const hitRadius = Math.max(16, state.image.width * 0.007);
+  for (const point of visiblePoints()) {
     const group = document.createElementNS("http://www.w3.org/2000/svg", "g");
     group.classList.add("point");
     if (point.id === state.selectedId) group.classList.add("selected");
     group.dataset.id = point.id;
 
     const color = markerColor(point);
-    const arrowGap = Math.max(30, state.image.width * 0.016);
-    const arrowHead = Math.max(17, state.image.width * 0.008);
-    const direction = point.x > state.image.width - (arrowGap + arrowHead + 12) ? -1 : 1;
-    const endX = point.x + direction * arrowGap;
-    const endY = point.y;
-    const baseX = endX + direction * arrowHead;
-    const baseY = point.y;
-
     const hitArea = document.createElementNS("http://www.w3.org/2000/svg", "circle");
     hitArea.setAttribute("cx", point.x);
     hitArea.setAttribute("cy", point.y);
-    hitArea.setAttribute("r", Math.max(16, state.image.width * 0.007));
+    hitArea.setAttribute("r", hitRadius);
     hitArea.setAttribute("fill", "transparent");
 
-    const head = document.createElementNS("http://www.w3.org/2000/svg", "polygon");
-    head.setAttribute(
-      "points",
-      `${endX},${endY} ${baseX},${baseY - arrowHead * 0.7} ${baseX},${baseY + arrowHead * 0.7}`
-    );
-    head.setAttribute("fill", color);
-    head.setAttribute("opacity", "0.98");
-    head.setAttribute("stroke", "#ffffff");
-    head.setAttribute("stroke-width", Math.max(1.2, state.image.width * 0.00055));
+    let marker;
+    if (state.markerStyle === "bubble") {
+      // Translucent disc centered on the trap; the trap stays visible through it.
+      marker = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+      marker.setAttribute("cx", point.x);
+      marker.setAttribute("cy", point.y);
+      marker.setAttribute("r", Math.max(11, state.image.width * 0.006));
+      marker.setAttribute("fill", color);
+      marker.setAttribute("fill-opacity", point.id === state.selectedId ? "0.4" : "0.2");
+      marker.setAttribute("stroke", "none");
+    } else {
+      // Small arrowhead pointing at the trap from the side, so it never covers it.
+      const arrowGap = Math.max(30, state.image.width * 0.016);
+      const arrowHead = Math.max(17, state.image.width * 0.008);
+      const direction = point.x > state.image.width - (arrowGap + arrowHead + 12) ? -1 : 1;
+      const endX = point.x + direction * arrowGap;
+      const baseX = endX + direction * arrowHead;
+      marker = document.createElementNS("http://www.w3.org/2000/svg", "polygon");
+      marker.setAttribute("points", `${endX},${point.y} ${baseX},${point.y - arrowHead * 0.7} ${baseX},${point.y + arrowHead * 0.7}`);
+      marker.setAttribute("fill", color);
+      marker.setAttribute("opacity", "0.98");
+    }
 
-    group.append(hitArea, head);
+    group.append(hitArea, marker);
     group.addEventListener("pointerdown", (event) => {
       event.stopPropagation();
       state.selectedId = point.id;
@@ -498,6 +527,20 @@ el.refreshBatches.addEventListener("click", loadBatches);
 el.refreshGroups.addEventListener("click", () => loadGroups().catch((error) => console.error(error)));
 window.addEventListener("resize", fitOverlay);
 
+el.markerStyle.value = state.markerStyle;
+el.markerStyle.addEventListener("change", () => {
+  state.markerStyle = el.markerStyle.value === "bubble" ? "bubble" : "arrow";
+  localStorage.setItem("trap-counter-marker-style", state.markerStyle);
+  renderPoints();
+});
+
+el.showLowConfidence.checked = state.showLowConfidence;
+el.showLowConfidence.addEventListener("change", () => {
+  state.showLowConfidence = el.showLowConfidence.checked;
+  localStorage.setItem("trap-counter-show-lowconf", state.showLowConfidence ? "1" : "0");
+  renderReview();
+});
+
 function labelsQuery() {
   const labels = {};
   for (const [key, value] of Object.entries(state.groupLabels)) {
@@ -519,6 +562,50 @@ function renderExportLinks() {
   el.exportCoords.href = `/api/batches/${state.batchId}/exports/coordinates`;
   el.exportJson.href = `/api/batches/${state.batchId}/exports/json`;
   el.exportAnnotated.href = `/api/batches/${state.batchId}/exports/annotated.zip`;
+}
+
+function anyPending() {
+  return state.images.some((image) => image.status === "queued" || image.status === "detecting");
+}
+
+function scheduleBatchPoll() {
+  if (state.pollTimer) {
+    clearTimeout(state.pollTimer);
+    state.pollTimer = null;
+  }
+  if (!state.batchId || !anyPending()) return;
+  const pending = state.images.filter((image) => image.status === "queued" || image.status === "detecting").length;
+  setStatus(`Detecting ${pending} image${pending === 1 ? "" : "s"}…`);
+  state.pollTimer = setTimeout(refreshBatchProgress, 2500);
+}
+
+async function refreshBatchProgress() {
+  state.pollTimer = null;
+  if (!state.batchId) return;
+  const batchId = state.batchId;
+  let images;
+  try {
+    images = await api(`/api/batches/${batchId}/images`);
+  } catch {
+    scheduleBatchPoll();
+    return;
+  }
+  if (state.batchId !== batchId) return; // user moved on
+  state.images = images;
+  renderImageList();
+  // Reveal fresh predictions on the open image, but never over an unsaved edit.
+  if (state.image && !state.dirty) {
+    const fresh = images.find((image) => image.id === state.image.id);
+    if (fresh && fresh.status === "predicted" && state.image.status !== "predicted") {
+      await selectImage(state.image.id);
+    }
+  }
+  if (!anyPending()) {
+    setStatus("Ready");
+    loadGroups().catch((error) => console.error(error));
+    return;
+  }
+  scheduleBatchPoll();
 }
 
 async function loadGroups() {

@@ -290,6 +290,35 @@ textarea {
   color: var(--accent);
 }
 
+.view-controls {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.view-controls .control {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+.view-controls select {
+  padding: 0.25rem 0.4rem;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: var(--panel);
+  color: var(--ink);
+}
+
+.counts.hide-lowconf .check-count,
+.counts.hide-lowconf .low-count,
+.counts.hide-lowconf .extra-low-count {
+  display: none;
+}
+
 .save-state {
   align-self: center;
   font-size: 0.8rem;

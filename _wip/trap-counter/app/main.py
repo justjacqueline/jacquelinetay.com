@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import shutil
+import threading
 import uuid
 from pathlib import Path
 
@@ -28,6 +29,35 @@ for directory in (ORIGINALS_DIR, PREVIEWS_DIR, EXPORTS_DIR):
 app = FastAPI(title="Nematode Trap Counter")
 app.mount("/static", StaticFiles(directory=BASE_DIR / "static"), name="static")
 app.mount("/media/previews", StaticFiles(directory=PREVIEWS_DIR), name="previews")
+
+# Background detection: uploads enqueue images; this single worker thread runs
+# ilastik on them one at a time so the upload request returns immediately and a
+# 60-image batch cannot time out.
+_detection_wake = threading.Event()
+
+
+def _detection_worker() -> None:
+    while True:
+        row = DB.next_queued_image()
+        if row is None:
+            _detection_wake.wait(2.0)
+            _detection_wake.clear()
+            continue
+        image_id = int(row["id"])
+        DB.set_image_status(image_id, "detecting")
+        try:
+            points, version = detect_traps(Path(row["original_path"]))
+            DB.update_prediction(image_id, points, version)  # also sets status to 'predicted'
+        except Exception:
+            DB.set_image_status(image_id, "error")
+
+
+@app.on_event("startup")
+def _start_detection_worker() -> None:
+    requeued = DB.requeue_stuck_images()  # recover anything interrupted by a restart
+    if requeued:
+        _detection_wake.set()
+    threading.Thread(target=_detection_worker, name="trap-detection", daemon=True).start()
 
 
 @app.get("/")
@@ -66,7 +96,9 @@ async def create_batch(
             partial_path.replace(original_path)
             preview_path = batch_previews / f"{Path(stored_name).stem}.jpg"
             metadata = make_preview(original_path, preview_path)
-            predicted_points, model_version = detect_traps(original_path)
+            # Detection (ilastik) is slow, so it does not run inline; the image
+            # is queued and a background worker fills in predictions. This keeps
+            # a large upload from timing out the request.
             DB.create_image(
                 batch_id=batch_id,
                 filename=upload.filename or stored_name,
@@ -74,9 +106,9 @@ async def create_batch(
                 preview_path=str(preview_path),
                 width=metadata["width"],
                 height=metadata["height"],
-                status="predicted",
-                predicted_points=predicted_points,
-                model_version=model_version,
+                status="queued",
+                predicted_points=[],
+                model_version="queued",
                 metadata=metadata,
             )
             saved += 1
@@ -87,6 +119,8 @@ async def create_batch(
             original_path.unlink(missing_ok=True)
             skipped.append(upload.filename or stored_name)
 
+    if saved:
+        _detection_wake.set()  # nudge the background worker to start detecting
     row = DB.get_batch(batch_id)
     if row is None:
         raise HTTPException(status_code=500, detail="Batch creation failed")

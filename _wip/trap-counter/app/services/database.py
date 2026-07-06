@@ -192,6 +192,38 @@ class Database:
                 (json.dumps({"points": points}), now, image_id),
             )
 
+    def next_queued_image(self) -> sqlite3.Row | None:
+        with self.connect() as conn:
+            return conn.execute(
+                "SELECT * FROM images WHERE status = 'queued' ORDER BY id LIMIT 1"
+            ).fetchone()
+
+    def set_image_status(self, image_id: int, status: str) -> None:
+        now = utc_now()
+        with self.connect() as conn:
+            conn.execute(
+                "UPDATE images SET status = ?, updated_at = ? WHERE id = ?",
+                (status, now, image_id),
+            )
+
+    def requeue_stuck_images(self) -> int:
+        """After a crash/restart, images left mid-detection are re-queued."""
+        now = utc_now()
+        with self.connect() as conn:
+            cur = conn.execute(
+                "UPDATE images SET status = 'queued', updated_at = ? WHERE status = 'detecting'",
+                (now,),
+            )
+            return cur.rowcount
+
+    def count_pending_images(self, batch_id: int) -> int:
+        with self.connect() as conn:
+            row = conn.execute(
+                "SELECT COUNT(*) AS n FROM images WHERE batch_id = ? AND status IN ('queued', 'detecting')",
+                (batch_id,),
+            ).fetchone()
+            return int(row["n"])
+
     def update_prediction(self, image_id: int, points: list[dict[str, Any]], model_version: str) -> None:
         now = utc_now()
         with self.connect() as conn:

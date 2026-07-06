@@ -20,8 +20,19 @@ There are two separate apps in this repo:
 The two are not connected. The real work is to make this folder's app good enough
 to deploy and then deploy it.
 
-## Already done in this pass
+## Already done
 
+- **Safe saving.** Review edits autosave; switching image/batch flushes first;
+  every edit is mirrored to a browser local draft for crash/offline recovery; a
+  save-state chip and a beforeunload guard. No more silent loss on image switch.
+- **Durable storage.** SQLite WAL mode; atomic write-once originals; per-file
+  upload resilience. See README "Where Files Are Stored".
+- **Background detection on upload.** Uploads return immediately and a worker runs
+  ilastik in the background; the UI polls for results. A 60+ image batch no longer
+  times out.
+- **Review display options.** Arrow / translucent-bubble marker toggle, and a
+  "show low-confidence" filter (off by default) that hides mostly-false-positive
+  low-confidence predictions from the view, count, and (once reviewed) the export.
 - **Prism export by genotype.** New `prism_counts.csv` + `prism` Excel sheet:
   one column per genotype, values are the per-image trap counts, ragged columns
   padded with blanks — the exact grid Prism's Column tables expect. Group keys are
@@ -60,17 +71,14 @@ Deployment checklist:
 
 ## 2. Make storage robust (she called this out specifically)
 
-The foundation is already sound: originals are stored immutably, previews are
-derived, review state is in SQLite, exports are regenerated on demand. Harden it:
+Done in-app: WAL mode, atomic write-once originals, per-file upload resilience.
+Remaining, and now the **top priority** since it's the one storage risk left:
 
 - **Back up `data/` automatically.** Everything scientific lives there
-  (`originals/`, `trap_counter.sqlite3`, `annotations`). A nightly copy to a second
-  disk or cloud bucket is enough. Originals never change, so incremental backups
-  are cheap.
-- **Never mutate originals.** Keep the rule that only previews/exports are
-  regenerable and originals are write-once.
-- **Keep the SQLite file on durable storage**, not a temp/ephemeral disk. Consider
-  turning on WAL mode for safer concurrent reads during review.
+  (`originals/`, `trap_counter.sqlite3`). A nightly copy to a second disk or cloud
+  bucket is enough. Originals never change, so incremental backups are cheap. WAL
+  protects against a crash; it does not protect against a lost disk.
+- **Keep the SQLite file on durable storage**, not a temp/ephemeral disk.
 - **Filename integrity:** the genotype export depends on her naming convention
   (`…_NNN.tif`). Add a gentle warning in the UI when a filename doesn't match, so a
   typo doesn't silently create a one-image "group."
@@ -90,11 +98,12 @@ knobs is the tell. Rather than chase it further:
   beats ilastik — but it depends on the app existing and collecting clean labels
   first. So building the app well *is* the ML plan, not a detour from it.
 
-## 4. Fold the practice-page polish into the real app
+## 4. Marker/display polish in the real app — done
 
-The marker improvements (smaller arrows + a "bubble on trap" toggle) were done on
-the live practice page. Mirror them in this app's `static/app.js` `renderPoints()`
-so the real tool matches what she liked. Small, self-contained follow-up.
+Arrow / translucent-bubble toggle and the low-confidence filter are now in the
+real app. Possible follow-up: the image-list still shows the raw detector count
+(e.g. `predicted · 47`) while the review panel shows the filtered count (`36`);
+could reconcile those if the difference is confusing.
 
 ## Suggested order
 

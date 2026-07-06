@@ -66,6 +66,48 @@ Point annotation JSON:
 
 Coordinates are stored in original image pixel coordinates, not preview coordinates, so exports remain scientifically useful.
 
+## Where Files Are Stored
+
+Everything lives under `_wip/trap-counter/data/` (gitignored):
+
+```text
+data/
+  trap_counter.sqlite3      # batches, images, review annotations (WAL mode)
+  originals/<batch_id>/*.tif # uploaded originals, write-once (never modified)
+  previews/<batch_id>/*.jpg  # browser preview images, regenerable
+  exports/<batch_id>/*       # generated CSV/XLSX/JSON/ZIP, regenerable
+```
+
+Originals are written atomically (`.part` then rename) and never mutated. The
+only irreplaceable files are `data/trap_counter.sqlite3` and `data/originals/` —
+back those up. Previews and exports can always be regenerated.
+
+## Uploads and Background Detection
+
+Detection (ilastik, ~15-25s/image) does **not** run inside the upload request.
+On upload each image is stored, given a preview, and marked `queued`; the request
+returns immediately so a large batch never times out. A single background worker
+then runs detection one image at a time and flips each to `predicted`. The UI
+polls and reveals results as they finish. One unreadable file is skipped rather
+than aborting the batch, and images left mid-detection by a restart are re-queued.
+
+## Saving Review Edits
+
+Review edits autosave (debounced) — there is no "remember to save" step. A
+save-state chip shows Saving/Saved/retrying. Switching image or batch flushes any
+pending save first, and every edit is mirrored to a browser local draft that is
+restored if a save failed or the tab crashed, so counting work is not lost.
+
+## Review Display Options
+
+- **Marker style**: small arrow (points at the trap) or a translucent bubble on
+  the trap. Persisted per browser.
+- **Show low-confidence**: off by default. Low-confidence predictions
+  (check/low/extra-low bands) are hidden from the image and the count, since they
+  are mostly false positives; turning it on reveals them. When an image is
+  reviewed, only the shown points are saved/exported, so hidden low-confidence
+  predictions are treated as rejected.
+
 ## Current ilastik Workflow
 
 The current working pipeline uses grayscale ilastik training/inference while keeping the browser preview visually faithful to the original TIFF.

@@ -77,7 +77,20 @@
           Reviewer notes
           <textarea id="notes" rows="2" placeholder="Optional note for audit trail"></textarea>
         </label>
-        <div class="counts">
+        <div class="view-controls">
+          <label class="control">
+            Marker
+            <select id="markerStyle">
+              <option value="arrow">Small arrow</option>
+              <option value="bubble">Bubble on trap</option>
+            </select>
+          </label>
+          <label class="control checkline">
+            <input id="showLowConfidence" type="checkbox">
+            Show low-confidence
+          </label>
+        </div>
+        <div class="counts" id="counts">
           <span>Predicted <strong id="predictedCount">0</strong></span>
           <span class="high-count">High <strong id="highConfidenceCount">0</strong></span>
           <span class="check-count">Check <strong id="checkConfidenceCount">0</strong></span>
