@@ -47,7 +47,7 @@ select {
 
 .review-topbar {
   display: grid;
-  grid-template-columns: minmax(220px, 1fr) minmax(180px, 240px) auto auto;
+  grid-template-columns: minmax(200px, 1fr) minmax(150px, 200px) minmax(150px, 200px) auto auto;
   align-items: center;
   gap: 16px;
   padding: 14px 18px;
@@ -165,9 +165,7 @@ h2 {
 
 .marker-head {
   fill: #050505;
-  stroke: #ffffff;
-  stroke-width: 1.5;
-  paint-order: stroke fill;
+  stroke: none;
 }
 
 .marker-head.reviewed {
@@ -176,6 +174,20 @@ h2 {
 
 .marker-head.selected {
   fill: #d62828;
+}
+
+/* Bubble style: a soft translucent disc sitting directly on the trap, no outline. */
+.marker-bubble {
+  fill: rgba(38, 70, 110, 0.18);
+  stroke: none;
+}
+
+.marker-bubble.reviewed {
+  fill: rgba(15, 143, 84, 0.18);
+}
+
+.marker-bubble.selected {
+  fill: rgba(38, 70, 110, 0.42);
 }
 
 .review-panel {

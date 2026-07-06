@@ -9,8 +9,11 @@ const exportBtn = document.getElementById("exportBtn");
 const notes = document.getElementById("notes");
 const uncertain = document.getElementById("uncertain");
 const selectedReadout = document.getElementById("selectedReadout");
+const markerStyleSelect = document.getElementById("markerStyleSelect");
 
 const storageKey = "trap-counter-practice-v2";
+const markerStyleKey = "trap-counter-practice-marker-style";
+let markerStyle = localStorage.getItem(markerStyleKey) === "bubble" ? "bubble" : "arrow";
 
 let examples = [];
 let currentExample = null;
@@ -92,13 +95,24 @@ function render() {
     hit.setAttribute("r", "16");
     hit.setAttribute("fill", "transparent");
 
-    const head = document.createElementNS("http://www.w3.org/2000/svg", "path");
-    head.setAttribute("d", "M -30 -9 L -8 0 L -30 9 Z");
-    head.classList.add("marker-head");
-    if (point.source === "reviewed") head.classList.add("reviewed");
-    if (point.id === selectedId) head.classList.add("selected");
+    let marker;
+    if (markerStyle === "bubble") {
+      // Translucent ring centered on the trap, so the trap stays visible through it.
+      marker = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+      marker.setAttribute("cx", "0");
+      marker.setAttribute("cy", "0");
+      marker.setAttribute("r", "13");
+      marker.classList.add("marker-bubble");
+    } else {
+      // Small arrowhead pointing at the trap from the left, so it never covers it.
+      marker = document.createElementNS("http://www.w3.org/2000/svg", "path");
+      marker.setAttribute("d", "M -12 -4 L -3 0 L -12 4 Z");
+      marker.classList.add("marker-head");
+    }
+    if (point.source === "reviewed") marker.classList.add("reviewed");
+    if (point.id === selectedId) marker.classList.add("selected");
 
-    group.append(hit, head);
+    group.append(hit, marker);
     layer.append(group);
   });
 
@@ -195,6 +209,13 @@ document.addEventListener("keydown", (event) => {
 exampleSelect.addEventListener("change", () => {
   saveState();
   setExample(exampleSelect.value);
+});
+
+markerStyleSelect.value = markerStyle;
+markerStyleSelect.addEventListener("change", () => {
+  markerStyle = markerStyleSelect.value === "bubble" ? "bubble" : "arrow";
+  localStorage.setItem(markerStyleKey, markerStyle);
+  render();
 });
 
 notes.addEventListener("input", saveState);
