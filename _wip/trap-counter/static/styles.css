@@ -319,6 +319,15 @@ textarea {
   display: none;
 }
 
+.counts .count-main {
+  font-weight: 600;
+  color: var(--accent);
+}
+
+.counts .count-main strong {
+  font-size: 1.15em;
+}
+
 .save-state {
   align-self: center;
   font-size: 0.8rem;

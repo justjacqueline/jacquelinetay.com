@@ -35,10 +35,6 @@ const el = {
   uncertain: document.querySelector("#uncertain"),
   notes: document.querySelector("#notes"),
   predictedCount: document.querySelector("#predictedCount"),
-  highConfidenceCount: document.querySelector("#highConfidenceCount"),
-  checkConfidenceCount: document.querySelector("#checkConfidenceCount"),
-  lowConfidenceCount: document.querySelector("#lowConfidenceCount"),
-  extraLowConfidenceCount: document.querySelector("#extraLowConfidenceCount"),
   reviewedCount: document.querySelector("#reviewedCount"),
   exports: document.querySelector("#exports"),
   exportPrism: document.querySelector("#exportPrism"),
@@ -313,14 +309,7 @@ function renderReview() {
     : "Upload or select a batch to begin.";
   const shown = hasImage ? visiblePoints() : [];
   el.predictedCount.textContent = hasImage ? state.image.predicted_count : "0";
-  const confidenceCounts = predictedConfidenceCounts(shown);
-  el.highConfidenceCount.textContent = confidenceCounts.high;
-  el.checkConfidenceCount.textContent = confidenceCounts.check;
-  el.lowConfidenceCount.textContent = confidenceCounts.low;
-  el.extraLowConfidenceCount.textContent = confidenceCounts.extraLow;
   el.reviewedCount.textContent = hasImage ? shown.length : "0";
-  // Hide the check/low/extra-low chips unless the reviewer opts into low-confidence.
-  el.counts.classList.toggle("hide-lowconf", !state.showLowConfidence);
   renderPoints();
 }
 
@@ -371,8 +360,22 @@ function fitOverlay() {
 }
 
 function renderPoints() {
-  el.overlay.innerHTML = "";
-  if (!state.image) return;
+  if (!state.image) {
+    el.overlay.innerHTML = "";
+    return;
+  }
+  // A reusable radial gradient makes each bubble read like a clear water drop:
+  // near-invisible in the middle, a faint refractive rim at the edge.
+  el.overlay.innerHTML =
+    state.markerStyle === "bubble"
+      ? '<defs><radialGradient id="waterdrop" cx="50%" cy="50%" r="50%">' +
+        '<stop offset="0%" stop-color="#bcd8f0" stop-opacity="0.03"/>' +
+        '<stop offset="66%" stop-color="#bcd8f0" stop-opacity="0.05"/>' +
+        '<stop offset="84%" stop-color="#7fb0e0" stop-opacity="0.22"/>' +
+        '<stop offset="95%" stop-color="#3f7cc0" stop-opacity="0.55"/>' +
+        '<stop offset="100%" stop-color="#3f7cc0" stop-opacity="0.42"/>' +
+        "</radialGradient></defs>"
+      : "";
   const hitRadius = Math.max(16, state.image.width * 0.007);
   for (const point of visiblePoints()) {
     const group = document.createElementNS("http://www.w3.org/2000/svg", "g");
@@ -387,16 +390,22 @@ function renderPoints() {
     hitArea.setAttribute("r", hitRadius);
     hitArea.setAttribute("fill", "transparent");
 
-    let marker;
     if (state.markerStyle === "bubble") {
-      // Translucent disc centered on the trap; the trap stays visible through it.
-      marker = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-      marker.setAttribute("cx", point.x);
-      marker.setAttribute("cy", point.y);
-      marker.setAttribute("r", Math.max(11, state.image.width * 0.006));
-      marker.setAttribute("fill", color);
-      marker.setAttribute("fill-opacity", point.id === state.selectedId ? "0.4" : "0.2");
-      marker.setAttribute("stroke", "none");
+      // Large, very translucent water drop sitting over the whole trap.
+      const r = Math.max(34, state.image.width * 0.024);
+      const drop = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+      drop.setAttribute("cx", point.x);
+      drop.setAttribute("cy", point.y);
+      drop.setAttribute("r", r);
+      drop.setAttribute("fill", "url(#waterdrop)");
+      if (point.id === state.selectedId) {
+        drop.setAttribute("stroke", "#1d7e53");
+        drop.setAttribute("stroke-opacity", "0.7");
+        drop.setAttribute("stroke-width", Math.max(1.5, state.image.width * 0.0008));
+      } else {
+        drop.setAttribute("stroke", "none");
+      }
+      group.append(drop, hitArea);
     } else {
       // Small arrowhead pointing at the trap from the side, so it never covers it.
       const arrowGap = Math.max(30, state.image.width * 0.016);
@@ -404,13 +413,12 @@ function renderPoints() {
       const direction = point.x > state.image.width - (arrowGap + arrowHead + 12) ? -1 : 1;
       const endX = point.x + direction * arrowGap;
       const baseX = endX + direction * arrowHead;
-      marker = document.createElementNS("http://www.w3.org/2000/svg", "polygon");
-      marker.setAttribute("points", `${endX},${point.y} ${baseX},${point.y - arrowHead * 0.7} ${baseX},${point.y + arrowHead * 0.7}`);
-      marker.setAttribute("fill", color);
-      marker.setAttribute("opacity", "0.98");
+      const arrow = document.createElementNS("http://www.w3.org/2000/svg", "polygon");
+      arrow.setAttribute("points", `${endX},${point.y} ${baseX},${point.y - arrowHead * 0.7} ${baseX},${point.y + arrowHead * 0.7}`);
+      arrow.setAttribute("fill", color);
+      arrow.setAttribute("opacity", "0.98");
+      group.append(hitArea, arrow);
     }
-
-    group.append(hitArea, marker);
     group.addEventListener("pointerdown", (event) => {
       event.stopPropagation();
       state.selectedId = point.id;

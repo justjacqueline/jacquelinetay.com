@@ -82,6 +82,31 @@ Originals are written atomically (`.part` then rename) and never mutated. The
 only irreplaceable files are `data/trap_counter.sqlite3` and `data/originals/` —
 back those up. Previews and exports can always be regenerated.
 
+## Backups
+
+A background job snapshots the SQLite database (via the online backup API, safe
+mid-write) and incrementally mirrors new originals every few hours into a backup
+folder, keeping the most recent snapshots. Configure in `.env`:
+
+```text
+TRAP_BACKUP_ENABLED=1
+TRAP_BACKUP_INTERVAL_HOURS=6
+TRAP_BACKUP_KEEP=14
+TRAP_BACKUP_DIR=   # defaults to data/backups
+```
+
+The default `data/backups` is same-disk (protects against DB corruption and
+accidental deletion). For protection against **disk failure**, set
+`TRAP_BACKUP_DIR` to a cloud-synced folder (iCloud/Dropbox/Google Drive) so a copy
+also lives off the machine.
+
+## Starting the App (non-technical)
+
+Double-click **`Start Trap Counter.command`**. A Terminal opens, the server starts,
+and the browser opens to `http://127.0.0.1:8000`. Close the Terminal to stop it.
+See `HOW_TO_USE.md` for the full reviewer guide. (This requires the one-time setup
+under "Run Locally" to have created `.venv`.)
+
 ## Uploads and Background Detection
 
 Detection (ilastik, ~15-25s/image) does **not** run inside the upload request.

@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Nematode Trap Counter</title>
-  <link rel="stylesheet" href="/static/styles.css">
+  <link rel="stylesheet" href="/static/styles.css?v=2">
 </head>
 <body>
   <header class="topbar">
@@ -55,7 +55,7 @@
         <div class="toolbar-actions">
           <span id="saveState" class="save-state" data-state="idle">No image</span>
           <button id="deletePoint" type="button" disabled>Delete Point</button>
-          <button id="rerunPrediction" type="button" disabled>Rerun Detection</button>
+          <button id="rerunPrediction" type="button" hidden disabled>Rerun Detection</button>
           <button id="saveReview" type="button" disabled>Save now</button>
         </div>
       </div>
@@ -91,12 +91,8 @@
           </label>
         </div>
         <div class="counts" id="counts">
-          <span>Predicted <strong id="predictedCount">0</strong></span>
-          <span class="high-count">High <strong id="highConfidenceCount">0</strong></span>
-          <span class="check-count">Check <strong id="checkConfidenceCount">0</strong></span>
-          <span class="low-count">Low <strong id="lowConfidenceCount">0</strong></span>
-          <span class="extra-low-count">Extra Low <strong id="extraLowConfidenceCount">0</strong></span>
-          <span>Reviewed <strong id="reviewedCount">0</strong></span>
+          <span title="Traps the AI detector proposed for this image">AI predicted <strong id="predictedCount">0</strong></span>
+          <span class="count-main" title="Traps currently marked — this is the number exported">Count <strong id="reviewedCount">0</strong></span>
         </div>
       </div>
 
@@ -124,6 +120,6 @@
     </section>
   </main>
 
-  <script src="/static/app.js"></script>
+  <script src="/static/app.js?v=2"></script>
 </body>
 </html>

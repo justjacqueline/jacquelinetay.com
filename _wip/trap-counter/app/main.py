@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import os
 import shutil
 import threading
 import uuid
@@ -13,6 +14,7 @@ from fastapi.staticfiles import StaticFiles
 from .models import AnnotationPayload, BatchOut, ImageOut
 from .services.database import Database
 from .services.detector import detect_traps
+from .services.backups import run_backup
 from .services.exports import build_group_summary, write_annotated_zip, write_batch_exports
 from .services.images import make_preview
 
@@ -58,6 +60,30 @@ def _start_detection_worker() -> None:
     if requeued:
         _detection_wake.set()
     threading.Thread(target=_detection_worker, name="trap-detection", daemon=True).start()
+
+
+# Automatic backups: snapshot the SQLite DB (safely) and mirror new originals on a
+# schedule. Set TRAP_BACKUP_DIR to a cloud-synced folder for an off-machine copy.
+_backup_stop = threading.Event()
+
+
+def _backup_worker() -> None:
+    backup_dir = Path(os.getenv("TRAP_BACKUP_DIR", str(DATA_DIR / "backups")))
+    interval = float(os.getenv("TRAP_BACKUP_INTERVAL_HOURS", "6")) * 3600
+    keep = int(os.getenv("TRAP_BACKUP_KEEP", "14"))
+    while not _backup_stop.is_set():
+        try:
+            run_backup(DATA_DIR, backup_dir, keep)
+        except Exception:
+            pass
+        _backup_stop.wait(max(interval, 300))
+
+
+@app.on_event("startup")
+def _start_backup_worker() -> None:
+    if os.getenv("TRAP_BACKUP_ENABLED", "1").lower() in {"0", "false", "no"}:
+        return
+    threading.Thread(target=_backup_worker, name="trap-backup", daemon=True).start()
 
 
 @app.get("/")
