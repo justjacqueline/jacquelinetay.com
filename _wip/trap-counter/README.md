@@ -100,12 +100,13 @@ accidental deletion). For protection against **disk failure**, set
 `TRAP_BACKUP_DIR` to a cloud-synced folder (iCloud/Dropbox/Google Drive) so a copy
 also lives off the machine.
 
-## Starting the App (non-technical)
+## Installing on Another Mac (non-technical)
 
-Double-click **`Start Trap Counter.command`**. A Terminal opens, the server starts,
-and the browser opens to `http://127.0.0.1:8000`. Close the Terminal to stop it.
-See `HOW_TO_USE.md` for the full reviewer guide. (This requires the one-time setup
-under "Run Locally" to have created `.venv`.)
+To run this on a reviewer's own Mac: copy the whole folder over (including
+`downloads/` and `models/`), double-click **`Setup.command`** once, then use
+**`Start Trap Counter.command`** from then on. Full checklist in `INSTALL.md`;
+daily reviewer guide in `HOW_TO_USE.md`. The app opens in the browser at
+`http://127.0.0.1:8000` and runs entirely on that machine.
 
 ## Uploads and Background Detection
 
