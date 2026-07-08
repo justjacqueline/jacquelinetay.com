@@ -32,6 +32,13 @@ const el = {
   rerunPrediction: document.querySelector("#rerunPrediction"),
   saveReview: document.querySelector("#saveReview"),
   saveState: document.querySelector("#saveState"),
+  markDone: document.querySelector("#markDone"),
+  openDashboard: document.querySelector("#openDashboard"),
+  dashboardView: document.querySelector("#dashboardView"),
+  dashboardBody: document.querySelector("#dashboardBody"),
+  dashboardProgress: document.querySelector("#dashboardProgress"),
+  workspace: document.querySelector(".workspace"),
+  reviewFooter: document.querySelector(".review-footer"),
   uncertain: document.querySelector("#uncertain"),
   notes: document.querySelector("#notes"),
   predictedCount: document.querySelector("#predictedCount"),
@@ -82,6 +89,7 @@ function setSaveState(name) {
     unsaved: "Unsaved changes",
     saving: "Saving…",
     error: "Save failed — kept locally, retrying",
+    locked: "Done — locked",
   };
   el.saveState.dataset.state = name;
   el.saveState.textContent = labels[name] || name;
@@ -243,9 +251,7 @@ async function selectBatch(batchId) {
   state.images = await api(`/api/batches/${batchId}/images`);
   renderImageList();
   await loadGroups();
-  if (state.images[0]) {
-    await selectImage(state.images[0].id);
-  }
+  showDashboard(); // land on the dashboard (home base), not a single image
   setStatus("Ready");
   scheduleBatchPoll();
 }
@@ -266,6 +272,9 @@ function renderImageList() {
 async function selectImage(imageId) {
   // Never switch away with unsaved edits still in memory.
   await flushPendingSave();
+  el.dashboardView.hidden = true; // leave the dashboard when opening an image
+  el.workspace.style.display = "";
+  el.reviewFooter.style.display = "";
   state.image = await api(`/api/images/${imageId}`);
   state.selectedId = null;
   el.preview.onload = fitOverlay;
@@ -292,7 +301,7 @@ async function selectImage(imageId) {
   state.dirty = false;
   renderReview();
   renderImageList();
-  setSaveState("saved");
+  setSaveState(state.image.validated ? "locked" : "saved");
 }
 
 function renderReview() {
@@ -300,9 +309,14 @@ function renderReview() {
   el.emptyState.style.display = hasImage ? "none" : "block";
   el.preview.style.display = hasImage ? "block" : "none";
   el.overlay.style.display = hasImage ? "block" : "none";
-  el.deletePoint.disabled = !state.selectedId;
+  const locked = hasImage && state.image.validated;
+  el.deletePoint.disabled = !state.selectedId || locked;
   el.rerunPrediction.disabled = !hasImage;
-  el.saveReview.disabled = !hasImage;
+  el.saveReview.disabled = !hasImage || locked;
+  el.markDone.disabled = !hasImage;
+  el.markDone.textContent = locked ? "Undone" : "Mark done";
+  el.overlay.style.pointerEvents = locked ? "none" : "";
+  el.imageStage.classList.toggle("locked", locked);
   el.imageTitle.textContent = hasImage ? state.image.filename : "No image selected";
   el.imageMeta.textContent = hasImage
     ? `${state.image.width} x ${state.image.height}px · ${state.image.model_version}`
@@ -495,6 +509,27 @@ el.saveReview.addEventListener("click", async () => {
   await persistReview();
 });
 
+el.markDone.addEventListener("click", async () => {
+  if (!state.image) return;
+  const next = !state.image.validated;
+  if (next) await flushPendingSave(); // lock in the latest edits before freezing
+  state.image = await api(`/api/images/${state.image.id}/validate`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ validated: next }),
+  });
+  state.points = state.image.points.map((point) => ({ ...point }));
+  state.images = state.images.map((image) => (image.id === state.image.id ? state.image : image));
+  renderReview();
+  renderImageList();
+  setSaveState(next ? "locked" : "saved");
+});
+
+el.openDashboard.addEventListener("click", async () => {
+  await flushPendingSave();
+  showDashboard();
+});
+
 el.notes.addEventListener("input", markDirty);
 el.uncertain.addEventListener("change", markDirty);
 
@@ -601,8 +636,10 @@ async function refreshBatchProgress() {
   if (state.batchId !== batchId) return; // user moved on
   state.images = images;
   renderImageList();
-  // Reveal fresh predictions on the open image, but never over an unsaved edit.
-  if (state.image && !state.dirty) {
+  if (!el.dashboardView.hidden) renderDashboard();
+  // Reveal fresh predictions on the open image, but only while actually viewing
+  // an image (not on the dashboard) and never over an unsaved edit.
+  if (el.dashboardView.hidden && state.image && !state.dirty && !state.image.validated) {
     const fresh = images.find((image) => image.id === state.image.id);
     if (fresh && fresh.status === "predicted" && state.image.status !== "predicted") {
       await selectImage(state.image.id);
@@ -645,6 +682,101 @@ async function loadGroups() {
     el.groupList.append(row);
   }
   renderExportLinks();
+}
+
+function strainKey(filename) {
+  const stem = filename.replace(/\.[^.]+$/, "");
+  return stem.replace(/[_-]\d+$/, "") || stem;
+}
+
+function strainLabel(filename) {
+  const key = strainKey(filename);
+  const renamed = state.groupLabels[key];
+  return renamed && renamed.trim() ? renamed.trim() : key;
+}
+
+function displayCount(image) {
+  return image.reviewed_count ?? (image.points ? image.points.length : 0);
+}
+
+function showDashboard() {
+  el.dashboardView.hidden = false;
+  el.workspace.style.display = "none";
+  el.reviewFooter.style.display = "none";
+  el.groups.hidden = true;
+  el.exports.hidden = true;
+  renderDashboard();
+}
+
+function hideDashboard() {
+  el.dashboardView.hidden = true;
+  el.workspace.style.display = "";
+  el.reviewFooter.style.display = "";
+  renderExportLinks();
+  loadGroups().catch((error) => console.error(error));
+}
+
+function renderDashboard() {
+  if (!state.batchId || !state.images.length) {
+    el.dashboardProgress.textContent = "No images in this batch.";
+    el.dashboardBody.innerHTML = "";
+    return;
+  }
+  const done = state.images.filter((image) => image.validated).length;
+  el.dashboardProgress.textContent = `${done} of ${state.images.length} images done`;
+
+  const strains = new Map();
+  for (const image of state.images) {
+    const label = strainLabel(image.filename);
+    if (!strains.has(label)) strains.set(label, new Map());
+    const plates = strains.get(label);
+    const plate = image.plate || 1;
+    if (!plates.has(plate)) plates.set(plate, []);
+    plates.get(plate).push(image);
+  }
+  let maxImgs = 3;
+  for (const plates of strains.values()) {
+    for (const imgs of plates.values()) maxImgs = Math.max(maxImgs, imgs.length);
+  }
+
+  let html = '<table class="dash-table"><thead><tr><th>plate</th>';
+  for (let i = 1; i <= maxImgs; i += 1) html += `<th>image ${i}</th>`;
+  html += '<th class="dash-total-h">plate total</th></tr></thead><tbody>';
+
+  for (const [label, plates] of strains) {
+    const plateNos = [...plates.keys()].sort((a, b) => a - b);
+    const platesDone = plateNos.filter((p) => plates.get(p).every((im) => im.validated)).length;
+    html += `<tr class="dash-strain"><td colspan="${maxImgs + 2}"><span class="dash-strain-name">${escapeHtml(label)}</span><span class="dash-strain-sub">${platesDone} of ${plateNos.length} plates done</span></td></tr>`;
+    for (const p of plateNos) {
+      const imgs = plates.get(p).slice().sort((a, b) => (a.image_number || 0) - (b.image_number || 0));
+      html += `<tr><td class="dash-plate">plate ${p}</td>`;
+      for (let i = 0; i < maxImgs; i += 1) {
+        const image = imgs[i];
+        if (!image) {
+          html += '<td class="dash-cell"><span class="dash-dash">—</span></td>';
+        } else if (image.validated) {
+          html += `<td class="dash-cell dash-click" data-id="${image.id}">${displayCount(image)}</td>`;
+        } else {
+          html += `<td class="dash-cell dash-click" data-id="${image.id}"><span class="dash-bang">!</span></td>`;
+        }
+      }
+      if (imgs.every((im) => im.validated)) {
+        const total = imgs.reduce((sum, im) => sum + displayCount(im), 0);
+        html += `<td class="dash-total"><span class="dash-total-ok">${total}</span></td>`;
+      } else {
+        html += '<td class="dash-total"><span class="dash-total-bad">! incomplete</span></td>';
+      }
+      html += "</tr>";
+    }
+  }
+  html += "</tbody></table>";
+  el.dashboardBody.innerHTML = html;
+  el.dashboardBody.querySelectorAll(".dash-click").forEach((cell) => {
+    cell.addEventListener("click", () => {
+      hideDashboard();
+      selectImage(Number(cell.dataset.id));
+    });
+  });
 }
 
 function formatDate(value) {

@@ -7,7 +7,7 @@ import threading
 import uuid
 from pathlib import Path
 
-from fastapi import FastAPI, File, Form, HTTPException, UploadFile
+from fastapi import Body, FastAPI, File, Form, HTTPException, UploadFile
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 
@@ -15,7 +15,7 @@ from .models import AnnotationPayload, BatchOut, ImageOut
 from .services.database import Database
 from .services.detector import detect_traps
 from .services.backups import run_backup
-from .services.exports import build_group_summary, write_annotated_zip, write_batch_exports
+from .services.exports import build_group_summary, image_number, plate_for, write_annotated_zip, write_batch_exports
 from .services.images import make_preview
 
 
@@ -178,6 +178,22 @@ def save_review(image_id: int, payload: AnnotationPayload) -> dict:
     return image_payload(row)
 
 
+@app.put("/api/images/{image_id}/validate", response_model=ImageOut)
+def set_validated(image_id: int, validated: bool = Body(..., embed=True)) -> dict:
+    if DB.get_image(image_id) is None:
+        raise HTTPException(status_code=404, detail="Image not found")
+    DB.set_validated(image_id, validated)
+    return image_payload(DB.get_image(image_id))
+
+
+@app.put("/api/images/{image_id}/plate", response_model=ImageOut)
+def set_plate(image_id: int, plate: int | None = Body(None, embed=True)) -> dict:
+    if DB.get_image(image_id) is None:
+        raise HTTPException(status_code=404, detail="Image not found")
+    DB.set_plate_override(image_id, plate)
+    return image_payload(DB.get_image(image_id))
+
+
 @app.post("/api/images/{image_id}/predict", response_model=ImageOut)
 def rerun_prediction(image_id: int) -> dict:
     row = DB.get_image(image_id)
@@ -243,5 +259,8 @@ def image_payload(row) -> dict:
         "notes": row["notes"],
         "model_version": row["model_version"],
         "points": points,
+        "validated": bool(row["validated"]),
+        "image_number": image_number(row["filename"]),
+        "plate": plate_for(row),
         "metadata": metadata,
     }

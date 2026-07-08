@@ -40,5 +40,8 @@ class ImageOut(BaseModel):
     notes: str
     model_version: str
     points: list[Point]
+    validated: bool = False
+    image_number: int | None = None
+    plate: int = 1
     metadata: dict[str, Any] = Field(default_factory=dict)
 

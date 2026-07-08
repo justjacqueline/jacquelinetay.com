@@ -53,6 +53,82 @@ def build_group_summary(rows, labels: dict[str, str] | None = None) -> list[dict
     return [summary[key] for key in order]
 
 
+IMAGES_PER_PLATE = 3
+
+
+def _get(row, key, default=None):
+    try:
+        value = row[key]
+    except (KeyError, IndexError):
+        return default
+    return value if value is not None else default
+
+
+def image_number(filename: str) -> int | None:
+    match = re.search(r"(\d+)$", Path(filename).stem)
+    return int(match.group(1)) if match else None
+
+
+def plate_for(row) -> int:
+    """Plate = manual override if set, else image number in groups of 3."""
+    override = _get(row, "plate_override")
+    if override is not None:
+        return int(override)
+    num = image_number(row["filename"])
+    if num is None:
+        return 1
+    return (num - 1) // IMAGES_PER_PLATE + 1
+
+
+def build_plate_frames(rows, labels: dict[str, str] | None = None):
+    """The reviewer's real output: per-photo counts, per-plate totals (only when
+    every image on the plate is validated), and a Prism column-per-strain table of
+    those plate totals. Returns (per_photo, per_plate, prism)."""
+    labels = labels or {}
+    photos = []
+    for row in rows:
+        key = derive_group_key(row["filename"])
+        photos.append(
+            {
+                "Strain": labels.get(key, key),
+                "Plate no": plate_for(row),
+                "Image no": image_number(row["filename"]),
+                "Count": reviewed_count(row),
+                "Validated": bool(_get(row, "validated", 0)),
+            }
+        )
+    per_photo = pd.DataFrame(photos, columns=["Strain", "Plate no", "Image no", "Count", "Validated"])
+
+    plate_records = []
+    if not per_photo.empty:
+        for (strain, plate), grp in per_photo.groupby(["Strain", "Plate no"], sort=False):
+            complete = bool(grp["Validated"].all())
+            plate_records.append(
+                {
+                    "Strain": strain,
+                    "Plate no": int(plate),
+                    "Total": int(grp["Count"].sum()) if complete else pd.NA,
+                    "Complete": complete,
+                    "Images on plate": len(grp),
+                }
+            )
+    per_plate = pd.DataFrame(plate_records, columns=["Strain", "Plate no", "Total", "Complete", "Images on plate"])
+
+    columns: dict[str, list] = {}
+    order: list[str] = []
+    for record in plate_records:
+        strain = record["Strain"]
+        if strain not in columns:
+            columns[strain] = []
+            order.append(strain)
+        columns[strain].append(record["Total"] if record["Complete"] else pd.NA)
+    max_len = max((len(v) for v in columns.values()), default=0)
+    prism = pd.DataFrame(
+        {strain: columns[strain] + [pd.NA] * (max_len - len(columns[strain])) for strain in order}
+    ).astype("Int64")
+    return per_photo, per_plate, prism
+
+
 def build_prism_frame(rows, labels: dict[str, str] | None = None) -> pd.DataFrame:
     """Prism "Column" table: one column per genotype, values are the per-image
     trap counts for that group, ragged columns padded with blanks.

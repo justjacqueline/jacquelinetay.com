@@ -72,6 +72,30 @@ class Database:
                 );
                 """
             )
+            self._migrate(conn)
+
+    def _migrate(self, conn: sqlite3.Connection) -> None:
+        columns = {row["name"] for row in conn.execute("PRAGMA table_info(images)")}
+        if "validated" not in columns:
+            # The reviewer's explicit "done" flag — distinct from having edited it.
+            conn.execute("ALTER TABLE images ADD COLUMN validated INTEGER NOT NULL DEFAULT 0")
+        if "plate_override" not in columns:
+            # Manual plate correction; NULL means "derive the plate from the image number".
+            conn.execute("ALTER TABLE images ADD COLUMN plate_override INTEGER")
+
+    def set_validated(self, image_id: int, validated: bool) -> None:
+        with self.connect() as conn:
+            conn.execute(
+                "UPDATE images SET validated = ?, updated_at = ? WHERE id = ?",
+                (1 if validated else 0, utc_now(), image_id),
+            )
+
+    def set_plate_override(self, image_id: int, plate: int | None) -> None:
+        with self.connect() as conn:
+            conn.execute(
+                "UPDATE images SET plate_override = ?, updated_at = ? WHERE id = ?",
+                (plate, utc_now(), image_id),
+            )
 
     def create_batch(self, name: str, metadata: dict[str, Any] | None = None) -> int:
         now = utc_now()

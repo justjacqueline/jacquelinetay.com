@@ -328,6 +328,146 @@ textarea {
   font-size: 1.15em;
 }
 
+.dashboard-view {
+  padding: 1rem 1.25rem 1.5rem;
+  overflow: auto;
+}
+
+.dashboard-head h2 {
+  margin: 0;
+}
+
+.dashboard-progress {
+  color: var(--muted);
+  font-size: 0.9rem;
+  margin: 0.15rem 0 0;
+}
+
+.dashboard-legend {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  font-size: 0.8rem;
+  color: var(--muted);
+  margin: 0.75rem 0;
+}
+
+.dash-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+}
+
+.dash-table th {
+  text-align: center;
+  font-weight: 400;
+  color: var(--muted);
+  font-size: 0.78rem;
+  padding: 6px 8px;
+}
+
+.dash-table th:first-child {
+  text-align: left;
+}
+
+.dash-table .dash-total-h {
+  text-align: right;
+}
+
+.dash-strain td {
+  border-top: 1px solid var(--line);
+  padding: 12px 8px 4px;
+}
+
+.dash-strain-name {
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.dash-strain-sub {
+  font-size: 0.78rem;
+  color: var(--muted);
+  margin-left: 8px;
+}
+
+.dash-plate {
+  color: var(--muted);
+  padding: 8px;
+}
+
+.dash-cell {
+  text-align: center;
+  padding: 6px 8px;
+  color: var(--ink);
+}
+
+.dash-click {
+  cursor: pointer;
+  border-radius: 6px;
+}
+
+.dash-click:hover {
+  background: var(--bg);
+}
+
+.dash-bang,
+.legend-bang {
+  display: inline-flex;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: rgba(232, 137, 36, 0.16);
+  color: var(--accent-2);
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+}
+
+.legend-bang {
+  width: 18px;
+  height: 18px;
+  font-size: 0.75rem;
+}
+
+.dash-dash,
+.legend-dash {
+  color: var(--line);
+}
+
+.dash-total {
+  text-align: right;
+  padding: 6px 8px;
+}
+
+.dash-total-ok {
+  display: inline-block;
+  background: rgba(29, 126, 83, 0.12);
+  color: var(--accent);
+  font-weight: 600;
+  padding: 3px 12px;
+  border-radius: 20px;
+}
+
+.dash-total-bad {
+  display: inline-block;
+  background: rgba(232, 137, 36, 0.14);
+  color: var(--accent-2);
+  padding: 3px 12px;
+  border-radius: 20px;
+}
+
+.image-stage.locked::after {
+  content: "Done — locked";
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background: rgba(29, 126, 83, 0.92);
+  color: #fff;
+  font-size: 0.75rem;
+  padding: 3px 10px;
+  border-radius: 20px;
+}
+
 .save-state {
   align-self: center;
   font-size: 0.8rem;

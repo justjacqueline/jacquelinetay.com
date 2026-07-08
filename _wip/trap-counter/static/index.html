@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Nematode Trap Counter</title>
-  <link rel="stylesheet" href="/static/styles.css?v=2">
+  <link rel="stylesheet" href="/static/styles.css?v=4">
 </head>
 <body>
   <header class="topbar">
@@ -54,10 +54,27 @@
         </div>
         <div class="toolbar-actions">
           <span id="saveState" class="save-state" data-state="idle">No image</span>
+          <button id="openDashboard" type="button">Dashboard</button>
           <button id="deletePoint" type="button" disabled>Delete Point</button>
           <button id="rerunPrediction" type="button" hidden disabled>Rerun Detection</button>
           <button id="saveReview" type="button" disabled>Save now</button>
+          <button id="markDone" type="button" disabled>Mark done</button>
         </div>
+      </div>
+
+      <div class="dashboard-view" id="dashboardView" hidden>
+        <div class="dashboard-head">
+          <div>
+            <h2>Batch dashboard</h2>
+            <p id="dashboardProgress" class="dashboard-progress">No batch selected.</p>
+          </div>
+        </div>
+        <div class="dashboard-legend">
+          <span><strong id="legendNum">42</strong> = done &amp; locked</span>
+          <span class="legend-bang">!</span> not validated yet
+          <span class="legend-dash">—</span> no image
+        </div>
+        <div id="dashboardBody"></div>
       </div>
 
       <div class="workspace">
@@ -120,6 +137,6 @@
     </section>
   </main>
 
-  <script src="/static/app.js?v=2"></script>
+  <script src="/static/app.js?v=4"></script>
 </body>
 </html>
