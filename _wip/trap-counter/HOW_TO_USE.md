@@ -30,14 +30,26 @@ window.**
 4. **Marker style.** Use the *Marker* dropdown to switch between a small arrow or
    a translucent bubble over each trap — whichever you find easier.
 
-## Get your data out (for Prism)
+## Mark images done
 
-1. In **Genotype groups**, each group is detected from the file names
-   (`2026-06-11_TrapQuant_N2_009.tif` → group `2026-06-11_TrapQuant_N2`). Rename
-   each to a clean header like `N2`. Give two groups the same name to merge them.
-2. Click **`prism_counts.csv (per-genotype)`**. You get one column per genotype,
-   with the per-image trap counts down each column — ready to paste into a Prism
-   Column table. (`weekly_review.xlsx` has the same plus extra detail.)
+The dashboard is your home base: each image shows `!` until you mark it done. Open
+an image, review the traps, then click **Mark done** — it locks so it can't be
+changed by accident (click **Undone** to edit again). A plate total only appears
+once every image on that plate is done.
+
+## Get your data out
+
+1. In **Strain names**, the strain is read from each filename. Rename it to the
+   clean strain name you use (e.g. `drd-5AddDrd-5line1` →
+   `drd-5(-); Pdrd-5::drd-5 line 1`).
+2. Download the two tables:
+   - **`plate_totals.csv`** — one row per plate: the images (joined by `;`),
+     strain, plate number, and the summed total. Plates with any un-done image are
+     left blank.
+   - **`per_image_counts.csv`** — one row per image: image, strain, plate number,
+     picture number, count.
+   Also available: **`trap_coordinates.csv`** (every trap's x/y) and
+   **`annotated_images.zip`** (your marks drawn on the images).
 
 ## Where your data lives
 

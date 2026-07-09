@@ -26,10 +26,17 @@ def reviewed_count(row) -> int:
     return int(value) if value is not None else len(annotation_points(row))
 
 
+_NAME_DATE_PREFIX = re.compile(r"^\d{4}-\d{2}-\d{2}[_-]")
+_TRAPQUANT_PREFIX = re.compile(r"^trapquant[_-]", re.IGNORECASE)
+
+
 def derive_group_key(filename: str) -> str:
-    """Group key = filename stem with a trailing replicate index removed."""
+    """Strain from the filename: drop the trailing replicate index and the
+    leading `<date>_TrapQuant_` so `2026-06-11_TrapQuant_N2_009` -> `N2`."""
     stem = Path(filename).stem
     trimmed = _REPLICATE_SUFFIX.sub("", stem)
+    trimmed = _NAME_DATE_PREFIX.sub("", trimmed)
+    trimmed = _TRAPQUANT_PREFIX.sub("", trimmed)
     return trimmed or stem
 
 
@@ -81,52 +88,60 @@ def plate_for(row) -> int:
 
 
 def build_plate_frames(rows, labels: dict[str, str] | None = None):
-    """The reviewer's real output: per-photo counts, per-plate totals (only when
-    every image on the plate is validated), and a Prism column-per-strain table of
-    those plate totals. Returns (per_photo, per_plate, prism)."""
+    """The reviewer's two output tables. Returns (per_photo, per_plate):
+
+    - per_photo: Image, Strain, Plate no, Picture no, Count  (one row per image)
+    - per_plate: Images (filenames joined by ';'), Strain, Plate no, Total
+      (Total is blank until every image on the plate is validated)
+    """
     labels = labels or {}
-    photos = []
+    records = []
     for row in rows:
         key = derive_group_key(row["filename"])
-        photos.append(
+        records.append(
             {
+                "filename": row["filename"],
                 "Strain": labels.get(key, key),
                 "Plate no": plate_for(row),
-                "Image no": image_number(row["filename"]),
+                "num": image_number(row["filename"]) or 0,
                 "Count": reviewed_count(row),
-                "Validated": bool(_get(row, "validated", 0)),
+                "validated": bool(_get(row, "validated", 0)),
             }
         )
-    per_photo = pd.DataFrame(photos, columns=["Strain", "Plate no", "Image no", "Count", "Validated"])
+    # Order within each plate so "Picture no" is a stable 1..n.
+    records.sort(key=lambda r: (str(r["Strain"]), r["Plate no"], r["num"]))
 
-    plate_records = []
-    if not per_photo.empty:
-        for (strain, plate), grp in per_photo.groupby(["Strain", "Plate no"], sort=False):
-            complete = bool(grp["Validated"].all())
-            plate_records.append(
-                {
-                    "Strain": strain,
-                    "Plate no": int(plate),
-                    "Total": int(grp["Count"].sum()) if complete else pd.NA,
-                    "Complete": complete,
-                    "Images on plate": len(grp),
-                }
-            )
-    per_plate = pd.DataFrame(plate_records, columns=["Strain", "Plate no", "Total", "Complete", "Images on plate"])
+    photo_rows = []
+    plate_groups: dict[tuple, list] = {}
+    picture_counter: dict[tuple, int] = {}
+    for record in records:
+        pkey = (record["Strain"], record["Plate no"])
+        picture_counter[pkey] = picture_counter.get(pkey, 0) + 1
+        photo_rows.append(
+            {
+                "Image": record["filename"],
+                "Strain": record["Strain"],
+                "Plate no": record["Plate no"],
+                "Picture no": picture_counter[pkey],
+                "Count": record["Count"],
+            }
+        )
+        plate_groups.setdefault(pkey, []).append(record)
+    per_photo = pd.DataFrame(photo_rows, columns=["Image", "Strain", "Plate no", "Picture no", "Count"])
 
-    columns: dict[str, list] = {}
-    order: list[str] = []
-    for record in plate_records:
-        strain = record["Strain"]
-        if strain not in columns:
-            columns[strain] = []
-            order.append(strain)
-        columns[strain].append(record["Total"] if record["Complete"] else pd.NA)
-    max_len = max((len(v) for v in columns.values()), default=0)
-    prism = pd.DataFrame(
-        {strain: columns[strain] + [pd.NA] * (max_len - len(columns[strain])) for strain in order}
-    ).astype("Int64")
-    return per_photo, per_plate, prism
+    plate_rows = []
+    for (strain, plate), recs in plate_groups.items():
+        complete = all(r["validated"] for r in recs)
+        plate_rows.append(
+            {
+                "Images": ";".join(r["filename"] for r in recs),
+                "Strain": strain,
+                "Plate no": plate,
+                "Total": int(sum(r["Count"] for r in recs)) if complete else pd.NA,
+            }
+        )
+    per_plate = pd.DataFrame(plate_rows, columns=["Images", "Strain", "Plate no", "Total"])
+    return per_photo, per_plate
 
 
 def build_prism_frame(rows, labels: dict[str, str] | None = None) -> pd.DataFrame:
@@ -196,50 +211,18 @@ def build_coordinates_frame(rows) -> pd.DataFrame:
 
 def write_batch_exports(rows, export_dir: Path, labels: dict[str, str] | None = None) -> dict[str, Path]:
     export_dir.mkdir(parents=True, exist_ok=True)
-    per_photo, per_plate, prism = build_plate_frames(rows, labels)
-    per_plate_out = per_plate.drop(columns=["Complete"])
+    per_photo, per_plate = build_plate_frames(rows, labels)
     coordinates = build_coordinates_frame(rows)
     counts_path = export_dir / "per_image_counts.csv"
     plate_path = export_dir / "plate_totals.csv"
-    coords_path = export_dir / "per_trap_coordinates.csv"
-    prism_path = export_dir / "prism_counts.csv"
-    excel_path = export_dir / "weekly_review.xlsx"
-    json_path = export_dir / "reviewed_annotations.json"
+    coords_path = export_dir / "trap_coordinates.csv"
     per_photo.to_csv(counts_path, index=False)
-    per_plate_out.to_csv(plate_path, index=False)
+    per_plate.to_csv(plate_path, index=False)
     coordinates.to_csv(coords_path, index=False)
-    # Prism reads a plain grid: one column per strain, one plate total per row.
-    prism.to_csv(prism_path, index=False)
-    with pd.ExcelWriter(excel_path) as writer:
-        prism.to_excel(writer, sheet_name="prism", index=False)
-        per_plate_out.to_excel(writer, sheet_name="plate_totals", index=False)
-        per_photo.to_excel(writer, sheet_name="per_image", index=False)
-        coordinates.to_excel(writer, sheet_name="coordinates", index=False)
-    json_path.write_text(
-        json.dumps(
-            [
-                {
-                    "image_id": row["id"],
-                    "filename": row["filename"],
-                    "width": row["width"],
-                    "height": row["height"],
-                    "uncertain": bool(row["uncertain"]),
-                    "notes": row["notes"],
-                    "model_version": row["model_version"],
-                    "points": annotation_points(row),
-                }
-                for row in rows
-            ],
-            indent=2,
-        )
-    )
     return {
         "counts": counts_path,
         "plate_totals": plate_path,
         "coordinates": coords_path,
-        "prism": prism_path,
-        "excel": excel_path,
-        "json": json_path,
     }
 
 

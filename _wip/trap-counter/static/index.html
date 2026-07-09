@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Nematode Trap Counter</title>
-  <link rel="stylesheet" href="/static/styles.css?v=5">
+  <link rel="stylesheet" href="/static/styles.css?v=6">
 </head>
 <body>
   <header class="topbar">
@@ -115,29 +115,27 @@
 
       <div class="groups" id="groups" hidden>
         <div class="section-title">
-          <h2>Genotype groups</h2>
+          <h2>Strain names</h2>
           <button id="refreshGroups" class="ghost" type="button">Refresh</button>
         </div>
         <p class="group-help">
-          One column per genotype in the Prism export. Rename a group to set its
-          column header (e.g. <code>2026-06-11_TrapQuant_N2</code> &rarr;
-          <code>N2</code>). Give two groups the same name to merge them.
+          The strain is read from each filename. Rename it to the clean strain
+          name used in the exports (e.g. <code>drd-5AddDrd-5line1</code> &rarr;
+          <code>drd-5(-); Pdrd-5::drd-5 line 1</code>). Give two the same name to
+          merge them.
         </p>
         <div id="groupList" class="group-list"></div>
       </div>
 
       <div class="exports" id="exports" hidden>
-        <a id="exportPrism" href="#" class="primary-export">prism_counts.csv (plate totals)</a>
-        <a id="exportPlateTotals" href="#">plate_totals.csv</a>
-        <a id="exportExcel" href="#">weekly_review.xlsx</a>
-        <a id="exportCounts" href="#">per_image_counts.csv</a>
-        <a id="exportCoords" href="#">per_trap_coordinates.csv</a>
-        <a id="exportJson" href="#">reviewed_annotations.json</a>
+        <a id="exportPlateTotals" href="#" class="primary-export">plate_totals.csv (Table 2)</a>
+        <a id="exportCounts" href="#">per_image_counts.csv (Table 1)</a>
+        <a id="exportCoords" href="#">trap_coordinates.csv (point data)</a>
         <a id="exportAnnotated" href="#">annotated_images.zip</a>
       </div>
     </section>
   </main>
 
-  <script src="/static/app.js?v=5"></script>
+  <script src="/static/app.js?v=6"></script>
 </body>
 </html>

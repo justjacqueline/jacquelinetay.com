@@ -44,12 +44,9 @@ const el = {
   predictedCount: document.querySelector("#predictedCount"),
   reviewedCount: document.querySelector("#reviewedCount"),
   exports: document.querySelector("#exports"),
-  exportPrism: document.querySelector("#exportPrism"),
   exportPlateTotals: document.querySelector("#exportPlateTotals"),
   exportCounts: document.querySelector("#exportCounts"),
   exportCoords: document.querySelector("#exportCoords"),
-  exportExcel: document.querySelector("#exportExcel"),
-  exportJson: document.querySelector("#exportJson"),
   exportAnnotated: document.querySelector("#exportAnnotated"),
   groups: document.querySelector("#groups"),
   groupList: document.querySelector("#groupList"),
@@ -611,12 +608,9 @@ function renderExportLinks() {
   }
   el.exports.hidden = false;
   const suffix = labelsQuery();
-  el.exportPrism.href = `/api/batches/${state.batchId}/exports/prism${suffix}`;
   el.exportPlateTotals.href = `/api/batches/${state.batchId}/exports/plate_totals${suffix}`;
-  el.exportExcel.href = `/api/batches/${state.batchId}/exports/excel${suffix}`;
   el.exportCounts.href = `/api/batches/${state.batchId}/exports/counts${suffix}`;
   el.exportCoords.href = `/api/batches/${state.batchId}/exports/coordinates`;
-  el.exportJson.href = `/api/batches/${state.batchId}/exports/json`;
   el.exportAnnotated.href = `/api/batches/${state.batchId}/exports/annotated.zip`;
 }
 
@@ -698,8 +692,11 @@ async function loadGroups() {
 }
 
 function strainKey(filename) {
-  const stem = filename.replace(/\.[^.]+$/, "");
-  return stem.replace(/[_-]\d+$/, "") || stem;
+  let stem = filename.replace(/\.[^.]+$/, "");
+  stem = stem.replace(/[_-]\d+$/, "");
+  stem = stem.replace(/^\d{4}-\d{2}-\d{2}[_-]/, "");
+  stem = stem.replace(/^trapquant[_-]/i, "");
+  return stem || filename;
 }
 
 function strainLabel(filename) {
