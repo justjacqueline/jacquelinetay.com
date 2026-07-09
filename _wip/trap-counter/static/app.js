@@ -45,6 +45,7 @@ const el = {
   reviewedCount: document.querySelector("#reviewedCount"),
   exports: document.querySelector("#exports"),
   exportPrism: document.querySelector("#exportPrism"),
+  exportPlateTotals: document.querySelector("#exportPlateTotals"),
   exportCounts: document.querySelector("#exportCounts"),
   exportCoords: document.querySelector("#exportCoords"),
   exportExcel: document.querySelector("#exportExcel"),
@@ -530,6 +531,17 @@ el.openDashboard.addEventListener("click", async () => {
   showDashboard();
 });
 
+el.exports.addEventListener("click", (event) => {
+  if (!event.target.closest("a") || !state.images.length) return;
+  const notDone = state.images.filter((image) => !image.validated).length;
+  if (notDone > 0) {
+    const ok = window.confirm(
+      `${notDone} of ${state.images.length} images are not marked done yet. Their plates will be blank in the export. Export anyway?`
+    );
+    if (!ok) event.preventDefault();
+  }
+});
+
 el.notes.addEventListener("input", markDirty);
 el.uncertain.addEventListener("change", markDirty);
 
@@ -600,6 +612,7 @@ function renderExportLinks() {
   el.exports.hidden = false;
   const suffix = labelsQuery();
   el.exportPrism.href = `/api/batches/${state.batchId}/exports/prism${suffix}`;
+  el.exportPlateTotals.href = `/api/batches/${state.batchId}/exports/plate_totals${suffix}`;
   el.exportExcel.href = `/api/batches/${state.batchId}/exports/excel${suffix}`;
   el.exportCounts.href = `/api/batches/${state.batchId}/exports/counts${suffix}`;
   el.exportCoords.href = `/api/batches/${state.batchId}/exports/coordinates`;
@@ -704,7 +717,7 @@ function showDashboard() {
   el.workspace.style.display = "none";
   el.reviewFooter.style.display = "none";
   el.groups.hidden = true;
-  el.exports.hidden = true;
+  renderExportLinks(); // keep the download links available from the dashboard
   renderDashboard();
 }
 

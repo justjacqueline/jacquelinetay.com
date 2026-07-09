@@ -196,21 +196,24 @@ def build_coordinates_frame(rows) -> pd.DataFrame:
 
 def write_batch_exports(rows, export_dir: Path, labels: dict[str, str] | None = None) -> dict[str, Path]:
     export_dir.mkdir(parents=True, exist_ok=True)
-    counts = build_counts_frame(rows, labels)
+    per_photo, per_plate, prism = build_plate_frames(rows, labels)
+    per_plate_out = per_plate.drop(columns=["Complete"])
     coordinates = build_coordinates_frame(rows)
-    prism = build_prism_frame(rows, labels)
-    counts_path = export_dir / "weekly_counts.csv"
+    counts_path = export_dir / "per_image_counts.csv"
+    plate_path = export_dir / "plate_totals.csv"
     coords_path = export_dir / "per_trap_coordinates.csv"
     prism_path = export_dir / "prism_counts.csv"
     excel_path = export_dir / "weekly_review.xlsx"
     json_path = export_dir / "reviewed_annotations.json"
-    counts.to_csv(counts_path, index=False)
+    per_photo.to_csv(counts_path, index=False)
+    per_plate_out.to_csv(plate_path, index=False)
     coordinates.to_csv(coords_path, index=False)
-    # Prism reads a plain grid: one column per genotype, one count per row.
+    # Prism reads a plain grid: one column per strain, one plate total per row.
     prism.to_csv(prism_path, index=False)
     with pd.ExcelWriter(excel_path) as writer:
         prism.to_excel(writer, sheet_name="prism", index=False)
-        counts.to_excel(writer, sheet_name="counts", index=False)
+        per_plate_out.to_excel(writer, sheet_name="plate_totals", index=False)
+        per_photo.to_excel(writer, sheet_name="per_image", index=False)
         coordinates.to_excel(writer, sheet_name="coordinates", index=False)
     json_path.write_text(
         json.dumps(
@@ -232,6 +235,7 @@ def write_batch_exports(rows, export_dir: Path, labels: dict[str, str] | None = 
     )
     return {
         "counts": counts_path,
+        "plate_totals": plate_path,
         "coordinates": coords_path,
         "prism": prism_path,
         "excel": excel_path,
