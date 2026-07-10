@@ -201,6 +201,7 @@ def rerun_prediction(image_id: int) -> dict:
         raise HTTPException(status_code=404, detail="Image not found")
     points, version = detect_traps(Path(row["original_path"]))
     DB.update_prediction(image_id, points, version)
+    DB.reset_review(image_id)  # re-run AI = start fresh from the new predictions
     updated = DB.get_image(image_id)
     return image_payload(updated)
 

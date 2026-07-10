@@ -39,6 +39,11 @@ button.primary {
   font-weight: 600;
 }
 button.primary:hover { background: #17683f; }
+button.danger {
+  border-color: var(--danger);
+  color: var(--danger);
+}
+button.danger:hover { background: rgba(175,45,45,0.08); }
 button.link {
   border: none;
   background: none;

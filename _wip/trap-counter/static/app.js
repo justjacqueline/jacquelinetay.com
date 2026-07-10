@@ -22,6 +22,8 @@ const el = {
   overlay: document.querySelector("#overlay"),
   stageHint: document.querySelector("#stageHint"),
   markDone: document.querySelector("#markDone"),
+  rerunAi: document.querySelector("#rerunAi"),
+  clearAll: document.querySelector("#clearAll"),
   reviewedCount: document.querySelector("#reviewedCount"),
   predictedCount: document.querySelector("#predictedCount"),
   markerStyle: document.querySelector("#markerStyle"),
@@ -311,6 +313,8 @@ function updateReview() {
   el.imageStage.classList.toggle("locked", locked);
   el.stageHint.hidden = locked;
   const shown = visiblePoints();
+  el.rerunAi.disabled = locked;
+  el.clearAll.disabled = locked || shown.length === 0;
   el.reviewedCount.textContent = shown.length;
   el.predictedCount.textContent = state.image.predicted_count;
   renderPoints();
@@ -363,6 +367,37 @@ el.markDone.addEventListener("click", async () => {
   state.images = state.images.map((im) => (im.id === state.image.id ? state.image : im));
   updateReview();
   setSaveState(next ? "locked" : "saved");
+});
+
+el.clearAll.addEventListener("click", () => {
+  if (!state.image || state.image.validated) return;
+  const n = visiblePoints().length;
+  if (n === 0) return;
+  if (!window.confirm(`Clear all ${n} traps from this photo? This can't be undone.`)) return;
+  state.points = [];
+  state.selectedId = null;
+  updateReview();
+  markDirty();
+});
+
+el.rerunAi.addEventListener("click", async () => {
+  if (!state.image || state.image.validated) return;
+  if (!window.confirm("Re-run the AI on this photo? It replaces the current marks with the AI's.")) return;
+  await flushPendingSave();
+  setStatus("Re-running AI…");
+  try {
+    state.image = await api(`/api/images/${state.image.id}/predict`, { method: "POST" });
+    state.points = state.image.points.map((p) => ({ ...p }));
+    state.images = state.images.map((im) => (im.id === state.image.id ? state.image : im));
+    clearDraft(state.image.id);
+    state.dirty = false;
+    updateReview();
+    setSaveState("saved");
+    setStatus("Ready");
+  } catch (error) {
+    console.error(error);
+    setStatus("Re-run failed — the original .tif is needed for detection");
+  }
 });
 
 el.notes.addEventListener("input", markDirty);

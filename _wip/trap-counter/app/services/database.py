@@ -248,6 +248,19 @@ class Database:
             ).fetchone()
             return int(row["n"])
 
+    def reset_review(self, image_id: int) -> None:
+        """Discard the reviewed annotation so fresh predictions are shown again."""
+        now = utc_now()
+        with self.connect() as conn:
+            conn.execute(
+                "UPDATE images SET reviewed_count = NULL, validated = 0, updated_at = ? WHERE id = ?",
+                (now, image_id),
+            )
+            conn.execute(
+                "UPDATE annotations SET reviewed_json = NULL, updated_at = ? WHERE image_id = ?",
+                (now, image_id),
+            )
+
     def update_prediction(self, image_id: int, points: list[dict[str, Any]], model_version: str) -> None:
         now = utc_now()
         with self.connect() as conn:
