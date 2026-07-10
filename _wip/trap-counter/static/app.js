@@ -20,6 +20,7 @@ const el = {
   imageStage: document.querySelector("#imageStage"),
   preview: document.querySelector("#preview"),
   overlay: document.querySelector("#overlay"),
+  stageHint: document.querySelector("#stageHint"),
   markDone: document.querySelector("#markDone"),
   reviewedCount: document.querySelector("#reviewedCount"),
   predictedCount: document.querySelector("#predictedCount"),
@@ -308,6 +309,7 @@ function updateReview() {
   el.nextBtn.disabled = idx >= state.images.length - 1;
   el.overlay.style.pointerEvents = locked ? "none" : "";
   el.imageStage.classList.toggle("locked", locked);
+  el.stageHint.hidden = locked;
   const shown = visiblePoints();
   el.reviewedCount.textContent = shown.length;
   el.predictedCount.textContent = state.image.predicted_count;

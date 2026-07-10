@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Nematode Trap Counter</title>
-  <link rel="stylesheet" href="/static/styles.css?v=7">
+  <link rel="stylesheet" href="/static/styles.css?v=8">
 </head>
 <body>
   <header class="topbar">
@@ -55,8 +55,8 @@
       <div class="image-stage" id="imageStage">
         <img id="preview" alt="">
         <svg id="overlay" aria-label="Trap point annotations"></svg>
-        <div class="stage-hint">click to add &middot; drag to move &middot; select and press Delete to remove</div>
       </div>
+      <p class="stage-hint" id="stageHint">Click to add a trap &middot; drag to move &middot; select and press Delete to remove.</p>
 
       <div class="review-actions">
         <button id="markDone" type="button" class="primary">&#10003; Mark done</button>
@@ -124,6 +124,6 @@
     </div>
   </div>
 
-  <script src="/static/app.js?v=7"></script>
+  <script src="/static/app.js?v=8"></script>
 </body>
 </html>
