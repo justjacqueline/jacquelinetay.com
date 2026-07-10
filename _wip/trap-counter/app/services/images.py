@@ -69,18 +69,45 @@ def make_preview(original_path: Path, preview_path: Path) -> dict[str, Any]:
     }
 
 
-def draw_annotated_preview(preview_path: Path, output_path: Path, points: list[dict[str, Any]], width: int, height: int) -> None:
+def draw_annotated_preview(
+    preview_path: Path,
+    output_path: Path,
+    points: list[dict[str, Any]],
+    width: int,
+    height: int,
+    marker: str = "bubble",
+) -> None:
     image = Image.open(preview_path).convert("RGB")
-    draw = ImageDraw.Draw(image)
     sx = image.width / width
     sy = image.height / height
-    radius = max(5, round(min(image.width, image.height) * 0.006))
-    for point in points:
-        x = float(point["x"]) * sx
-        y = float(point["y"]) * sy
-        color = (29, 126, 83) if point.get("source") != "predicted" else (232, 137, 36)
-        draw.ellipse((x - radius, y - radius, x + radius, y + radius), outline=color, width=3)
-        draw.line((x - radius * 1.6, y, x + radius * 1.6, y), fill=color, width=2)
-        draw.line((x, y - radius * 1.6, x, y + radius * 1.6), fill=color, width=2)
     output_path.parent.mkdir(parents=True, exist_ok=True)
-    image.save(output_path, "PNG")
+
+    if marker == "arrow":
+        draw = ImageDraw.Draw(image)
+        head = max(8, round(min(image.width, image.height) * 0.011))
+        gap = max(14, round(min(image.width, image.height) * 0.018))
+        for point in points:
+            x = float(point["x"]) * sx
+            y = float(point["y"]) * sy
+            color = (11, 111, 63) if point.get("source") != "predicted" else (5, 5, 5)
+            direction = -1 if x > image.width - (gap + head + 12) else 1
+            tip = x + direction * gap
+            base = tip + direction * head
+            draw.polygon([(tip, y), (base, y - head * 0.7), (base, y + head * 0.7)], fill=color)
+    else:
+        # Translucent water-drop bubble, matching the on-screen style.
+        overlay = Image.new("RGBA", image.size, (0, 0, 0, 0))
+        odraw = ImageDraw.Draw(overlay)
+        radius = max(10, round(min(image.width, image.height) * 0.024))
+        for point in points:
+            x = float(point["x"]) * sx
+            y = float(point["y"]) * sy
+            odraw.ellipse(
+                (x - radius, y - radius, x + radius, y + radius),
+                fill=(63, 124, 192, 34),
+                outline=(63, 124, 192, 150),
+                width=max(2, round(radius * 0.12)),
+            )
+        image = Image.alpha_composite(image.convert("RGBA"), overlay).convert("RGB")
+
+    image.save(output_path, "JPEG", quality=85, optimize=True)

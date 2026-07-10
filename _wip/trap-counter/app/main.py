@@ -214,7 +214,7 @@ def list_groups(batch_id: int) -> list[dict]:
 
 
 @app.get("/api/batches/{batch_id}/exports/{kind}")
-def export_batch(batch_id: int, kind: str, labels: str | None = None) -> FileResponse:
+def export_batch(batch_id: int, kind: str, labels: str | None = None, marker: str = "bubble") -> FileResponse:
     rows = DB.list_images(batch_id)
     if not rows:
         raise HTTPException(status_code=404, detail="Batch has no images")
@@ -230,7 +230,7 @@ def export_batch(batch_id: int, kind: str, labels: str | None = None) -> FileRes
     export_dir = EXPORTS_DIR / str(batch_id)
     paths = write_batch_exports(rows, export_dir, label_map)
     if kind == "annotated.zip":
-        path = write_annotated_zip(rows, export_dir / "annotated_images.zip")
+        path = write_annotated_zip(rows, export_dir / "annotated_images.zip", marker=marker)
     else:
         path = paths.get(kind)
     if path is None or not path.exists():

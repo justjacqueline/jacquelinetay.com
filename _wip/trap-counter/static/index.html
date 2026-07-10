@@ -4,138 +4,126 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Nematode Trap Counter</title>
-  <link rel="stylesheet" href="/static/styles.css?v=6">
+  <link rel="stylesheet" href="/static/styles.css?v=7">
 </head>
 <body>
   <header class="topbar">
-    <div>
-      <h1>Nematode Trap Counter</h1>
-      <p>Weekly microscopy review with auditable trap counts.</p>
+    <div class="brand">
+      <h1>Trap Counter</h1>
+    </div>
+    <label class="batch-picker">
+      <span>Batch</span>
+      <select id="batchSelect"><option value="">No batches yet</option></select>
+    </label>
+    <div class="topbar-actions">
+      <button id="newBatchBtn" type="button"><span class="plus">+</span> New batch</button>
+      <button id="downloadBtn" type="button" class="primary" disabled>Download results</button>
     </div>
     <div class="status" id="status">Ready</div>
   </header>
 
-  <main class="layout">
-    <aside class="sidebar">
-      <section class="panel">
-        <h2>Upload Batch</h2>
-        <form id="uploadForm">
-          <label>
-            Batch name
-            <input name="batch_name" type="text" placeholder="2026-06-29 plate A" required>
-          </label>
-          <label>
-            TIFF images
-            <input name="files" type="file" accept=".tif,.tiff,image/tiff" multiple required>
-          </label>
-          <button type="submit">Upload and Detect</button>
-        </form>
-      </section>
-
-      <section class="panel">
-        <div class="section-title">
-          <h2>Batches</h2>
-          <button id="refreshBatches" class="ghost" type="button">Refresh</button>
+  <main class="app">
+    <!-- Dashboard (home base) -->
+    <section id="dashboardView" class="view">
+      <div class="dash-head">
+        <div class="progress-row">
+          <span id="progressLabel" class="progress-label">No batch selected.</span>
+          <button id="editStrainsBtn" type="button" class="link" hidden>Edit strain names</button>
         </div>
-        <div id="batchList" class="list"></div>
-      </section>
-
-      <section class="panel">
-        <h2>Images</h2>
-        <div id="imageList" class="list"></div>
-      </section>
-    </aside>
-
-    <section class="review">
-      <div class="review-toolbar">
-        <div>
-          <h2 id="imageTitle">No image selected</h2>
-          <p id="imageMeta">Upload or select a batch to begin.</p>
+        <div class="progress-track"><div id="progressFill" class="progress-fill"></div></div>
+        <div class="dash-legend">
+          <span><strong id="legendNum">42</strong> done</span>
+          <span class="legend-bang">!</span> not done
+          <span><span class="legend-dash">—</span> no image</span>
         </div>
-        <div class="toolbar-actions">
-          <span id="saveState" class="save-state" data-state="idle">No image</span>
-          <button id="openDashboard" type="button">Dashboard</button>
-          <button id="deletePoint" type="button" disabled>Delete Point</button>
-          <button id="rerunPrediction" type="button" hidden disabled>Rerun Detection</button>
-          <button id="saveReview" type="button" disabled>Save now</button>
-          <button id="markDone" type="button" disabled>Mark done</button>
+      </div>
+      <div id="dashboardBody"></div>
+      <div id="emptyDash" class="empty-state">Click <strong>New batch</strong> to upload a week's images.</div>
+    </section>
+
+    <!-- Review one image (focused) -->
+    <section id="reviewView" class="view" hidden>
+      <div class="review-topbar">
+        <button id="backBtn" type="button" class="link">&larr; Dashboard</button>
+        <span id="reviewContext" class="review-context"></span>
+        <span class="spacer"></span>
+        <span id="saveState" class="save-state" data-state="saved">Saved</span>
+        <button id="prevBtn" type="button">&lsaquo; Prev</button>
+        <button id="nextBtn" type="button">Next &rsaquo;</button>
+      </div>
+
+      <div class="image-stage" id="imageStage">
+        <img id="preview" alt="">
+        <svg id="overlay" aria-label="Trap point annotations"></svg>
+        <div class="stage-hint">click to add &middot; drag to move &middot; select and press Delete to remove</div>
+      </div>
+
+      <div class="review-actions">
+        <button id="markDone" type="button" class="primary">&#10003; Mark done</button>
+        <span class="spacer"></span>
+        <div class="count-block">
+          <div class="count-main"><strong id="reviewedCount">0</strong> traps</div>
+          <div class="count-sub">AI found <span id="predictedCount">0</span></div>
         </div>
       </div>
 
-      <div class="dashboard-view" id="dashboardView" hidden>
-        <div class="dashboard-head">
-          <div>
-            <h2>Batch dashboard</h2>
-            <p id="dashboardProgress" class="dashboard-progress">No batch selected.</p>
-          </div>
-        </div>
-        <div class="dashboard-legend">
-          <span><strong id="legendNum">42</strong> = done &amp; locked</span>
-          <span class="legend-bang">!</span> not validated yet
-          <span class="legend-dash">—</span> no image
-        </div>
-        <div id="dashboardBody"></div>
-      </div>
-
-      <div class="workspace">
-        <div class="image-stage" id="imageStage">
-          <img id="preview" alt="">
-          <svg id="overlay" aria-label="Trap point annotations"></svg>
-          <div class="empty-state" id="emptyState">Select an image to review.</div>
-        </div>
-      </div>
-
-      <div class="review-footer">
-        <label class="checkline">
-          <input id="uncertain" type="checkbox">
-          Uncertain image
+      <div class="review-options">
+        <label class="opt">Marker
+          <select id="markerStyle">
+            <option value="bubble">Bubble on trap</option>
+            <option value="arrow">Small arrow</option>
+          </select>
         </label>
-        <label class="notes">
-          Reviewer notes
-          <textarea id="notes" rows="2" placeholder="Optional note for audit trail"></textarea>
+        <label class="opt notes-opt">Notes
+          <input id="notes" type="text" placeholder="e.g. edge of plate blurry">
         </label>
-        <div class="view-controls">
-          <label class="control">
-            Marker
-            <select id="markerStyle">
-              <option value="arrow">Small arrow</option>
-              <option value="bubble">Bubble on trap</option>
-            </select>
-          </label>
-          <label class="control checkline">
-            <input id="showLowConfidence" type="checkbox">
-            Show low-confidence
-          </label>
-        </div>
-        <div class="counts" id="counts">
-          <span title="Traps the AI detector proposed for this image">AI predicted <strong id="predictedCount">0</strong></span>
-          <span class="count-main" title="Traps currently marked — this is the number exported">Count <strong id="reviewedCount">0</strong></span>
-        </div>
-      </div>
-
-      <div class="groups" id="groups" hidden>
-        <div class="section-title">
-          <h2>Strain names</h2>
-          <button id="refreshGroups" class="ghost" type="button">Refresh</button>
-        </div>
-        <p class="group-help">
-          The strain is read from each filename. Rename it to the clean strain
-          name used in the exports (e.g. <code>drd-5AddDrd-5line1</code> &rarr;
-          <code>drd-5(-); Pdrd-5::drd-5 line 1</code>). Give two the same name to
-          merge them.
-        </p>
-        <div id="groupList" class="group-list"></div>
-      </div>
-
-      <div class="exports" id="exports" hidden>
-        <a id="exportPlateTotals" href="#" class="primary-export">plate_totals.csv (Table 2)</a>
-        <a id="exportCounts" href="#">per_image_counts.csv (Table 1)</a>
-        <a id="exportCoords" href="#">trap_coordinates.csv (point data)</a>
-        <a id="exportAnnotated" href="#">annotated_images.zip</a>
       </div>
     </section>
   </main>
 
-  <script src="/static/app.js?v=6"></script>
+  <!-- New batch modal -->
+  <div id="uploadModal" class="modal-backdrop" hidden>
+    <div class="modal" role="dialog" aria-label="New batch">
+      <div class="modal-head"><h2>New batch</h2><button class="modal-close" data-close type="button" aria-label="Close">&times;</button></div>
+      <form id="uploadForm">
+        <label>Batch name
+          <input name="batch_name" type="text" placeholder="2026-06-11 trap quantification" required>
+        </label>
+        <label>Images (.tif)
+          <input name="files" type="file" accept=".tif,.tiff,image/tiff" multiple required>
+        </label>
+        <div class="modal-actions">
+          <button type="button" data-close>Cancel</button>
+          <button type="submit" class="primary">Upload and detect</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Download modal -->
+  <div id="downloadModal" class="modal-backdrop" hidden>
+    <div class="modal" role="dialog" aria-label="Download results">
+      <div class="modal-head"><h2>Download results</h2><button class="modal-close" data-close type="button" aria-label="Close">&times;</button></div>
+      <p id="downloadWarn" class="download-warn" hidden></p>
+      <ul class="download-list">
+        <li><a id="exportPlateTotals" href="#">plate_totals.csv</a><span>One row per plate: images, strain, plate no, and the summed total.</span></li>
+        <li><a id="exportCounts" href="#">per_image_counts.csv</a><span>One row per image: image, strain, plate no, picture no, count, notes.</span></li>
+        <li><a id="exportCoords" href="#">trap_coordinates.csv</a><span>Every trap's x/y position.</span></li>
+        <li><a id="exportAnnotated" href="#">annotated_images.zip</a><span>Your marks drawn onto the images. Created only when you click this.</span></li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Strain names modal -->
+  <div id="strainsModal" class="modal-backdrop" hidden>
+    <div class="modal" role="dialog" aria-label="Strain names">
+      <div class="modal-head"><h2>Strain names</h2><button class="modal-close" data-close type="button" aria-label="Close">&times;</button></div>
+      <p class="modal-help">The strain is read from each filename. Rename it to the clean name used in the exports. Give two the same name to merge them.</p>
+      <div id="strainList" class="strain-list"></div>
+      <div class="modal-actions"><button type="button" data-close class="primary">Done</button></div>
+    </div>
+  </div>
+
+  <script src="/static/app.js?v=7"></script>
 </body>
 </html>

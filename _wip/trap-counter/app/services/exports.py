@@ -105,6 +105,7 @@ def build_plate_frames(rows, labels: dict[str, str] | None = None):
                 "Plate no": plate_for(row),
                 "num": image_number(row["filename"]) or 0,
                 "Count": reviewed_count(row),
+                "Notes": _get(row, "notes", "") or "",
                 "validated": bool(_get(row, "validated", 0)),
             }
         )
@@ -124,10 +125,11 @@ def build_plate_frames(rows, labels: dict[str, str] | None = None):
                 "Plate no": record["Plate no"],
                 "Picture no": picture_counter[pkey],
                 "Count": record["Count"],
+                "Notes": record["Notes"],
             }
         )
         plate_groups.setdefault(pkey, []).append(record)
-    per_photo = pd.DataFrame(photo_rows, columns=["Image", "Strain", "Plate no", "Picture no", "Count"])
+    per_photo = pd.DataFrame(photo_rows, columns=["Image", "Strain", "Plate no", "Picture no", "Count", "Notes"])
 
     plate_rows = []
     for (strain, plate), recs in plate_groups.items():
@@ -226,17 +228,18 @@ def write_batch_exports(rows, export_dir: Path, labels: dict[str, str] | None = 
     }
 
 
-def write_annotated_zip(rows, output_path: Path) -> Path:
+def write_annotated_zip(rows, output_path: Path, marker: str = "bubble") -> Path:
     output_path.parent.mkdir(parents=True, exist_ok=True)
     with zipfile.ZipFile(output_path, "w", compression=zipfile.ZIP_DEFLATED) as zf:
         for row in rows:
-            annotated_path = output_path.parent / f"{Path(row['filename']).stem}_annotated.png"
+            annotated_path = output_path.parent / f"{Path(row['filename']).stem}_annotated.jpg"
             draw_annotated_preview(
                 Path(row["preview_path"]),
                 annotated_path,
                 annotation_points(row),
                 int(row["width"]),
                 int(row["height"]),
+                marker=marker,
             )
             zf.write(annotated_path, arcname=annotated_path.name)
             annotated_path.unlink(missing_ok=True)
