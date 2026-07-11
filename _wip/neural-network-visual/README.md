@@ -24,7 +24,7 @@ _wip/neural-network-visual/
                          #   https://www.falstad.com/dotproduct/
 ```
 
-**Reading order for visitors:** `building-a-probe/` (story) → `probing/` (playground) → `dot-product/` (geometric primer for what "applying" a probe means).
+**Reading order for visitors:** `dot-product/` (geometric primer for what "applying" a probe means) → `building-a-probe/` (story) → `probing/` (playground).
 
 ## Why "_wip" / what "not public" actually means
 

@@ -22,6 +22,8 @@ const el = {
   overlay: document.querySelector("#overlay"),
   stageHint: document.querySelector("#stageHint"),
   markDone: document.querySelector("#markDone"),
+  selectionTool: document.querySelector("#selectionTool"),
+  deleteSelected: document.querySelector("#deleteSelected"),
   rerunAi: document.querySelector("#rerunAi"),
   clearAll: document.querySelector("#clearAll"),
   reviewedCount: document.querySelector("#reviewedCount"),
@@ -48,6 +50,9 @@ const state = {
   image: null,
   points: [],
   selectedId: null,
+  selectedIds: new Set(),
+  selectionTool: "normal",
+  selectionDrag: null,
   draggingId: null,
   dragMoved: false,
   dirty: false,
@@ -55,6 +60,7 @@ const state = {
   saveTimer: null,
   savePromise: null,
   pollTimer: null,
+  uploading: false,
   groupLabels: {},
   markerStyle: localStorage.getItem("trap-counter-marker-style") === "arrow" ? "arrow" : "bubble",
 };
@@ -90,8 +96,49 @@ function visiblePoints() {
   return state.points.filter(passesFilter);
 }
 
+function isSelected(point) {
+  return state.selectedIds.has(point.id);
+}
+
+function setSelected(ids) {
+  state.selectedIds = new Set(ids);
+  state.selectedId = state.selectedIds.size === 1 ? [...state.selectedIds][0] : null;
+}
+
+function clearSelection() {
+  setSelected([]);
+}
+
+function selectOnly(id) {
+  setSelected([id]);
+}
+
+function toggleSelected(id) {
+  if (state.selectedIds.has(id)) state.selectedIds.delete(id);
+  else state.selectedIds.add(id);
+  state.selectedId = state.selectedIds.size === 1 ? [...state.selectedIds][0] : null;
+}
+
+function selectedVisiblePoints() {
+  return visiblePoints().filter((p) => state.selectedIds.has(p.id));
+}
+
+function pruneSelectionToVisible() {
+  const visibleIds = new Set(visiblePoints().map((p) => p.id));
+  const next = [...state.selectedIds].filter((id) => visibleIds.has(id));
+  if (next.length !== state.selectedIds.size) setSelected(next);
+}
+
 function markerColor(point) {
   return point.source === "predicted" ? "#050505" : "#0b6f3f";
+}
+
+function isPendingImage(image) {
+  return image && (image.status === "queued" || image.status === "detecting");
+}
+
+function canEditImage(image) {
+  return image && !image.validated && (image.status === "predicted" || image.status === "reviewed");
 }
 
 // ---------- Autosave engine ----------
@@ -102,6 +149,8 @@ function setSaveState(name) {
     saving: "Saving…",
     error: "Save failed — kept locally, retrying",
     locked: "Done — locked",
+    pending: "AI running",
+    aierror: "AI error",
   };
   el.saveState.dataset.state = name;
   el.saveState.textContent = labels[name] || name;
@@ -203,11 +252,12 @@ function renderPoints() {
         '<stop offset="100%" stop-color="#3f7cc0" stop-opacity="0.42"/>' +
         "</radialGradient></defs>"
       : "";
+  renderSelectionShape();
   const hitR = Math.max(16, state.image.width * 0.007);
   for (const point of visiblePoints()) {
     const g = document.createElementNS("http://www.w3.org/2000/svg", "g");
     g.classList.add("point");
-    if (point.id === state.selectedId) g.classList.add("selected");
+    if (isSelected(point)) g.classList.add("selected");
     g.dataset.id = point.id;
     const hit = document.createElementNS("http://www.w3.org/2000/svg", "circle");
     hit.setAttribute("cx", point.x); hit.setAttribute("cy", point.y);
@@ -218,9 +268,11 @@ function renderPoints() {
       const drop = document.createElementNS("http://www.w3.org/2000/svg", "circle");
       drop.setAttribute("cx", point.x); drop.setAttribute("cy", point.y);
       drop.setAttribute("r", r); drop.setAttribute("fill", "url(#waterdrop)");
-      if (point.id === state.selectedId) {
-        drop.setAttribute("stroke", "#1d7e53"); drop.setAttribute("stroke-opacity", "0.7");
-        drop.setAttribute("stroke-width", Math.max(1.5, state.image.width * 0.0008));
+      if (isSelected(point)) {
+        drop.setAttribute("fill", "rgba(232,137,36,0.16)");
+        drop.setAttribute("stroke", "#e88924"); drop.setAttribute("stroke-opacity", "0.95");
+        drop.setAttribute("stroke-width", Math.max(3, state.image.width * 0.0015));
+        drop.setAttribute("stroke-dasharray", `${Math.max(10, state.image.width * 0.006)} ${Math.max(6, state.image.width * 0.003)}`);
       } else { drop.setAttribute("stroke", "none"); }
       g.append(drop, hit);
     } else {
@@ -232,18 +284,57 @@ function renderPoints() {
       const arrow = document.createElementNS("http://www.w3.org/2000/svg", "polygon");
       arrow.setAttribute("points", `${endX},${point.y} ${baseX},${point.y - head * 0.7} ${baseX},${point.y + head * 0.7}`);
       arrow.setAttribute("fill", markerColor(point)); arrow.setAttribute("opacity", "0.98");
+      if (isSelected(point)) {
+        arrow.setAttribute("fill", "#e88924");
+        arrow.setAttribute("stroke", "#7b4b12");
+        arrow.setAttribute("stroke-width", Math.max(3, state.image.width * 0.0016));
+      }
       g.append(hit, arrow);
     }
     g.addEventListener("pointerdown", (event) => {
-      if (state.image.validated) return;
+      if (!canEditImage(state.image)) return;
       event.stopPropagation();
-      state.selectedId = point.id;
+      if (state.selectionTool === "box" || state.selectionTool === "lasso") {
+        beginSelectionDrag(event);
+        return;
+      }
+      if (event.shiftKey) {
+        toggleSelected(point.id);
+        updateReview();
+        return;
+      }
+      selectOnly(point.id);
       state.draggingId = point.id;
       state.dragMoved = false;
       g.setPointerCapture(event.pointerId);
-      renderPoints();
+      updateReview();
     });
     el.overlay.append(g);
+  }
+}
+
+function renderSelectionShape() {
+  if (!state.selectionDrag) return;
+  const drag = state.selectionDrag;
+  if (drag.tool === "box") {
+    const x = Math.min(drag.start.x, drag.current.x);
+    const y = Math.min(drag.start.y, drag.current.y);
+    const width = Math.abs(drag.current.x - drag.start.x);
+    const height = Math.abs(drag.current.y - drag.start.y);
+    const rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+    rect.classList.add("selection-shape");
+    rect.setAttribute("x", x);
+    rect.setAttribute("y", y);
+    rect.setAttribute("width", width);
+    rect.setAttribute("height", height);
+    el.overlay.append(rect);
+    return;
+  }
+  if (drag.tool === "lasso" && drag.points.length > 1) {
+    const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+    path.classList.add("selection-shape");
+    path.setAttribute("d", `M ${drag.points.map((p) => `${p.x} ${p.y}`).join(" L ")} Z`);
+    el.overlay.append(path);
   }
 }
 
@@ -254,18 +345,99 @@ function svgPoint(event) {
   return { x: Math.max(0, Math.min(state.image.width, t.x)), y: Math.max(0, Math.min(state.image.height, t.y)) };
 }
 
+function pointInPolygon(point, polygon) {
+  let inside = false;
+  for (let i = 0, j = polygon.length - 1; i < polygon.length; j = i++) {
+    const pi = polygon[i];
+    const pj = polygon[j];
+    const intersects = ((pi.y > point.y) !== (pj.y > point.y))
+      && (point.x < ((pj.x - pi.x) * (point.y - pi.y)) / (pj.y - pi.y) + pi.x);
+    if (intersects) inside = !inside;
+  }
+  return inside;
+}
+
+function pointsInSelectionDrag(drag) {
+  if (!drag) return [];
+  if (drag.tool === "box") {
+    const minX = Math.min(drag.start.x, drag.current.x);
+    const maxX = Math.max(drag.start.x, drag.current.x);
+    const minY = Math.min(drag.start.y, drag.current.y);
+    const maxY = Math.max(drag.start.y, drag.current.y);
+    return visiblePoints().filter((p) => p.x >= minX && p.x <= maxX && p.y >= minY && p.y <= maxY);
+  }
+  if (drag.tool === "lasso" && drag.points.length >= 3) {
+    return visiblePoints().filter((p) => pointInPolygon(p, drag.points));
+  }
+  return [];
+}
+
+function beginSelectionDrag(event) {
+  const p = svgPoint(event);
+  state.selectionDrag = {
+    tool: state.selectionTool,
+    additive: event.shiftKey,
+    start: p,
+    current: p,
+    points: [p],
+    pointerId: event.pointerId,
+  };
+  el.overlay.setPointerCapture(event.pointerId);
+  renderPoints();
+}
+
+function finishSelectionDrag() {
+  const drag = state.selectionDrag;
+  if (!drag) return;
+  const chosen = pointsInSelectionDrag(drag).map((p) => p.id);
+  state.selectionDrag = null;
+  if (chosen.length > 0) {
+    if (drag.additive) setSelected([...state.selectedIds, ...chosen]);
+    else setSelected(chosen);
+  } else if (!drag.additive) {
+    clearSelection();
+  }
+  updateReview();
+}
+
+function deleteSelectedPoints() {
+  if (!canEditImage(state.image)) return false;
+  const ids = new Set(selectedVisiblePoints().map((p) => p.id));
+  if (ids.size === 0) return false;
+  state.points = state.points.filter((p) => !ids.has(p.id));
+  clearSelection();
+  updateReview();
+  markDirty();
+  return true;
+}
+
 el.overlay.addEventListener("pointerdown", (event) => {
-  if (!state.image || state.image.validated || event.target.closest(".point")) return;
+  if (!canEditImage(state.image) || event.target.closest(".point")) return;
+  if (state.selectionTool === "box" || state.selectionTool === "lasso") {
+    beginSelectionDrag(event);
+    return;
+  }
   const p = svgPoint(event);
   const id = `pt_${crypto.randomUUID().replaceAll("-", "").slice(0, 12)}`;
   state.points.push({ id, x: p.x, y: p.y, source: "manual", confidence: null });
-  state.selectedId = id;
+  selectOnly(id);
   updateReview();
   markDirty();
 });
 
 el.overlay.addEventListener("pointermove", (event) => {
-  if (!state.draggingId || !state.image) return;
+  if (state.selectionDrag && state.selectionDrag.pointerId === event.pointerId && canEditImage(state.image)) {
+    const p = svgPoint(event);
+    state.selectionDrag.current = p;
+    if (state.selectionDrag.tool === "lasso") {
+      const last = state.selectionDrag.points[state.selectionDrag.points.length - 1];
+      const minStep = Math.max(3, state.image.width * 0.0015);
+      if (Math.hypot(p.x - last.x, p.y - last.y) >= minStep) state.selectionDrag.points.push(p);
+    }
+    renderPoints();
+    return;
+  }
+  if (!state.draggingId || !canEditImage(state.image)) return;
   const point = state.points.find((c) => c.id === state.draggingId);
   if (!point) return;
   const next = svgPoint(event);
@@ -275,20 +447,42 @@ el.overlay.addEventListener("pointermove", (event) => {
   renderPoints();
 });
 
-el.overlay.addEventListener("pointerup", () => {
+el.overlay.addEventListener("pointerup", (event) => {
+  if (state.selectionDrag && state.selectionDrag.pointerId === event.pointerId) {
+    finishSelectionDrag();
+    return;
+  }
   if (state.draggingId && state.dragMoved) markDirty();
   state.draggingId = null; state.dragMoved = false;
 });
 
+el.overlay.addEventListener("pointercancel", () => {
+  state.selectionDrag = null;
+  state.draggingId = null;
+  state.dragMoved = false;
+  renderPoints();
+});
+
 document.addEventListener("keydown", (event) => {
-  if (event.key !== "Delete" && event.key !== "Backspace") return;
   if (event.target instanceof HTMLInputElement || event.target instanceof HTMLTextAreaElement) return;
-  if (!state.selectedId || !state.image || state.image.validated) return;
-  event.preventDefault();
-  state.points = state.points.filter((p) => p.id !== state.selectedId);
-  state.selectedId = null;
+  if (event.key === "Escape") {
+    if (state.selectionDrag || state.selectedIds.size > 0) {
+      event.preventDefault();
+      state.selectionDrag = null;
+      clearSelection();
+      updateReview();
+    }
+    return;
+  }
+  if (event.key !== "Delete" && event.key !== "Backspace") return;
+  if (deleteSelectedPoints()) event.preventDefault();
+});
+
+document.addEventListener("pointerdown", (event) => {
+  if (!state.image || state.selectedIds.size === 0) return;
+  if (event.target.closest("#reviewView")) return;
+  clearSelection();
   updateReview();
-  markDirty();
 });
 
 // ---------- Review view ----------
@@ -301,22 +495,46 @@ function pictureNo(image) {
 
 function updateReview() {
   if (!state.image) return;
+  pruneSelectionToVisible();
   const locked = Boolean(state.image.validated);
+  const pending = isPendingImage(state.image);
+  const errored = state.image.status === "error";
+  const canEdit = canEditImage(state.image);
   const idx = state.images.findIndex((im) => im.id === state.image.id);
   el.reviewContext.textContent =
     `${strainLabel(state.image.filename)} · plate ${state.image.plate} · picture ${pictureNo(state.image)}  (image ${idx + 1} of ${state.images.length})`;
   el.markDone.textContent = locked ? "Undone (edit)" : "✓ Mark done";
   el.markDone.classList.toggle("primary", !locked);
+  el.markDone.disabled = !canEdit && !locked;
   el.prevBtn.disabled = idx <= 0;
   el.nextBtn.disabled = idx >= state.images.length - 1;
-  el.overlay.style.pointerEvents = locked ? "none" : "";
+  el.overlay.style.pointerEvents = canEdit ? "" : "none";
   el.imageStage.classList.toggle("locked", locked);
-  el.stageHint.hidden = locked;
+  el.imageStage.classList.toggle("pending", pending);
+  el.imageStage.classList.toggle("error", errored);
+  el.stageHint.hidden = false;
+  const selected = selectedVisiblePoints();
+  if (locked) el.stageHint.textContent = "Done — locked.";
+  else if (pending) el.stageHint.textContent = state.image.status === "queued" ? "Waiting for AI. This photo is not ready to review yet." : "AI is finding traps. This photo is not ready to review yet.";
+  else if (errored) el.stageHint.textContent = "AI did not finish for this photo. Ask JT to retry detection before reviewing.";
+  else if (selected.length > 0) el.stageHint.textContent = `${selected.length} trap${selected.length === 1 ? "" : "s"} selected · Delete selected removes them · Esc cancels.`;
+  else if (state.selectionTool === "box") el.stageHint.textContent = "Drag a box to select traps · Shift-drag adds more · press Delete selected to remove.";
+  else if (state.selectionTool === "lasso") el.stageHint.textContent = "Draw around traps to select them · Shift-draw adds more · press Delete selected to remove.";
+  else el.stageHint.textContent = "Click to add a trap · drag to move · Shift-click selects several · press Delete selected to remove.";
   const shown = visiblePoints();
-  el.rerunAi.disabled = locked;
-  el.clearAll.disabled = locked || shown.length === 0;
+  el.selectionTool.disabled = !canEdit;
+  el.deleteSelected.disabled = !canEdit || selected.length === 0;
+  el.deleteSelected.textContent = selected.length > 0 ? `Delete ${selected.length} selected` : "Delete selected";
+  el.deleteSelected.classList.toggle("primary-danger", selected.length > 0);
+  el.rerunAi.disabled = locked || pending || errored;
+  el.clearAll.disabled = !canEdit || shown.length === 0;
+  el.notes.disabled = !canEdit;
   el.reviewedCount.textContent = shown.length;
   el.predictedCount.textContent = state.image.predicted_count;
+  if (pending) setSaveState("pending");
+  else if (errored) setSaveState("aierror");
+  else if (locked) setSaveState("locked");
+  else if (canEdit && !state.dirty && !state.saving) setSaveState("saved");
   renderPoints();
 }
 
@@ -324,12 +542,13 @@ async function selectImage(imageId) {
   await flushPendingSave();
   showReview();
   state.image = await api(`/api/images/${imageId}`);
-  state.selectedId = null;
+  clearSelection();
+  state.selectionDrag = null;
   el.preview.onload = fitOverlay;
   el.preview.src = state.image.preview_url;
 
   const draft = readDraft(imageId);
-  if (draft && Array.isArray(draft.points) && !state.image.validated) {
+  if (draft && Array.isArray(draft.points) && canEditImage(state.image)) {
     state.points = draft.points.map((p) => ({ ...p }));
     el.notes.value = draft.notes || "";
     state.dirty = true;
@@ -358,49 +577,72 @@ el.backBtn.addEventListener("click", async () => { await flushPendingSave(); sho
 
 el.markDone.addEventListener("click", async () => {
   if (!state.image) return;
+  if (!canEditImage(state.image) && !state.image.validated) return;
   const next = !state.image.validated;
   if (next) await flushPendingSave();
   state.image = await api(`/api/images/${state.image.id}/validate`, {
     method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ validated: next }),
   });
   state.points = state.image.points.map((p) => ({ ...p }));
+  clearSelection();
+  state.selectionDrag = null;
   state.images = state.images.map((im) => (im.id === state.image.id ? state.image : im));
   updateReview();
   setSaveState(next ? "locked" : "saved");
 });
 
 el.clearAll.addEventListener("click", () => {
-  if (!state.image || state.image.validated) return;
+  if (!canEditImage(state.image)) return;
   const n = visiblePoints().length;
   if (n === 0) return;
   if (!window.confirm(`Clear all ${n} traps from this photo? This can't be undone.`)) return;
   state.points = [];
-  state.selectedId = null;
+  clearSelection();
   updateReview();
   markDirty();
 });
 
+el.deleteSelected.addEventListener("click", deleteSelectedPoints);
+
 el.rerunAi.addEventListener("click", async () => {
-  if (!state.image || state.image.validated) return;
-  if (!window.confirm("Re-run the AI on this photo? It replaces the current marks with the AI's.")) return;
+  if (!state.image || state.image.validated || isPendingImage(state.image)) return;
+  if (state.image.status === "error") return;
+  if (!window.confirm("Reset this photo to the AI marks? This discards your edits for this photo.")) return;
+  const imageId = state.image.id;
   await flushPendingSave();
-  setStatus("Re-running AI…");
+  if (!state.images.some((im) => im.id === imageId)) return;
+  setStatus("Resetting to AI marks");
+  el.rerunAi.disabled = true;
   try {
-    state.image = await api(`/api/images/${state.image.id}/predict`, { method: "POST" });
-    state.points = state.image.points.map((p) => ({ ...p }));
-    state.images = state.images.map((im) => (im.id === state.image.id ? state.image : im));
-    clearDraft(state.image.id);
-    state.dirty = false;
-    updateReview();
-    setSaveState("saved");
+    const updated = await api(`/api/images/${imageId}/reset`, { method: "POST" });
+    state.images = state.images.map((im) => (im.id === imageId ? updated : im));
+    clearDraft(imageId);
+    if (state.image && state.image.id === imageId) {
+      state.image = updated;
+      state.points = updated.points.map((p) => ({ ...p }));
+      clearSelection();
+      state.selectionDrag = null;
+      state.dirty = false;
+      updateReview();
+      setSaveState("saved");
+    }
     setStatus("Ready");
   } catch (error) {
     console.error(error);
-    setStatus("Re-run failed — the original .tif is needed for detection");
+    setStatus("Reset failed — AI marks are not ready for this photo");
+  } finally {
+    if (state.image && state.image.id === imageId) updateReview();
   }
 });
 
 el.notes.addEventListener("input", markDirty);
+
+el.selectionTool.value = state.selectionTool;
+el.selectionTool.addEventListener("change", () => {
+  state.selectionTool = ["box", "lasso"].includes(el.selectionTool.value) ? el.selectionTool.value : "normal";
+  state.selectionDrag = null;
+  updateReview();
+});
 
 el.markerStyle.value = state.markerStyle;
 el.markerStyle.addEventListener("change", () => {
@@ -431,6 +673,18 @@ function displayCount(image) {
   return image.reviewed_count ?? (image.points ? image.points.length : 0);
 }
 
+function aiReady(image) {
+  return image.status === "predicted" || image.status === "reviewed" || image.validated;
+}
+
+function dashboardCell(image) {
+  if (image.validated) return `${displayCount(image)}`;
+  if (image.status === "queued") return '<span class="dash-status">waiting</span>';
+  if (image.status === "detecting") return '<span class="dash-status">AI…</span>';
+  if (image.status === "error") return '<span class="dash-error">error</span>';
+  return '<span class="dash-bang">!</span>';
+}
+
 function showDashboard() {
   el.reviewView.hidden = true;
   el.dashboardView.hidden = false;
@@ -453,7 +707,13 @@ function renderDashboard() {
   }
   el.editStrainsBtn.hidden = false;
   const done = state.images.filter((im) => im.validated).length;
-  el.progressLabel.textContent = `${done} of ${state.images.length} images done`;
+  const ready = state.images.filter(aiReady).length;
+  const detecting = state.images.filter((im) => im.status === "detecting").length;
+  const queued = state.images.filter((im) => im.status === "queued").length;
+  const aiText = ready === state.images.length
+    ? "AI ready for all images"
+    : `AI ready for ${ready} of ${state.images.length}; ${detecting} detecting, ${queued} waiting`;
+  el.progressLabel.textContent = `${done} of ${state.images.length} images done · ${aiText}`;
   el.progressFill.style.width = `${Math.round((done / state.images.length) * 100)}%`;
 
   const strains = new Map();
@@ -481,8 +741,7 @@ function renderDashboard() {
       for (let i = 0; i < maxImgs; i += 1) {
         const image = imgs[i];
         if (!image) html += '<td class="dash-cell"><span class="dash-dash">—</span></td>';
-        else if (image.validated) html += `<td class="dash-cell dash-click" data-id="${image.id}">${displayCount(image)}</td>`;
-        else html += `<td class="dash-cell dash-click" data-id="${image.id}"><span class="dash-bang">!</span></td>`;
+        else html += `<td class="dash-cell dash-click" data-id="${image.id}">${dashboardCell(image)}</td>`;
       }
       if (imgs.every((im) => im.validated)) {
         const total = imgs.reduce((s, im) => s + displayCount(im), 0);
@@ -518,8 +777,18 @@ async function refreshBatchProgress() {
   let images;
   try { images = await api(`/api/batches/${batchId}/images`); } catch { scheduleBatchPoll(); return; }
   if (state.batchId !== batchId) return;
+  const currentId = state.image && state.image.id;
+  const currentUpdated = currentId ? images.find((im) => im.id === currentId) : null;
   state.images = images;
   if (!el.dashboardView.hidden) renderDashboard();
+  if (currentUpdated && !el.reviewView.hidden) {
+    const wasPending = state.image && (state.image.status === "queued" || state.image.status === "detecting");
+    state.image = currentUpdated;
+    if (wasPending && !state.dirty && !state.saving && !readDraft(currentId)) {
+      state.points = currentUpdated.points.map((p) => ({ ...p }));
+    }
+    updateReview();
+  }
   if (!anyPending()) { setStatus("Ready"); return; }
   scheduleBatchPoll();
 }
@@ -528,7 +797,7 @@ async function refreshBatchProgress() {
 async function loadBatches(selectId) {
   state.batches = await api("/api/batches");
   el.batchSelect.innerHTML = state.batches.length
-    ? state.batches.map((b) => `<option value="${b.id}">${escapeHtml(b.name)} (${b.image_count})</option>`).join("")
+    ? state.batches.map((b) => `<option value="${b.id}">#${b.id} ${escapeHtml(b.name)} (${b.image_count})</option>`).join("")
     : '<option value="">No batches yet</option>';
   const target = selectId || state.batchId || (state.batches[0] && state.batches[0].id);
   if (target) {
@@ -606,12 +875,21 @@ function renderDownloadLinks() {
 
 // ---------- Modals ----------
 function openModal(modal) { modal.hidden = false; }
-function closeModal(modal) { modal.hidden = true; }
+function closeModal(modal) {
+  if (state.uploading && modal === el.uploadModal) return;
+  modal.hidden = true;
+}
+function setUploadBusy(busy) {
+  state.uploading = busy;
+  el.uploadForm.querySelectorAll("input, button").forEach((item) => { item.disabled = busy; });
+  const submit = el.uploadForm.querySelector('button[type="submit"]');
+  if (submit) submit.textContent = busy ? "Uploading..." : "Upload and detect";
+}
 document.querySelectorAll("[data-close]").forEach((btn) => {
-  btn.addEventListener("click", () => btn.closest(".modal-backdrop").hidden = true);
+  btn.addEventListener("click", () => closeModal(btn.closest(".modal-backdrop")));
 });
 document.querySelectorAll(".modal-backdrop").forEach((backdrop) => {
-  backdrop.addEventListener("click", (event) => { if (event.target === backdrop) backdrop.hidden = true; });
+  backdrop.addEventListener("click", (event) => { if (event.target === backdrop) closeModal(backdrop); });
 });
 
 el.newBatchBtn.addEventListener("click", () => openModal(el.uploadModal));
@@ -620,16 +898,21 @@ el.downloadBtn.addEventListener("click", () => { renderDownloadLinks(); openModa
 
 el.uploadForm.addEventListener("submit", async (event) => {
   event.preventDefault();
+  if (state.uploading) return;
   const formData = new FormData(el.uploadForm);
   setStatus("Uploading");
+  setUploadBusy(true);
   try {
     const batch = await api("/api/batches", { method: "POST", body: formData });
     el.uploadForm.reset();
+    setUploadBusy(false);
     closeModal(el.uploadModal);
     await loadBatches(batch.id);
   } catch (error) {
     console.error(error);
     setStatus("Upload failed");
+  } finally {
+    setUploadBusy(false);
   }
 });
 

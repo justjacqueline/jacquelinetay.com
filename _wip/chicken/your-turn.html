@@ -1,0 +1,1485 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Chicken - Your Turn Mockup</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f7f3e8;
+      --panel: #fffdf7;
+      --panel-strong: #fff7d8;
+      --ink: #2d2a24;
+      --muted: #746b5d;
+      --line: #ddd2bd;
+      --corn: #f4bd2d;
+      --leaf: #5f9f6f;
+      --barn: #c85145;
+      --sky: #7fb6d9;
+      --honest-bg: #e7f4dd;
+      --honest-ink: #356438;
+      --bluff-bg: #fff1cf;
+      --bluff-ink: #7b5500;
+      --unknown-bg: #ece9e2;
+      --unknown-ink: #5e5a52;
+      --danger-bg: #fff0ec;
+      --danger-ink: #8b2f22;
+      --shadow: 0 18px 50px rgba(65, 50, 29, 0.14);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at 12% 10%, rgba(244, 189, 45, 0.22), transparent 28%),
+        linear-gradient(180deg, #fbf8ef 0%, var(--bg) 44%, #eee5d4 100%);
+      color: var(--ink);
+    }
+
+    button {
+      font: inherit;
+    }
+
+    .app {
+      min-height: 100vh;
+      display: grid;
+      grid-template-rows: auto 1fr;
+    }
+
+    .topbar {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      gap: 16px;
+      align-items: center;
+      padding: 18px 28px;
+      border-bottom: 1px solid rgba(121, 98, 59, 0.18);
+      background: rgba(255, 253, 247, 0.88);
+      backdrop-filter: blur(12px);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 0;
+    }
+
+    .brand-mark {
+      width: 42px;
+      height: 42px;
+      border-radius: 12px;
+      display: grid;
+      place-items: center;
+      background: var(--panel-strong);
+      border: 1px solid #e2c86f;
+      box-shadow: inset 0 -3px 0 rgba(122, 83, 20, 0.1);
+    }
+
+    .brand h1 {
+      margin: 0;
+      font-size: 22px;
+      line-height: 1;
+      letter-spacing: 0;
+    }
+
+    .brand p,
+    .room-meta p {
+      margin: 4px 0 0;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .room-code {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 9px 14px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      box-shadow: 0 6px 20px rgba(85, 67, 38, 0.08);
+    }
+
+    .room-code span {
+      color: var(--muted);
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .room-code strong {
+      font-size: 22px;
+      letter-spacing: 0.12em;
+    }
+
+    .top-actions {
+      justify-self: end;
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .ghost,
+    .primary {
+      border: 0;
+      min-height: 40px;
+      border-radius: 8px;
+      padding: 0 14px;
+      cursor: default;
+    }
+
+    .ghost {
+      background: #fff;
+      color: var(--ink);
+      border: 1px solid var(--line);
+    }
+
+    .primary {
+      background: var(--ink);
+      color: #fff;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(210px, 250px) minmax(760px, 1fr);
+      gap: 20px;
+      padding: 24px 28px 28px;
+      max-width: 1500px;
+      width: 100%;
+      margin: 0 auto;
+    }
+
+    .panel {
+      background: rgba(255, 253, 247, 0.88);
+      border: 1px solid rgba(121, 98, 59, 0.18);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+    }
+
+    .side-panel {
+      padding: 16px;
+      align-self: start;
+    }
+
+    .panel-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .panel-title h2 {
+      margin: 0;
+      font-size: 15px;
+    }
+
+    .pill {
+      border-radius: 999px;
+      padding: 4px 9px;
+      font-size: 12px;
+      color: #425643;
+      background: #eaf4df;
+      border: 1px solid #cde2bd;
+      white-space: nowrap;
+    }
+
+    .player-list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .player-row {
+      display: grid;
+      grid-template-columns: 36px 1fr auto;
+      gap: 10px;
+      align-items: center;
+      padding: 9px;
+      border-radius: 8px;
+      background: #fff;
+      border: 1px solid #ebe1cd;
+      cursor: pointer;
+    }
+
+    .player-row.waiting,
+    .seat.waiting {
+      border-color: #dfd4c2;
+      background: rgba(255, 255, 255, 0.78);
+    }
+
+    .player-row.deciding,
+    .seat.deciding {
+      border-color: #e0bf65;
+      box-shadow: 0 0 0 3px rgba(244, 189, 45, 0.18), 0 12px 28px rgba(48, 38, 21, 0.12);
+    }
+
+    .player-row.target,
+    .seat.target {
+      border-color: #e8b8ad;
+      box-shadow: 0 0 0 4px rgba(200, 81, 69, 0.18), 0 12px 28px rgba(48, 38, 21, 0.12);
+    }
+
+    .player-row.done,
+    .seat.done {
+      border-color: #b9d1ab;
+      background: rgba(249, 255, 243, 0.92);
+    }
+
+    .seat-dot {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      color: #fff;
+      font-weight: 800;
+      background: var(--leaf);
+    }
+
+    .seat-dot.host {
+      background: var(--barn);
+    }
+
+    .player-row strong {
+      display: block;
+      font-size: 14px;
+    }
+
+    .player-row span {
+      display: block;
+      color: var(--muted);
+      font-size: 12px;
+      margin-top: 2px;
+    }
+
+    .corn-count {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-weight: 800;
+      color: #6b4a07;
+    }
+
+    .corn-icon {
+      position: relative;
+      width: 18px;
+      height: 18px;
+      display: inline-block;
+    }
+
+    .corn-icon::before,
+    .corn-icon::after {
+      content: "";
+      position: absolute;
+      width: 8px;
+      height: 12px;
+      border-radius: 50% 50% 45% 45%;
+      background: var(--corn);
+      border: 1px solid #d79e18;
+      box-shadow: inset 0 -2px 0 rgba(131, 84, 7, 0.13);
+    }
+
+    .corn-icon::before {
+      left: 2px;
+      top: 4px;
+      transform: rotate(-18deg);
+    }
+
+    .corn-icon::after {
+      right: 2px;
+      top: 2px;
+      transform: rotate(18deg);
+    }
+
+    .corn-icon .kernel {
+      position: absolute;
+      left: 6px;
+      top: 0;
+      width: 8px;
+      height: 12px;
+      border-radius: 50% 50% 45% 45%;
+      background: #ffd968;
+      border: 1px solid #d79e18;
+      box-shadow: inset 0 -2px 0 rgba(131, 84, 7, 0.13);
+    }
+
+    .status-chip {
+      display: inline-flex;
+      align-items: center;
+      width: fit-content;
+      min-height: 22px;
+      margin-top: 7px;
+      padding: 0 8px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 800;
+      border: 1px solid transparent;
+    }
+
+    .status-chip.waiting {
+      background: var(--unknown-bg);
+      color: var(--unknown-ink);
+      border-color: #d7d2c8;
+    }
+
+    .status-chip.deciding {
+      background: var(--bluff-bg);
+      color: var(--bluff-ink);
+      border-color: #e0bf65;
+    }
+
+    .status-chip.done {
+      background: var(--honest-bg);
+      color: var(--honest-ink);
+      border-color: #cde2bd;
+    }
+
+    .table-wrap {
+      display: grid;
+      grid-template-rows: 1fr auto;
+      gap: 18px;
+      min-height: calc(100vh - 122px);
+    }
+
+    .table {
+      position: relative;
+      min-height: 560px;
+      overflow: hidden;
+      background:
+        linear-gradient(90deg, rgba(255, 255, 255, 0.35) 1px, transparent 1px),
+        linear-gradient(180deg, rgba(255, 255, 255, 0.35) 1px, transparent 1px),
+        #d8c59b;
+      background-size: 36px 36px;
+      border-radius: 8px;
+      border: 1px solid rgba(98, 76, 39, 0.24);
+      box-shadow: var(--shadow);
+    }
+
+    .table::before {
+      content: "";
+      position: absolute;
+      inset: 74px 96px 110px;
+      border-radius: 999px;
+      background:
+        radial-gradient(circle at 50% 48%, rgba(255, 255, 255, 0.26), transparent 48%),
+        #84a874;
+      border: 12px solid #6f8d61;
+      box-shadow: inset 0 14px 40px rgba(26, 56, 30, 0.15);
+    }
+
+    .table-arrow-layer {
+      position: absolute;
+      inset: 0;
+      z-index: 4;
+      pointer-events: none;
+    }
+
+    .table-arrow {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 4;
+    }
+
+    .table-arrow > path {
+      fill: none;
+      stroke: rgba(200, 81, 69, 0.9);
+      stroke-width: 4;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      filter: drop-shadow(0 2px 2px rgba(55, 38, 20, 0.16));
+    }
+
+    .table-arrow-marker {
+      fill: rgba(200, 81, 69, 0.95);
+      stroke: none;
+    }
+
+    .table-arrow-label {
+      position: absolute;
+      left: 50%;
+      top: 30%;
+      transform: translate(-50%, -50%);
+      z-index: 2;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      min-height: 30px;
+      padding: 0 10px;
+      border-radius: 999px;
+      background: #fffdf7;
+      border: 1px solid #e8b8ad;
+      color: var(--danger-ink);
+      box-shadow: 0 8px 18px rgba(65, 50, 29, 0.14);
+      font-size: 12px;
+      font-weight: 900;
+    }
+
+    .play-area {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      width: min(560px, calc(100% - 260px));
+      padding: 12px;
+      border-radius: 8px;
+      background: rgba(255, 253, 247, 0.92);
+      border: 1px solid rgba(63, 56, 43, 0.2);
+      box-shadow: 0 14px 34px rgba(44, 56, 30, 0.18);
+      z-index: 3;
+    }
+
+    .play-area-kicker {
+      display: block;
+      color: var(--muted);
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-weight: 800;
+    }
+
+    .play-area h2 {
+      margin: 6px 0 0;
+      font-size: clamp(18px, 2.3vw, 26px);
+      line-height: 1.05;
+      letter-spacing: 0;
+    }
+
+    .play-banner {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr);
+      gap: 10px;
+      align-items: center;
+      margin-top: 10px;
+    }
+
+    .play-banner-action {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 38px;
+      padding: 0 12px;
+      border-radius: 999px;
+      background: #eef7fb;
+      color: #315f7c;
+      border: 1px solid #bfd8e8;
+      font-size: 12px;
+      font-weight: 900;
+      white-space: nowrap;
+    }
+
+    .play-area p {
+      margin: 10px 0 0;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.42;
+    }
+
+    .claim-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+      margin-top: 14px;
+    }
+
+    .claim-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      min-height: 32px;
+      padding: 0 10px;
+      border-radius: 999px;
+      background: var(--unknown-bg);
+      color: var(--unknown-ink);
+      border: 1px solid #d7d2c8;
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .claim-chip.target {
+      background: var(--danger-bg);
+      color: var(--danger-ink);
+      border-color: #e8b8ad;
+    }
+
+    .claim-chip .corn-icon {
+      width: 14px;
+      height: 14px;
+    }
+
+    .center-note {
+      display: block;
+      margin-top: 12px;
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .flow-card {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      min-height: 30px;
+      margin-top: 10px;
+      padding: 5px 10px;
+      border-radius: 999px;
+      background: var(--unknown-bg);
+      color: var(--unknown-ink);
+      border: 1px solid #d7d2c8;
+      font-size: 12px;
+      font-weight: 900;
+      white-space: normal;
+      max-width: 100%;
+    }
+
+    .seat {
+      position: absolute;
+      width: 176px;
+      min-height: 98px;
+      padding: 10px;
+      border-radius: 8px;
+      background: rgba(255, 253, 247, 0.94);
+      border: 1px solid rgba(75, 58, 30, 0.18);
+      box-shadow: 0 12px 28px rgba(48, 38, 21, 0.12);
+      z-index: 2;
+      cursor: pointer;
+    }
+
+    .seat.active {
+      border-color: #d18b26;
+      box-shadow: 0 0 0 3px rgba(244, 189, 45, 0.28), 0 12px 28px rgba(48, 38, 21, 0.12);
+    }
+
+    .seat-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .seat-name {
+      font-weight: 800;
+      font-size: 14px;
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .seat-cards {
+      display: flex;
+      gap: 6px;
+      margin-top: 10px;
+    }
+
+    .back-card {
+      width: 38px;
+      height: 50px;
+      border-radius: 6px;
+      background:
+        linear-gradient(135deg, rgba(255,255,255,0.28) 25%, transparent 25%) 0 0 / 14px 14px,
+        var(--barn);
+      border: 2px solid #fff5df;
+      box-shadow: 0 2px 0 rgba(78, 42, 24, 0.18);
+    }
+
+    .lost-card {
+      background: #d9d2c5;
+      border-color: #f4eee2;
+      opacity: 0.75;
+      position: relative;
+    }
+
+    .lost-card::after {
+      content: "";
+      position: absolute;
+      left: 5px;
+      right: 5px;
+      top: 23px;
+      height: 2px;
+      background: #6c6559;
+      transform: rotate(-28deg);
+    }
+
+    .seat-1 { left: 50%; top: 18px; transform: translateX(-50%); }
+    .seat-2 { right: 24px; top: 110px; }
+    .seat-3 { right: 48px; bottom: 96px; }
+    .seat-4 { left: 50%; bottom: 20px; transform: translateX(-50%); }
+    .seat-5 { left: 48px; bottom: 96px; }
+
+    .hand {
+      display: grid;
+      gap: 16px;
+      padding: 16px;
+    }
+
+    .hand .panel-title {
+      margin-bottom: 0;
+    }
+
+    .hand-title-left {
+      min-width: 0;
+    }
+
+    .private-layout {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+      align-items: stretch;
+    }
+
+    .my-hand-board {
+      padding: 14px;
+      border-radius: 8px;
+      background: #fff;
+      border: 1px solid #e4d8c4;
+    }
+
+    .my-hand-board h3 {
+      margin: 0;
+      font-size: 15px;
+    }
+
+    .my-hand-board p {
+      margin: 6px 0 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.42;
+    }
+
+    .hand-stats {
+      margin-bottom: 14px;
+    }
+
+    .big-corn {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      min-height: 56px;
+      padding: 8px 14px;
+      border-radius: 8px;
+      background: #fff7d8;
+      border: 1px solid #e2c86f;
+      color: #654406;
+      font-size: 28px;
+      font-weight: 900;
+      line-height: 1;
+    }
+
+    .big-corn .corn-icon {
+      width: 32px;
+      height: 28px;
+    }
+
+    .claimed-card-row {
+      display: grid;
+      grid-template-columns: 108px 1fr;
+      gap: 12px;
+      align-items: center;
+      margin-top: 12px;
+    }
+
+    .decision-actions {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .decision-button {
+      min-height: 56px;
+      padding: 10px;
+      border-radius: 8px;
+      background: #fff;
+      border: 1px solid #e4d8c4;
+      text-align: left;
+      cursor: default;
+    }
+
+    .decision-button.active-choice {
+      border-color: #86b6d2;
+      background: #eef7fb;
+      box-shadow: 0 0 0 3px rgba(127, 182, 217, 0.18), 0 8px 18px rgba(65, 50, 29, 0.08);
+    }
+
+    .is-selected {
+      outline: 3px solid rgba(127, 182, 217, 0.22);
+      outline-offset: 2px;
+    }
+
+    .decision-button.disabled-card {
+      border-color: #d3ccc0;
+      background: #f1eee8;
+      box-shadow: none;
+      opacity: 0.68;
+    }
+
+    .decision-button strong,
+    .choice-card strong {
+      display: block;
+      font-size: 14px;
+    }
+
+    .decision-button span,
+    .choice-card span {
+      display: block;
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.3;
+    }
+
+    .choice-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+      margin-bottom: 8px;
+    }
+
+    .choice-meta span {
+      display: inline-flex;
+      align-items: center;
+      min-height: 22px;
+      margin: 0;
+      padding: 0 7px;
+      border-radius: 999px;
+      background: #f6f0e6;
+      border: 1px solid #e2d5c1;
+      color: var(--muted);
+      font-size: 10px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .choice-meta .cost {
+      color: #654406;
+      background: #fff7d8;
+      border-color: #e2c86f;
+    }
+
+    .choice-meta .scope {
+      color: #315f7c;
+      background: #eef7fb;
+      border-color: #bfd8e8;
+    }
+
+    .target-picker {
+      margin-top: 12px;
+      padding: 12px;
+      border-radius: 8px;
+      border: 1px solid #d9c8ab;
+      background: #fffdf7;
+    }
+
+    .target-picker-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+
+    .target-picker-header strong {
+      font-size: 14px;
+    }
+
+    .target-picker-header span {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .target-options {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .target-option {
+      min-height: 48px;
+      border-radius: 8px;
+      border: 1px solid var(--line);
+      background: #fff;
+      text-align: left;
+      padding: 8px 10px;
+    }
+
+    .target-option.active-choice {
+      border-color: #e0bf65;
+      background: #fff8e4;
+      box-shadow: 0 0 0 3px rgba(244, 189, 45, 0.16);
+    }
+
+    .target-option strong,
+    .target-option span {
+      display: block;
+    }
+
+    .target-option span {
+      margin-top: 2px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .my-cards {
+      display: flex;
+      gap: 12px;
+      align-items: stretch;
+    }
+
+    .all-choices-row {
+      display: grid;
+      grid-template-columns: repeat(8, minmax(104px, 1fr));
+      gap: 10px;
+      align-items: stretch;
+    }
+
+    .animal-card {
+      width: 138px;
+      min-height: 188px;
+      display: grid;
+      grid-template-rows: 96px auto;
+      overflow: hidden;
+      border-radius: 8px;
+      background: #fff;
+      border: 1px solid #d8c7a8;
+      box-shadow: 0 10px 24px rgba(65, 50, 29, 0.12);
+    }
+
+    .animal-card.compact {
+      width: 118px;
+      min-height: 158px;
+      grid-template-rows: 78px auto;
+      box-shadow: 0 8px 18px rgba(65, 50, 29, 0.1);
+    }
+
+    .animal-card.compact svg {
+      width: 58px;
+      height: 58px;
+    }
+
+    .all-choices-row .animal-card.compact,
+    .all-choices-row .decision-button {
+      width: 100%;
+      min-height: 178px;
+      grid-template-rows: 84px auto;
+    }
+
+    .all-choices-row .decision-button {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .play-area .animal-portrait {
+      width: 60px;
+      height: 60px;
+      border-radius: 20px;
+      font-size: 36px;
+    }
+
+    .play-area .card-body {
+      padding: 8px;
+    }
+
+    .play-area .card-fact {
+      grid-template-columns: 36px 1fr;
+      font-size: 10.5px;
+    }
+
+    .play-area .animal-card.compact {
+      width: 108px;
+      min-height: 148px;
+      grid-template-rows: 70px auto;
+    }
+
+    .animal-card.claimed {
+      border-color: #cfc8ba;
+      background: #faf8f2;
+    }
+
+    .animal-card.claimed .card-art {
+      filter: grayscale(1);
+      opacity: 0.82;
+    }
+
+    .animal-card.honest-card {
+      border-color: #a9c99b;
+      box-shadow: 0 0 0 3px rgba(95, 159, 111, 0.16), 0 8px 18px rgba(65, 50, 29, 0.1);
+    }
+
+    .animal-card.active-card {
+      border-color: #6fa85d;
+      box-shadow: 0 0 0 4px rgba(95, 159, 111, 0.28), 0 12px 28px rgba(65, 50, 29, 0.16);
+      transform: translateY(-2px);
+    }
+
+    .animal-card.bluff-card {
+      border-color: #e0bf65;
+      box-shadow: 0 0 0 3px rgba(244, 189, 45, 0.18), 0 8px 18px rgba(65, 50, 29, 0.1);
+    }
+
+    .animal-card.disabled-card {
+      border-color: #d3ccc0;
+      background: #f1eee8;
+      box-shadow: none;
+      opacity: 0.68;
+    }
+
+    .animal-card.disabled-card .card-art,
+    .animal-card.disabled-card .card-body {
+      filter: grayscale(1);
+    }
+
+    .card-art {
+      display: grid;
+      place-items: center;
+      border-bottom: 1px solid #eadcc3;
+      background:
+        radial-gradient(circle at 50% 48%, rgba(255, 255, 255, 0.72), transparent 58%),
+        #f4ecdb;
+    }
+
+    .card-art svg {
+      overflow: visible;
+    }
+
+    .animal-portrait {
+      width: 72px;
+      height: 72px;
+      display: grid;
+      place-items: center;
+      border-radius: 24px;
+      border: 2px solid rgba(45, 42, 36, 0.16);
+      background: linear-gradient(180deg, #fffdfa 0%, #f4ead9 100%);
+      box-shadow: inset 0 -6px 0 rgba(80, 60, 35, 0.06), 0 8px 18px rgba(65, 50, 29, 0.12);
+      font-size: 44px;
+      line-height: 1;
+    }
+
+    .animal-portrait.fox { background: linear-gradient(180deg, #fff5e8 0%, #ffd7b7 100%); }
+    .animal-portrait.goat { background: linear-gradient(180deg, #fffdfa 0%, #e9ead5 100%); }
+    .animal-portrait.rooster { background: linear-gradient(180deg, #fff8df 0%, #ffd8cf 100%); }
+    .animal-portrait.snake { background: linear-gradient(180deg, #f7ffec 0%, #cfe8c2 100%); }
+    .animal-portrait.dog { background: linear-gradient(180deg, #fff5e9 0%, #dfc0a1 100%); }
+
+    .card-body {
+      padding: 10px;
+    }
+
+    .card-body strong {
+      display: block;
+      font-size: 15px;
+    }
+
+    .card-body span {
+      display: block;
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.35;
+    }
+
+    .card-facts {
+      display: grid;
+      gap: 4px;
+      margin-top: 6px;
+    }
+
+    .card-fact {
+      display: grid;
+      grid-template-columns: 42px 1fr;
+      gap: 6px;
+      align-items: start;
+      font-size: 11px;
+      line-height: 1.25;
+      color: var(--muted);
+    }
+
+    .card-fact b {
+      color: var(--ink);
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .card-status {
+      display: inline-flex;
+      width: fit-content;
+      margin-top: 7px;
+      border-radius: 999px;
+      padding: 4px 7px;
+      font-size: 11px;
+      font-weight: 800;
+    }
+
+    .hand-summary {
+      text-align: right;
+      min-width: 170px;
+    }
+
+    .hand-summary p {
+      margin: 6px 0 0;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .turn-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 10px;
+      border-radius: 999px;
+      background: #eef6e5;
+      border: 1px solid #cfe2bd;
+      color: #395b35;
+      font-weight: 800;
+      font-size: 13px;
+    }
+
+    .actions-grid {
+      display: grid;
+      gap: 10px;
+    }
+
+    .action-button {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 12px;
+      align-items: center;
+      min-height: 62px;
+      padding: 10px 12px;
+      border-radius: 8px;
+      background: #fff;
+      border: 1px solid #e4d8c4;
+      text-align: left;
+      cursor: default;
+    }
+
+    .action-button strong {
+      display: block;
+      font-size: 14px;
+    }
+
+    .action-button span {
+      display: block;
+      margin-top: 3px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .hint {
+      border-radius: 999px;
+      padding: 5px 8px;
+      font-size: 11px;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .honest {
+      background: var(--honest-bg);
+      color: var(--honest-ink);
+    }
+
+    .bluff {
+      background: var(--bluff-bg);
+      color: var(--bluff-ink);
+    }
+
+    .unknown {
+      background: var(--unknown-bg);
+      color: var(--unknown-ink);
+    }
+
+    .free {
+      background: #e7f0f7;
+      color: #315f7c;
+    }
+
+    .locked {
+      background: #efe9df;
+      color: #786b58;
+    }
+
+    .risk {
+      background: var(--danger-bg);
+      color: var(--danger-ink);
+    }
+
+    .disabled {
+      background: var(--unknown-bg);
+      color: var(--unknown-ink);
+    }
+
+    .rules {
+      margin-top: 14px;
+      padding-top: 14px;
+      border-top: 1px solid #e4d8c4;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+    svg {
+      display: block;
+      width: 78px;
+      height: 78px;
+    }
+
+    @media (max-width: 1120px) {
+      .layout {
+        grid-template-columns: 1fr;
+      }
+
+      .side-panel {
+        order: 2;
+      }
+
+      .table-wrap {
+        min-height: 0;
+      }
+
+      .table {
+        min-height: 520px;
+      }
+    }
+
+    @media (max-width: 720px) {
+      .topbar {
+        grid-template-columns: 1fr;
+        padding: 14px;
+      }
+
+      .room-code,
+      .top-actions {
+        justify-self: start;
+      }
+
+      .layout {
+        padding: 14px;
+        gap: 14px;
+      }
+
+      .table {
+        min-height: 690px;
+      }
+
+      .table::before {
+        inset: 126px 20px 210px;
+      }
+
+      .table-arrow-layer {
+        display: none;
+      }
+
+      .seat {
+        width: calc(50% - 26px);
+      }
+
+      .seat-1,
+      .seat-4 {
+        left: 14px;
+        transform: none;
+      }
+
+      .seat-2,
+      .seat-3 {
+        right: 14px;
+      }
+
+      .seat-5 {
+        left: 14px;
+      }
+
+      .seat-1 { top: 14px; }
+      .seat-2 { top: 14px; }
+      .seat-3 { top: 130px; bottom: auto; }
+      .seat-5 { bottom: 218px; }
+      .seat-4 { bottom: 218px; left: auto; right: 14px; }
+
+      .play-area {
+        width: min(420px, calc(100% - 40px));
+      }
+
+      .private-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .all-choices-row {
+        grid-template-columns: repeat(2, minmax(118px, 1fr));
+      }
+
+      .my-cards {
+        overflow-x: auto;
+        padding-bottom: 4px;
+      }
+
+      .hand-summary {
+        text-align: left;
+      }
+    }
+  </style>
+</head>
+<body data-page="turn">
+  <div class="app">
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 80 80" role="img" aria-label="">
+            <circle cx="40" cy="43" r="22" fill="#fff7d8" stroke="#2d2a24" stroke-width="3"/>
+            <path d="M31 23c1-8 8-10 10-3 5-7 13-2 8 6 8-1 10 8 1 11" fill="#c85145" stroke="#2d2a24" stroke-width="3" stroke-linejoin="round"/>
+            <circle cx="33" cy="39" r="3" fill="#2d2a24"/>
+            <path d="M47 42l14 5-14 6z" fill="#f4bd2d" stroke="#2d2a24" stroke-width="3" stroke-linejoin="round"/>
+            <path d="M28 55c8 8 20 8 27 0" fill="none" stroke="#2d2a24" stroke-width="3" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div>
+          <h1>Chicken</h1>
+          <p>Cozy bluffing farm game</p>
+        </div>
+      </div>
+
+      <div class="room-code" aria-label="Room code">
+        <span>Room</span>
+        <strong>HEN42</strong>
+      </div>
+
+      <div class="top-actions">
+        <button class="ghost">Copy Code</button>
+        <button class="primary">Start Game</button>
+      </div>
+    </header>
+
+    <main class="layout">
+      <aside class="panel side-panel">
+        <div class="panel-title">
+          <h2>Players</h2>
+          <span class="pill">5 players</span>
+        </div>
+        <div class="player-list">
+          <div class="player-row deciding" data-player="you">
+            <div class="seat-dot host">J</div>
+            <div><strong>Jacqueline</strong><span>Your turn</span><span class="status-chip deciding">Choosing</span></div>
+            <div class="corn-count"><i class="corn-icon"><span class="kernel"></span></i>5</div>
+          </div>
+          <div class="player-row waiting" data-player="maya">
+            <div class="seat-dot">M</div>
+            <div><strong>Maya</strong><span>2 animals left</span><span class="status-chip waiting">Waiting</span></div>
+            <div class="corn-count"><i class="corn-icon"><span class="kernel"></span></i>2</div>
+          </div>
+          <div class="player-row waiting" data-player="sam">
+            <div class="seat-dot">S</div>
+            <div><strong>Sam</strong><span>1 animal left</span><span class="status-chip waiting">Waiting</span></div>
+            <div class="corn-count"><i class="corn-icon"><span class="kernel"></span></i>6</div>
+          </div>
+          <div class="player-row waiting" data-player="ari">
+            <div class="seat-dot">A</div>
+            <div><strong>Ari</strong><span>2 animals left</span><span class="status-chip waiting">Waiting</span></div>
+            <div class="corn-count"><i class="corn-icon"><span class="kernel"></span></i>1</div>
+          </div>
+          <div class="player-row waiting" data-player="nina">
+            <div class="seat-dot">N</div>
+            <div><strong>Nina</strong><span>2 animals left</span><span class="status-chip waiting">Waiting</span></div>
+            <div class="corn-count"><i class="corn-icon"><span class="kernel"></span></i>3</div>
+          </div>
+        </div>
+      </aside>
+
+      <section class="table-wrap" aria-label="Game table mockup">
+        <div class="table panel">
+          <div class="table-arrow-layer" aria-hidden="true"></div>
+          <div class="seat seat-1 waiting" data-player="maya">
+            <div class="seat-top">
+              <div class="seat-name">Maya</div>
+              <div class="corn-count"><i class="corn-icon"><span class="kernel"></span></i>2</div>
+            </div>
+            <span class="status-chip waiting">Waiting</span>
+            <div class="seat-cards"><div class="back-card"></div><div class="back-card"></div></div>
+          </div>
+
+          <div class="seat seat-2 waiting" data-player="sam">
+            <div class="seat-top">
+              <div class="seat-name">Sam</div>
+              <div class="corn-count"><i class="corn-icon"><span class="kernel"></span></i>6</div>
+            </div>
+            <span class="status-chip waiting">Waiting</span>
+            <div class="seat-cards"><div class="back-card lost-card"></div><div class="back-card"></div></div>
+          </div>
+
+          <div class="seat seat-3 waiting" data-player="ari">
+            <div class="seat-top">
+              <div class="seat-name">Ari</div>
+              <div class="corn-count"><i class="corn-icon"><span class="kernel"></span></i>1</div>
+            </div>
+            <span class="status-chip waiting">Waiting</span>
+            <div class="seat-cards"><div class="back-card"></div><div class="back-card"></div></div>
+          </div>
+
+          <div class="seat seat-4 active deciding" data-player="you">
+            <div class="seat-top">
+              <div class="seat-name">You</div>
+              <div class="corn-count"><i class="corn-icon"><span class="kernel"></span></i>5</div>
+            </div>
+            <span class="status-chip deciding">Choosing</span>
+          </div>
+
+          <div class="seat seat-5 waiting" data-player="nina">
+            <div class="seat-top">
+              <div class="seat-name">Nina</div>
+              <div class="corn-count"><i class="corn-icon"><span class="kernel"></span></i>3</div>
+            </div>
+            <span class="status-chip waiting">Waiting</span>
+            <div class="seat-cards"><div class="back-card"></div><div class="back-card"></div></div>
+          </div>
+
+          <div class="play-area" data-current-play>
+            <div class="play-area-kicker">Current Play</div>
+            <h2>Your turn</h2>
+            <div class="play-banner">
+              <div class="play-banner-action">Choose one action from your hand</div>
+            </div>
+          </div>
+        </div>
+
+        <section class="hand panel" aria-label="Your private hand">
+          <div class="panel-title">
+            <div class="hand-title-left">
+              <h2>Your Hand</h2>
+              <span class="pill">choose action</span>
+            </div>
+            <div class="big-corn"><i class="corn-icon"><span class="kernel"></span></i>5</div>
+          </div>
+
+          <div class="private-layout">
+            <div class="my-hand-board">
+              <div class="hand-stats">
+                <div>
+                  <h3>Your choices</h3>
+                  <p>Green cards are honest. Yellow cards are bluff animals. Blue actions do not need a card. Scope is shown on each choice.</p>
+                </div>
+              </div>
+              <div class="all-choices-row">
+                <button class="decision-button active-choice" data-action="take1">
+                  <div class="choice-meta"><span class="cost">Cost 0</span><span class="scope">Self</span></div>
+                  <strong>Take 1 Corn</strong>
+                  <span>Take 1 corn from the supply.</span>
+                  <span class="card-status free">Free</span>
+                </button>
+                <button class="decision-button active-choice" data-action="take2">
+                  <div class="choice-meta"><span class="cost">Cost 0</span><span class="scope">Self</span></div>
+                  <strong>Take 2 Corn</strong>
+                  <span>Take 2 corn from the supply.</span>
+                  <span class="card-status free">Free</span>
+                </button>
+                <button class="decision-button disabled-card" data-action="coup">
+                  <div class="choice-meta"><span class="cost">Cost 7</span><span class="scope">One player</span></div>
+                  <strong>Chicken Coup</strong>
+                  <span>Pay 7 corn. One player loses 1 animal.</span>
+                  <span class="card-status disabled">Need 7</span>
+                </button>
+                <article class="animal-card compact honest-card active-card" data-action="goat">
+                  <div class="card-art"><div class="animal-portrait goat" role="img" aria-label="Goat">🐐</div></div>
+                  <div class="card-body">
+                    <div class="choice-meta"><span class="cost">Cost 0</span><span class="scope">Self</span></div>
+                    <strong>Goat</strong>
+                    <div class="card-facts">
+                      <div class="card-fact"><b>Power</b><span>Swap cards.</span></div>
+                      <div class="card-fact"><b>Block</b><span>Fox steal.</span></div>
+                    </div>
+                    <span class="card-status honest">Honest</span>
+                  </div>
+                </article>
+                <article class="animal-card compact honest-card active-card" data-action="rooster">
+                  <div class="card-art"><div class="animal-portrait rooster" role="img" aria-label="Rooster">🐓</div></div>
+                  <div class="card-body">
+                    <div class="choice-meta"><span class="cost">Cost 0</span><span class="scope">Self</span></div>
+                    <strong>Rooster</strong>
+                    <div class="card-facts">
+                      <div class="card-fact"><b>Power</b><span>Take 3 corn from the supply.</span></div>
+                      <div class="card-fact"><b>Block</b><span>Take 2 corn from the supply.</span></div>
+                    </div>
+                    <span class="card-status honest">Honest</span>
+                  </div>
+                </article>
+                <article class="animal-card compact bluff-card active-card" data-action="fox">
+                  <div class="card-art"><div class="animal-portrait fox" role="img" aria-label="Fox">🦊</div></div>
+                  <div class="card-body">
+                    <div class="choice-meta"><span class="cost">Cost 0</span><span class="scope">One player</span></div>
+                    <strong>Fox</strong>
+                    <div class="card-facts">
+                      <div class="card-fact"><b>Power</b><span>Steal 2 corn from one player.</span></div>
+                      <div class="card-fact"><b>Block</b><span>Fox steal.</span></div>
+                    </div>
+                    <span class="card-status bluff">Bluff</span>
+                  </div>
+                </article>
+                <article class="animal-card compact bluff-card active-card" data-action="snake">
+                  <div class="card-art"><div class="animal-portrait snake" role="img" aria-label="Snake">🐍</div></div>
+                  <div class="card-body">
+                    <div class="choice-meta"><span class="cost">Cost 3</span><span class="scope">One player</span></div>
+                    <strong>Snake</strong>
+                    <div class="card-facts">
+                      <div class="card-fact"><b>Power</b><span>Pay 3 corn. Attack one player.</span></div>
+                      <div class="card-fact"><b>Block</b><span>None.</span></div>
+                    </div>
+                    <span class="card-status bluff">Bluff</span>
+                  </div>
+                </article>
+                <article class="animal-card compact bluff-card active-card" data-action="dog">
+                  <div class="card-art"><div class="animal-portrait dog" role="img" aria-label="Guard Dog">🐶</div></div>
+                  <div class="card-body">
+                    <div class="choice-meta"><span class="cost">Cost 0</span><span class="scope">Block only</span></div>
+                    <strong>Guard Dog</strong>
+                    <div class="card-facts">
+                      <div class="card-fact"><b>Power</b><span>None.</span></div>
+                      <div class="card-fact"><b>Block</b><span>Snake attack on one player.</span></div>
+                    </div>
+                    <span class="card-status bluff">Bluff</span>
+                  </div>
+                </article>
+              </div>
+              <div class="target-picker">
+                <div class="target-picker-header">
+                  <strong>Choose one target for Fox, Snake, or Chicken Coup</strong>
+                  <span>Arrows point from you to the chosen player.</span>
+                </div>
+                <div class="target-options">
+                  <button class="target-option active-choice" data-target="maya">
+                    <strong>Maya</strong>
+                    <span>2 corn · 2 animals</span>
+                  </button>
+                  <button class="target-option" data-target="sam">
+                    <strong>Sam</strong>
+                    <span>6 corn · 1 animal</span>
+                  </button>
+                  <button class="target-option" data-target="ari">
+                    <strong>Ari</strong>
+                    <span>1 corn · 2 animals</span>
+                  </button>
+                  <button class="target-option" data-target="nina">
+                    <strong>Nina</strong>
+                    <span>3 corn · 2 animals</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      </section>
+
+    </main>
+  </div>
+  <script src="/_wip/chicken/chicken.js"></script>
+</body>
+</html>

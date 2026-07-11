@@ -1,0 +1,17 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "practice",
+      "runtimeExecutable": "python3",
+      "runtimeArgs": ["-m", "http.server", "8137"],
+      "port": 8137
+    },
+    {
+      "name": "realapp",
+      "runtimeExecutable": "/Users/jt/Desktop/professional/jacquelinetay.com/_wip/trap-counter/.venv/bin/uvicorn",
+      "runtimeArgs": ["app.main:app", "--port", "8000", "--app-dir", "/Users/jt/Desktop/professional/jacquelinetay.com/_wip/trap-counter"],
+      "port": 8000
+    }
+  ]
+}

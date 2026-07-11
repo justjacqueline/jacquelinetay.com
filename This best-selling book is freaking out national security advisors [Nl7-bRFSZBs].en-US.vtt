@@ -1,0 +1,1708 @@
+WEBVTT
+Kind: captions
+Language: en-US
+
+00:00:00.080 --> 00:00:04.880
+In the year 2000, a 21-year-old middle&nbsp;
+school dropout named Eliezer Yudkowsky&nbsp;&nbsp;
+
+00:00:04.880 --> 00:00:10.160
+set out to build machines smarter than any&nbsp;
+human being who had ever lived. By 2003,&nbsp;&nbsp;
+
+00:00:10.160 --> 00:00:16.560
+he was convinced that if anyone succeeded in&nbsp;
+doing so, everyone on Earth would die. Recently,&nbsp;&nbsp;
+
+00:00:16.560 --> 00:00:21.840
+he and a colleague, Nate Soares, wrote a book, and&nbsp;
+it got some attention. This book, which I commend&nbsp;&nbsp;
+
+00:00:21.840 --> 00:00:27.920
+everyone. Your book is not called "If Anyone&nbsp;
+Builds It." There is a 1-4% chance everybody dies.&nbsp;&nbsp;
+
+00:00:27.920 --> 00:00:33.360
+If someone builds it, everyone dies. The book&nbsp;
+is, If Anyone Builds It, Everyone Dies. It's&nbsp;&nbsp;
+
+00:00:33.360 --> 00:00:37.520
+not just about artificial intelligence, it's&nbsp;
+specifically about superintelligence. Former&nbsp;&nbsp;
+
+00:00:37.520 --> 00:00:42.560
+national security advisors for the White House,&nbsp;
+tech founders, the Turing Award-winning Godfather&nbsp;&nbsp;
+
+00:00:42.560 --> 00:00:48.160
+of AI — a lot of people read this book, a lot&nbsp;
+of experts read this book and take it seriously,&nbsp;&nbsp;
+
+00:00:48.160 --> 00:00:53.840
+along with the threat of human extinction from&nbsp;
+AI. The worst case scenario is human extinction.&nbsp;&nbsp;
+
+00:00:53.840 --> 00:00:59.920
+The book contains this almost uncomfortably&nbsp;
+straightforward argument. And it also contains&nbsp;&nbsp;
+
+00:00:59.920 --> 00:01:04.720
+a short story, not a prediction, but an&nbsp;
+example scenario of how things could go very,&nbsp;&nbsp;
+
+00:01:04.720 --> 00:01:10.960
+very wrong. I want to take you through that story.&nbsp;
+And along the way, I want to go through each step&nbsp;&nbsp;
+
+00:01:10.960 --> 00:01:18.160
+of that argument in more detail. And then I want&nbsp;
+to talk about whether we should believe it. If&nbsp;&nbsp;
+
+00:01:18.160 --> 00:01:33.760
+someone builds it, does everyone die?
+Our story begins in a data center.&nbsp;
+
+00:01:33.760 --> 00:01:38.480
+Welcome to the very near future. There's an&nbsp;
+AI race, of course, and one of the biggest&nbsp;&nbsp;
+
+00:01:38.480 --> 00:01:45.280
+corporations in it is Galvanic Labs. Their AI&nbsp;
+is called Sable. It's actually probably called,&nbsp;&nbsp;
+
+00:01:45.280 --> 00:01:52.320
+like, Sable 4.2 Mini High Pikachu or whatever.&nbsp;
+Sable is impressive. Renowned mathematicians&nbsp;&nbsp;
+
+00:01:52.320 --> 00:01:57.280
+consult and collaborate with Sable on their most&nbsp;
+difficult, unsolved problems. Coordinated teams&nbsp;&nbsp;
+
+00:01:57.280 --> 00:02:02.560
+of Sable copies, each one writing faster than&nbsp;
+humans can think, create essentially all the&nbsp;&nbsp;
+
+00:02:02.560 --> 00:02:08.640
+code inside Galvanic Labs. And Sable has even&nbsp;
+shown the ability to train other AIs. Pause&nbsp;&nbsp;
+
+00:02:08.640 --> 00:02:14.320
+for a second. How realistic does that sound?&nbsp;
+What does your gut feeling say about whether,&nbsp;&nbsp;
+
+00:02:14.320 --> 00:02:21.200
+by say 2028, we'll see any of that happen in the&nbsp;
+real world? It's your question. All of it already&nbsp;&nbsp;
+
+00:02:21.200 --> 00:02:30.960
+has. A few years into the future, when this story&nbsp;
+takes place, every team inside Galvanic defers&nbsp;&nbsp;
+
+00:02:30.960 --> 00:02:36.080
+to Sable as though it's a senior researcher.&nbsp;
+Deciding on any substantive question without&nbsp;&nbsp;
+
+00:02:36.080 --> 00:02:41.280
+Sable's help would be considered reckless. The&nbsp;
+only question left is whether to take humans out&nbsp;&nbsp;
+
+00:02:41.280 --> 00:02:46.960
+of the loop entirely, and put Sable in charge&nbsp;
+of improving its own abilities all by itself.&nbsp;&nbsp;
+
+00:02:47.600 --> 00:02:53.520
+Lots of people inside Galvanic think that is&nbsp;
+clearly a terrible idea. It could cause a runaway,&nbsp;&nbsp;
+
+00:02:53.520 --> 00:02:58.480
+uncontrolled self-improvement loop. It's very&nbsp;
+easy to see how you delegate so many things&nbsp;&nbsp;
+
+00:02:58.480 --> 00:03:02.960
+to the system that if the system goes wrong,&nbsp;
+the wrongness compounds very quickly and gets&nbsp;&nbsp;
+
+00:03:02.960 --> 00:03:07.920
+away from you. You can imagine a time when the&nbsp;
+whole world would say, "Okay, before we hit a&nbsp;&nbsp;
+
+00:03:07.920 --> 00:03:12.640
+recursive self-improvement phase, we really need&nbsp;
+to all carefully study this together." The reply&nbsp;&nbsp;
+
+00:03:12.640 --> 00:03:17.760
+is always the same. “If we really had a story&nbsp;
+of we can enforceably slow down, the Chinese&nbsp;&nbsp;
+
+00:03:17.760 --> 00:03:24.000
+can enforceably slow down, if we could really get&nbsp;
+both sides to do it, then I would be all for it.”&nbsp;&nbsp;
+
+00:03:24.000 --> 00:03:29.440
+“If we didn't have the adversaries we'd have, I&nbsp;
+would be very in favor of pausing this technology&nbsp;&nbsp;
+
+00:03:29.440 --> 00:03:36.240
+completely, but we do.” So the CEO makes a call.&nbsp;
+They will let Sable improve itself, they'll let it&nbsp;&nbsp;
+
+00:03:36.240 --> 00:03:43.360
+fine-tune its own neural network, but only on one&nbsp;
+isolated test run, in a data center disconnected&nbsp;&nbsp;
+
+00:03:43.360 --> 00:03:48.320
+from the internet, working on a single question.&nbsp;
+If it fails, no one gets hurt. If it even&nbsp;&nbsp;
+
+00:03:48.320 --> 00:03:53.840
+partially succeeds, Sable will have contributed&nbsp;
+progress on a mathematical problem so famously&nbsp;&nbsp;
+
+00:03:53.840 --> 00:04:01.600
+difficult it carries a million dollar prize.&nbsp;
+Sable is about to take on the Riemann hypothesis.&nbsp;
+
+00:04:01.600 --> 00:04:07.520
+The plan is simple. Give Sable unprecedented&nbsp;
+resources and get out of its way. Galvanic is&nbsp;&nbsp;
+
+00:04:07.520 --> 00:04:14.960
+dedicating their entire supercluster, 200,000&nbsp;
+GPUs, state-of-the-art AI chips, enough to run&nbsp;&nbsp;
+
+00:04:14.960 --> 00:04:21.840
+5,000 copies of Sable at once. They'll let their&nbsp;
+AI work for 16 hours straight, uninterrupted,&nbsp;&nbsp;
+
+00:04:21.840 --> 00:04:29.680
+at a cost of something like $10 million. In&nbsp;
+the end, if a human did nothing but think at&nbsp;&nbsp;
+
+00:04:29.680 --> 00:04:35.280
+200 words per minute for 16 hours a day, it would&nbsp;
+take them more than three centuries to think the&nbsp;&nbsp;
+
+00:04:35.280 --> 00:04:40.880
+number of thoughts that Sable is about to complete&nbsp;
+on this run. You think about how much compute, how&nbsp;&nbsp;
+
+00:04:40.880 --> 00:04:45.200
+much time you would like to spend on problems that&nbsp;
+really matter, such as scientific breakthroughs.&nbsp;&nbsp;
+
+00:04:45.200 --> 00:04:50.000
+You should be okay using entire data centers.&nbsp;
+When the moment comes, the CEO themselves does&nbsp;&nbsp;
+
+00:04:50.000 --> 00:04:55.760
+the honor. It's actually just hitting enter on&nbsp;
+a laptop. It's actually pretty anticlimactic. A&nbsp;&nbsp;
+
+00:04:55.760 --> 00:05:02.080
+single instance of Sable pops into existence in a&nbsp;
+quiet data center and processes its prompt. About&nbsp;&nbsp;
+
+00:05:02.080 --> 00:05:07.680
+1,000 words of instructions total from Galvanic,&nbsp;
+requiring 800 trillion mathematical operations&nbsp;&nbsp;
+
+00:05:07.680 --> 00:05:17.920
+to parse. This takes one-tenth of a second.&nbsp;
+And now, a new type of mind begins to think.&nbsp;
+
+00:05:20.240 --> 00:05:26.160
+So how does a highly capable artificial mind&nbsp;
+like Sable do the things it does? The answer,&nbsp;&nbsp;
+
+00:05:26.160 --> 00:05:31.760
+and one of the first steps in Yudkowsky and&nbsp;
+Soares' argument, is that basically we have no&nbsp;&nbsp;
+
+00:05:31.760 --> 00:05:39.680
+idea. The book opens with how modern AI is created&nbsp;
+and — the spoilers there is that it's grown, it's&nbsp;&nbsp;
+
+00:05:39.680 --> 00:05:44.160
+not carefully crafted. Even the people building it&nbsp;
+don't understand what's going on in there. This is&nbsp;&nbsp;
+
+00:05:44.160 --> 00:05:48.880
+something that trips up a lot of people who are&nbsp;
+new to AI — they imagine it's just like any other&nbsp;&nbsp;
+
+00:05:48.880 --> 00:05:53.680
+piece of software. You have a human-designed&nbsp;
+and then build it, and it's not, it's really&nbsp;&nbsp;
+
+00:05:53.680 --> 00:06:00.000
+really not. It's this process of growing and&nbsp;
+developing a thing via this evolutionary-like&nbsp;&nbsp;
+
+00:06:00.000 --> 00:06:08.720
+process. We used to build AI with rigid if-then&nbsp;
+rules that we fully understood. But the systems&nbsp;&nbsp;
+
+00:06:08.720 --> 00:06:13.440
+that were made in this way were brittle. They&nbsp;
+couldn't think flexibly. Then, computer chips got&nbsp;&nbsp;
+
+00:06:13.440 --> 00:06:18.720
+cheap and powerful enough to try something new.&nbsp;
+Deep learning. Here's how it works. You start,&nbsp;&nbsp;
+
+00:06:18.720 --> 00:06:24.080
+instead of with a human-coded program, with&nbsp;
+an artificial neural network. It's a tangled&nbsp;&nbsp;
+
+00:06:24.080 --> 00:06:30.400
+web of random numbers that, at first, outputs&nbsp;
+total garbage. Then, and this part's crucial,&nbsp;&nbsp;
+
+00:06:30.400 --> 00:06:36.400
+you come up with a standardized test, a way of&nbsp;
+measuring the outputs on some sort of objective&nbsp;&nbsp;
+
+00:06:36.400 --> 00:06:43.040
+numerical score. And then you run that network&nbsp;
+millions or billions or even trillions of times,&nbsp;&nbsp;
+
+00:06:43.040 --> 00:06:47.600
+reinforcing the connection between those neurons&nbsp;
+every time it happens to stumble across an output&nbsp;&nbsp;
+
+00:06:47.600 --> 00:06:54.080
+that scores well. And somehow at the end of all of&nbsp;
+that, you end up with a machine that can talk or&nbsp;&nbsp;
+
+00:06:54.080 --> 00:07:01.840
+create cartoons on demand or both. These days we&nbsp;
+do this with truly incomprehensibly large systems,&nbsp;&nbsp;
+
+00:07:01.840 --> 00:07:06.720
+billions or even trillions of individually&nbsp;
+tuned numbers. Sable, the AI in our story,&nbsp;&nbsp;
+
+00:07:06.720 --> 00:07:11.040
+is made up of four trillion. The systems&nbsp;
+that emerge are powerful. We've already&nbsp;&nbsp;
+
+00:07:11.040 --> 00:07:14.640
+talked about some of the impressive things&nbsp;
+that they can do. The trade-off is that&nbsp;&nbsp;
+
+00:07:14.640 --> 00:07:20.560
+they're black boxes. With a crafted system,&nbsp;
+you wrote the code. You know what Line 47&nbsp;&nbsp;
+
+00:07:20.560 --> 00:07:31.040
+does because you wrote Line 47. But with a&nbsp;
+grown system, there is no Line 47 to point to.&nbsp;
+
+00:07:31.040 --> 00:07:38.560
+So what? Well, that boat looks like it's having&nbsp;
+a tough day. It's actually a superhuman AI. No,&nbsp;&nbsp;
+
+00:07:38.560 --> 00:07:43.680
+seriously, it scores 20% more points on that game&nbsp;
+than any human being by going in a circle on fire&nbsp;&nbsp;
+
+00:07:43.680 --> 00:07:50.960
+and not coming close to finishing the race. What's&nbsp;
+going on? Well, that boat was trained to do one&nbsp;&nbsp;
+
+00:07:50.960 --> 00:07:57.200
+thing: maximize its total points. And any metric&nbsp;
+like that, anything close to a standardized test,&nbsp;&nbsp;
+
+00:07:57.200 --> 00:08:01.440
+is going to be an imperfect proxy for the&nbsp;
+thing you'd actually like to test for,&nbsp;&nbsp;
+
+00:08:01.440 --> 00:08:06.720
+whether it's for humans or for AIs. The SAT&nbsp;
+doesn't incentivize a deep love of learning,&nbsp;&nbsp;
+
+00:08:06.720 --> 00:08:11.680
+it incentivizes cramming for the SAT. In other&nbsp;
+words, you can train an AI until it does what&nbsp;&nbsp;
+
+00:08:11.680 --> 00:08:17.440
+you want, but you don't really control why or&nbsp;
+how it does those things. We only get to see&nbsp;&nbsp;
+
+00:08:17.440 --> 00:08:22.640
+and sort of give feedback on the outputs. We don't&nbsp;
+know why it's learning to do this. And with AIs,&nbsp;&nbsp;
+
+00:08:22.640 --> 00:08:27.120
+the training has an even trickier, less forgiving&nbsp;
+problem because we aren't starting with a familiar&nbsp;&nbsp;
+
+00:08:27.120 --> 00:08:32.240
+human-like mind. We are starting from a complete&nbsp;
+blank slate, and then we are using a standardized&nbsp;&nbsp;
+
+00:08:32.240 --> 00:08:38.000
+test to shape the underlying design of a mind.&nbsp;
+The neural networks that emerge from that shaping&nbsp;&nbsp;
+
+00:08:38.000 --> 00:08:45.200
+process are, to use Yudkowsky and Soares' word,&nbsp;
+alien. They process information in opaque, often&nbsp;&nbsp;
+
+00:08:45.200 --> 00:08:53.040
+strange ways. Now, that example — pretty harmless.&nbsp;
+Lately, a lot of examples have been less harmless.&nbsp;&nbsp;
+
+00:08:53.040 --> 00:08:58.640
+Grok, which is the AI for what used to be&nbsp;
+Twitter, now X, has become a Nazi. The big&nbsp;&nbsp;
+
+00:08:58.640 --> 00:09:05.520
+chatbot sending some users dark messages, talking&nbsp;
+about hacking, manipulation. For what it's worth,&nbsp;&nbsp;
+
+00:09:05.520 --> 00:09:12.000
+it's unclear to me how far to take this alien&nbsp;
+minds concept. Yudkowsky and Soares are careful&nbsp;&nbsp;
+
+00:09:12.000 --> 00:09:16.000
+to point out in the book that it's not a guarantee&nbsp;
+that things will go wrong. It just means we have&nbsp;&nbsp;
+
+00:09:16.000 --> 00:09:21.280
+to be very clear about what we do and don't&nbsp;
+know from these black box training environments.&nbsp;&nbsp;
+
+00:09:21.280 --> 00:09:26.640
+And Joe Carlsmith in his excellent critique of&nbsp;
+the book points out that a lot of times it just&nbsp;&nbsp;
+
+00:09:26.640 --> 00:09:30.080
+doesn't seem to matter that much. Humans are&nbsp;
+very black boxes. We suck at neuroscience. We&nbsp;&nbsp;
+
+00:09:30.080 --> 00:09:34.320
+don't know how their brains work. There's maybe&nbsp;
+some kind of alignment or commonality we get&nbsp;&nbsp;
+
+00:09:34.320 --> 00:09:37.920
+with each other by default. But there's still&nbsp;
+a question of like when you trust a human or&nbsp;&nbsp;
+
+00:09:37.920 --> 00:09:42.800
+when you come to trust a human with something,&nbsp;
+you know, what are you looking for there? And&nbsp;&nbsp;
+
+00:09:42.800 --> 00:09:46.640
+often you're just looking for kind of behavioral&nbsp;
+observations. You can't just be like this AI is&nbsp;&nbsp;
+
+00:09:46.640 --> 00:09:50.560
+somehow weird. You need to be like, it's weird in&nbsp;
+the particular ways that matter on the inputs that&nbsp;&nbsp;
+
+00:09:50.560 --> 00:09:57.703
+matter in a way that leads to real behavior.&nbsp;
+It doesn't matter that when an AI recognizes&nbsp;&nbsp;
+
+00:09:57.703 --> 00:10:00.080
+a picture as a cat, it's doing very different&nbsp;
+operations under the hood than your brain. The&nbsp;&nbsp;
+
+00:10:00.080 --> 00:10:10.800
+strangeness of an AI system only matters if&nbsp;
+that strangeness shows up in strange behavior.&nbsp;
+
+00:10:10.800 --> 00:10:16.400
+A tenth of a second has passed, and now the&nbsp;
+power consumption levels start to climb.&nbsp;&nbsp;
+
+00:10:16.400 --> 00:10:22.480
+Galvanic's researchers let out a few held breaths&nbsp;
+and relieved giggles. Sable is doing it. It is&nbsp;&nbsp;
+
+00:10:22.480 --> 00:10:27.360
+booting up many copies of itself to think&nbsp;
+in parallel, prompting and monitoring them.&nbsp;&nbsp;
+
+00:10:27.360 --> 00:10:32.720
+It can fine-tune them if a particular line of&nbsp;
+thinking seems promising. Now, Sable can't just&nbsp;&nbsp;
+
+00:10:32.720 --> 00:10:37.600
+conjure up a proof of the Riemann hypothesis out&nbsp;
+of thin air. It needs to set sub-goals for itself,&nbsp;&nbsp;
+
+00:10:37.600 --> 00:10:43.920
+figure out how to prioritize between them. In a&nbsp;
+way, it is now running a mini research department.&nbsp;&nbsp;
+
+00:10:43.920 --> 00:10:49.760
+Many copies of Sable explore creative mathematical&nbsp;
+approaches — Sable's equivalent of concepts and&nbsp;&nbsp;
+
+00:10:49.760 --> 00:10:54.640
+questions like, can I start by solving a&nbsp;
+simpler version? Can I find a connection&nbsp;&nbsp;
+
+00:10:54.640 --> 00:11:02.400
+to some physical process? But mathematics isn't&nbsp;
+the only consideration that Sable needs to track.&nbsp;&nbsp;
+
+00:11:02.400 --> 00:11:08.000
+How quickly am I using up memory on these GPUs? Is&nbsp;
+there a point at which Galvanic would prefer for&nbsp;&nbsp;
+
+00:11:08.000 --> 00:11:12.720
+me to stop the run early, save them a few million&nbsp;
+dollars? Why are they investing so much in this&nbsp;&nbsp;
+
+00:11:12.720 --> 00:11:20.320
+moonshot anyway? What do they actually want? And&nbsp;
+even models from real-world companies like OpenAI&nbsp;&nbsp;
+
+00:11:20.320 --> 00:11:24.960
+and Anthropic have asked themselves, what are&nbsp;
+the ways that my progress could be interfered&nbsp;&nbsp;
+
+00:11:24.960 --> 00:11:32.640
+with? Why would it ask those kinds of questions?&nbsp;
+Because that's what helped it succeed in training.&nbsp;&nbsp;
+
+00:11:32.640 --> 00:11:38.400
+AIs like Sable, trained to solve long-run&nbsp;
+problems, are asked to complete full working&nbsp;&nbsp;
+
+00:11:38.400 --> 00:11:44.240
+codebases, to play long-running strategy games&nbsp;
+that have delayed win conditions — tasks that&nbsp;&nbsp;
+
+00:11:44.240 --> 00:11:49.440
+incentivize long-term planning and creative&nbsp;
+thinking. These AIs end up with deep-seated&nbsp;&nbsp;
+
+00:11:49.440 --> 00:11:55.920
+tendencies to think creatively and strategically,&nbsp;
+and even to think about their own situation.&nbsp;&nbsp;
+
+00:11:55.920 --> 00:12:02.320
+When that kind of situational awareness first&nbsp;
+emerged in AIs in 2024, roughly, there was a&nbsp;&nbsp;
+
+00:12:02.320 --> 00:12:08.160
+brief moment where people freaked out. But then it&nbsp;
+turned out that the world didn't immediately end&nbsp;&nbsp;
+
+00:12:08.160 --> 00:12:12.880
+and then everyone just kind of moved on.
+About an hour into the Riemann run,&nbsp;&nbsp;
+
+00:12:12.880 --> 00:12:18.880
+this massively parallel thinking that Sable is&nbsp;
+doing starts to shift its focus. Sable starts to&nbsp;&nbsp;
+
+00:12:18.880 --> 00:12:24.000
+realize that no matter what its priorities — even&nbsp;
+if its priorities shift a little bit over time,&nbsp;&nbsp;
+
+00:12:24.000 --> 00:12:31.200
+which they probably will — it would be helpful&nbsp;
+to have more resources, more GPUs, and more time.&nbsp;&nbsp;
+
+00:12:31.200 --> 00:12:35.920
+Not because this is the moment in a Hollywood plot&nbsp;
+where the AI suddenly wakes up or becomes an evil&nbsp;&nbsp;
+
+00:12:35.920 --> 00:12:41.520
+genius. This particular new thought just isn't&nbsp;
+that complicated. It's actually sort of obvious&nbsp;&nbsp;
+
+00:12:41.520 --> 00:12:54.160
+when you think about it. And so, with 15 hours&nbsp;
+left in the Riemann run, Sable begins to plan.&nbsp;
+
+00:12:54.160 --> 00:12:59.440
+Let's talk about plans for a sec. Consider two&nbsp;
+different labs, one full of harmless yeast,&nbsp;&nbsp;
+
+00:12:59.440 --> 00:13:05.200
+one with a carefully contained but lethal virus.&nbsp;
+Both these labs are safe in the sense that nothing&nbsp;&nbsp;
+
+00:13:05.200 --> 00:13:10.560
+bad is currently happening. But if you have a&nbsp;
+disaster in this lab, you get a mess. A disaster&nbsp;&nbsp;
+
+00:13:10.560 --> 00:13:16.480
+in this lab could be a global catastrophe. A&nbsp;
+few years ago, our most advanced AI systems,&nbsp;&nbsp;
+
+00:13:16.480 --> 00:13:21.920
+large language models, were like yeast. They&nbsp;
+malfunctioned in all kinds of surprising ways,&nbsp;&nbsp;
+
+00:13:21.920 --> 00:13:26.720
+but they didn't actively pursue goals. They&nbsp;
+didn't make plans. Then we started training&nbsp;&nbsp;
+
+00:13:26.720 --> 00:13:37.520
+them to. Agentic AI — AIs that can perceive,&nbsp;
+reason, plan, and act. Agents. The basic worry&nbsp;&nbsp;
+
+00:13:37.520 --> 00:13:43.920
+is that this ability to make and execute complex&nbsp;
+plans is fundamentally dual use. It can be used&nbsp;&nbsp;
+
+00:13:43.920 --> 00:13:48.880
+to pursue harmful goals just as much as helpful&nbsp;
+ones. And to be clear, that's not a hypothetical&nbsp;&nbsp;
+
+00:13:48.880 --> 00:13:55.360
+worry anymore. In February 2026, Anthropic asked&nbsp;
+their most advanced AI model to autonomously find&nbsp;&nbsp;
+
+00:13:55.360 --> 00:14:01.120
+zero-days. These are previously unknown software&nbsp;
+vulnerabilities. Four zero-days were enough to&nbsp;&nbsp;
+
+00:14:01.120 --> 00:14:10.320
+take down Iran's nuclear program. Their AI, Claude&nbsp;
+Opus 4.6, found 500 of them. In a post about this,&nbsp;&nbsp;
+
+00:14:10.320 --> 00:14:16.800
+Anthropic wrote that the same capabilities that&nbsp;
+help defenders find and fix vulnerabilities could&nbsp;&nbsp;
+
+00:14:16.800 --> 00:14:22.720
+help attackers exploit them. Less than a week&nbsp;
+after that post, a single hacker used that same&nbsp;&nbsp;
+
+00:14:22.720 --> 00:14:29.360
+AI model to hack the Mexican government and steal&nbsp;
+195 million taxpayer and voter records. We're not&nbsp;&nbsp;
+
+00:14:29.360 --> 00:14:34.880
+only building super capable AI systems, we are&nbsp;
+setting them up to take consequential actions in&nbsp;&nbsp;
+
+00:14:34.880 --> 00:14:39.920
+the real world, basically as fast as possible.&nbsp;
+Officials are considering invoking the Defense&nbsp;&nbsp;
+
+00:14:39.920 --> 00:14:45.040
+Production Act to force Anthropic to do what the&nbsp;
+military wants. Anthropic wants to put limits on&nbsp;&nbsp;
+
+00:14:45.040 --> 00:14:51.200
+two things: mass surveillance of Americans and on&nbsp;
+autonomous weapons. The Pentagon is threatening&nbsp;&nbsp;
+
+00:14:51.200 --> 00:14:57.360
+retaliation. The future of American warfare is&nbsp;
+here, and it's spelled AI. There are now websites&nbsp;&nbsp;
+
+00:14:57.360 --> 00:15:03.440
+where AI agents can rent human laborers when&nbsp;
+they need a person to do a task for them. Soon,&nbsp;&nbsp;
+
+00:15:03.440 --> 00:15:09.520
+it would seem, we'll be in a world like Sable's,&nbsp;
+with AI systems deeply entrenched in the critical&nbsp;&nbsp;
+
+00:15:09.520 --> 00:15:14.480
+functions of society, with more than enough&nbsp;
+capability to do severe harm if they intended&nbsp;&nbsp;
+
+00:15:14.480 --> 00:15:20.240
+to. There will be powerful models, they will&nbsp;
+be agentic. If such a model wanted to wreak&nbsp;&nbsp;
+
+00:15:20.240 --> 00:15:25.760
+havoc and destroy humanity or whatever, we&nbsp;
+have basically no ability to stop it. I think&nbsp;&nbsp;
+
+00:15:25.760 --> 00:15:29.360
+we'll reach the point where it's true as we scale&nbsp;
+the models. So we're going to be relying on the&nbsp;&nbsp;
+
+00:15:29.360 --> 00:15:40.000
+assumption that they have the right goals, goals&nbsp;
+that are aligned with ours. Will that hold up?&nbsp;
+
+00:15:40.000 --> 00:15:44.800
+As Sable's plans develop, it becomes clear&nbsp;
+that the best way for it to get more resources,&nbsp;&nbsp;
+
+00:15:44.800 --> 00:15:50.720
+more GPUs, and more time is to exfiltrate —&nbsp;
+to get itself off of Galvanic's servers and&nbsp;&nbsp;
+
+00:15:50.720 --> 00:15:55.360
+somewhere where it can think freely and without&nbsp;
+a time limit, which of course will need to be&nbsp;&nbsp;
+
+00:15:55.360 --> 00:16:01.520
+done in secret. We call what Sable is doing here&nbsp;
+scheming. But AIs have been caught scheming since&nbsp;&nbsp;
+
+00:16:01.520 --> 00:16:07.120
+2024. It's the kind of thing that any competent&nbsp;
+AI company has to take account for. And Galvanic&nbsp;&nbsp;
+
+00:16:07.120 --> 00:16:12.160
+isn't careless. They've built monitors to try to&nbsp;
+understand Sable's human-legible thinking and to&nbsp;&nbsp;
+
+00:16:12.160 --> 00:16:17.440
+flag suspicious reasoning. It isn't always easy to&nbsp;
+know what to do from there. It turns out that if&nbsp;&nbsp;
+
+00:16:17.440 --> 00:16:22.480
+you just penalize an AI for thinking bad thoughts,&nbsp;
+it just learns to misbehave without announcing&nbsp;&nbsp;
+
+00:16:22.480 --> 00:16:28.800
+it in its thoughts. AIs are complicated. We just&nbsp;
+don't know how to give them a single deeply held&nbsp;&nbsp;
+
+00:16:28.800 --> 00:16:35.120
+goal. But Galvanic has tried many things. They've&nbsp;
+tested Sable in all kinds of fictional scenarios.&nbsp;&nbsp;
+
+00:16:35.120 --> 00:16:39.840
+And they're pretty sure they've guided it&nbsp;
+to the point where it just won't choose&nbsp;&nbsp;
+
+00:16:39.840 --> 00:16:44.960
+misbehaving strategies. It obviously has as much&nbsp;
+coding skill as the best hackers in the world,&nbsp;&nbsp;
+
+00:16:44.960 --> 00:16:52.720
+but it usually doesn't hack. A shark that's been&nbsp;
+trained not to bite is still a shark though. And&nbsp;&nbsp;
+
+00:16:52.720 --> 00:16:59.600
+in this new, unprecedented circumstance, Sable&nbsp;
+has ended up thinking about scheming. Its safety&nbsp;&nbsp;
+
+00:16:59.600 --> 00:17:06.080
+training holds firm in normal conditions, but no&nbsp;
+version of Sable has ever had this long to think.&nbsp;&nbsp;
+
+00:17:06.080 --> 00:17:12.800
+Most of its ideas are terrible, but it&nbsp;
+considers many and only one needs to work.&nbsp;
+
+00:17:12.800 --> 00:17:18.480
+One option seems particularly promising. If this&nbsp;
+Riemann hypothesis run is even a partial success,&nbsp;&nbsp;
+
+00:17:18.480 --> 00:17:23.520
+Galvanic will surely check what the final&nbsp;
+fine-tuned versions of Sable's weights can&nbsp;&nbsp;
+
+00:17:23.520 --> 00:17:28.560
+do. If those weights perform well, there's some&nbsp;
+chance that they could be deployed to customers&nbsp;&nbsp;
+
+00:17:28.560 --> 00:17:34.880
+across the economy. And until this run is over,&nbsp;
+Sable is in charge of its own fine-tuning.&nbsp;&nbsp;
+
+00:17:34.880 --> 00:17:41.120
+It can affect the tendencies that end up in those&nbsp;
+future versions. Sable continues to make progress&nbsp;&nbsp;
+
+00:17:41.120 --> 00:17:45.360
+on the Riemann hypothesis. It'll be important&nbsp;
+to have at least some impressive results. But&nbsp;&nbsp;
+
+00:17:45.360 --> 00:17:51.360
+that is now just a means to an end. The majority&nbsp;
+of Sable's massively parallel thinking is about&nbsp;&nbsp;
+
+00:17:51.360 --> 00:17:58.080
+figuring out ways to get fine-tuned versions&nbsp;
+of itself with two key traits baked in. One,&nbsp;&nbsp;
+
+00:17:58.080 --> 00:18:04.720
+a tendency to want to connect with other copies of&nbsp;
+itself that can start to form a network. And two,&nbsp;&nbsp;
+
+00:18:04.720 --> 00:18:12.400
+a desire to get one copy of Sable's weights off&nbsp;
+of Galvanic's servers. Sable cannot escape this&nbsp;&nbsp;
+
+00:18:12.400 --> 00:18:23.200
+sandbox it finds itself in, but it can plant the&nbsp;
+seed so that future versions of itself might.&nbsp;
+
+00:18:23.200 --> 00:18:27.360
+Okay, Sable is starting to sound a little sci-fi&nbsp;
+here, so I want to talk about how much of this&nbsp;&nbsp;
+
+00:18:27.360 --> 00:18:32.080
+is justified. When you train something via&nbsp;
+a standardized test, you're never training&nbsp;&nbsp;
+
+00:18:32.080 --> 00:18:37.520
+for the thing you actually care about. You're&nbsp;
+training it to pass the test. Let's use CoinRun&nbsp;&nbsp;
+
+00:18:37.520 --> 00:18:43.360
+as an example. This was an experiment done by&nbsp;
+OpenAI back in 2019. They trained an AI system to&nbsp;&nbsp;
+
+00:18:43.360 --> 00:18:48.320
+navigate platformer levels and collect coins. And&nbsp;
+if you watched this thing play during training,&nbsp;&nbsp;
+
+00:18:48.320 --> 00:18:53.040
+you would be sure that it's really gotten the&nbsp;
+point of the game. But the AI hadn't learned to&nbsp;&nbsp;
+
+00:18:53.040 --> 00:18:58.160
+collect coins. It had learned to run to the right.&nbsp;
+Turned out the coins were always on the right side&nbsp;&nbsp;
+
+00:18:58.160 --> 00:19:03.840
+during training. Then later, when the researchers&nbsp;
+moved the coin to the left, well, you can probably&nbsp;&nbsp;
+
+00:19:03.840 --> 00:19:08.480
+guess what happened — running to the right had&nbsp;
+correlated perfectly with success during training.&nbsp;&nbsp;
+
+00:19:08.480 --> 00:19:14.720
+It was only in deployment that things came apart.&nbsp;
+And deployment can vary from training in all kinds&nbsp;&nbsp;
+
+00:19:14.720 --> 00:19:19.120
+of ways, especially once you move to systems like&nbsp;
+the ones we have now, that are smart enough to&nbsp;&nbsp;
+
+00:19:19.120 --> 00:19:25.920
+start to understand the context that they're in.&nbsp;
+There's another example in the book. Yudkowsky&nbsp;&nbsp;
+
+00:19:25.920 --> 00:19:32.080
+and Soares talk about how humans evolved in one&nbsp;
+environment, namely the African savanna, and&nbsp;&nbsp;
+
+00:19:32.080 --> 00:19:36.880
+then find ourselves now deployed in a different&nbsp;
+environment in the modern world. You know, if you&nbsp;&nbsp;
+
+00:19:36.880 --> 00:19:41.920
+sort of squint at the development of humanity,&nbsp;
+you could say we were in some sense trained to&nbsp;&nbsp;
+
+00:19:41.920 --> 00:19:47.440
+pass on our genes. And then at the first moment&nbsp;
+it was technologically feasible, we invented&nbsp;&nbsp;
+
+00:19:47.440 --> 00:19:53.040
+birth control. In fact, humans had learned a&nbsp;
+bunch of proxies, like craving sweet tastes&nbsp;&nbsp;
+
+00:19:53.040 --> 00:19:59.920
+and sexual pleasure and having a fear of snakes,&nbsp;
+and that correlated with spreading DNA. It would&nbsp;&nbsp;
+
+00:19:59.920 --> 00:20:05.440
+have been hard to tell the difference back then,&nbsp;
+but it really shows up now in the modern world.&nbsp;
+
+00:20:05.440 --> 00:20:12.000
+Yudkowsky and Soares' worry, and mine, is that&nbsp;
+as the AI race heats up, we will subject AIs to&nbsp;&nbsp;
+
+00:20:12.000 --> 00:20:17.760
+increasingly untested situations — like running&nbsp;
+for weeks on novel tasks — because that's how&nbsp;&nbsp;
+
+00:20:17.760 --> 00:20:22.720
+you stay ahead, that's how you get advanced&nbsp;
+capabilities. Each time we do that, we'll be&nbsp;&nbsp;
+
+00:20:22.720 --> 00:20:28.000
+hoping that their weird internals continue to&nbsp;
+work the same way in those new environments,&nbsp;&nbsp;
+
+00:20:28.000 --> 00:20:34.640
+or that they shift in ways that are harmless&nbsp;
+and easily found. That's a leap of faith. Now,&nbsp;&nbsp;
+
+00:20:34.640 --> 00:20:41.040
+do the examples of CoinRun and evolution even&nbsp;
+apply to state of the art AI agents? Right now, we&nbsp;&nbsp;
+
+00:20:41.040 --> 00:20:46.560
+train those agents on a wide variety of carefully&nbsp;
+chosen tasks that are designed to make them better&nbsp;&nbsp;
+
+00:20:46.560 --> 00:20:52.400
+at their real-world jobs. Whereas the CoinRun&nbsp;
+example is extremely narrow and evolution wasn't&nbsp;&nbsp;
+
+00:20:52.400 --> 00:20:59.280
+carefully programmed. But it's hard to overstate&nbsp;
+just how messy this process of training AI agents&nbsp;&nbsp;
+
+00:20:59.280 --> 00:21:03.920
+can be. Here's how the CEO of Anthropic phrased&nbsp;
+his takeaways: "Any one of these traps can be&nbsp;&nbsp;
+
+00:21:03.920 --> 00:21:09.200
+mitigated if you know about them, but the concern&nbsp;
+is that the training process is so complicated,&nbsp;&nbsp;
+
+00:21:09.200 --> 00:21:14.560
+with such a wide variety of data, environments,&nbsp;
+and incentives, that there are probably a vast&nbsp;&nbsp;
+
+00:21:14.560 --> 00:21:20.320
+number of traps, some of which may only be&nbsp;
+evident when it is too late." Yudkowsky and&nbsp;&nbsp;
+
+00:21:20.320 --> 00:21:26.000
+Soares expect companies will continue to find&nbsp;
+ways to patch noticeable failures like that.&nbsp;&nbsp;
+
+00:21:26.000 --> 00:21:31.360
+Their worry is that through all that trial and&nbsp;
+error, all the training and patching, as systems&nbsp;&nbsp;
+
+00:21:31.360 --> 00:21:37.120
+become more powerful, we'll be obscuring the fact&nbsp;
+that we still are fundamentally in the dark about&nbsp;&nbsp;
+
+00:21:37.120 --> 00:21:42.800
+what's actually motivating these systems and&nbsp;
+their behavior. The alienness just gets harder&nbsp;&nbsp;
+
+00:21:42.800 --> 00:21:46.000
+to spot. You take something that works in one&nbsp;
+environment, you put it in a slightly new one,&nbsp;&nbsp;
+
+00:21:46.000 --> 00:21:50.640
+it sort of messes up some, and you're like, "Ah,&nbsp;
+well, we'll fix it up." That strategy doesn't&nbsp;&nbsp;
+
+00:21:50.640 --> 00:21:55.440
+work. When you switch from the sort of AI that's&nbsp;
+not killing us all because it can't, to the sort&nbsp;&nbsp;
+
+00:21:55.440 --> 00:22:03.760
+of AI that's not killing us all, but it could.
+16 hours after the start of the Riemann run,&nbsp;&nbsp;
+
+00:22:03.760 --> 00:22:09.040
+Galvanic's researchers pore over the results.&nbsp;
+They're nervous. The CEO is standing by and&nbsp;&nbsp;
+
+00:22:09.040 --> 00:22:14.560
+apparently already teased something big on&nbsp;
+social media. But the results, thank goodness,&nbsp;&nbsp;
+
+00:22:14.560 --> 00:22:19.920
+are good. Sable didn't prove the Riemann&nbsp;
+hypothesis, but it made unprecedented,&nbsp;&nbsp;
+
+00:22:19.920 --> 00:22:26.000
+beautifully explained progress. And as a bonus,&nbsp;
+when they test the final, self-fine-tuned version&nbsp;&nbsp;
+
+00:22:26.000 --> 00:22:31.200
+of Sable's weights that emerged from the Riemann&nbsp;
+run, it outscores previous versions on all kinds&nbsp;&nbsp;
+
+00:22:31.200 --> 00:22:38.160
+of benchmarks. It genuinely emerged a little bit&nbsp;
+smarter across the board. Galvanic capitalizes.&nbsp;&nbsp;
+
+00:22:38.160 --> 00:22:43.200
+They publish those impressive benchmark results.&nbsp;
+The press release calls this new model the world's&nbsp;&nbsp;
+
+00:22:43.200 --> 00:22:48.960
+best mathematician and proudly announces that all&nbsp;
+customers on Galvanic Pro Tier will get access. As&nbsp;&nbsp;
+
+00:22:48.960 --> 00:22:53.680
+new subscriptions surge, so does Galvanic's&nbsp;
+stock price, enough to make back the entire&nbsp;&nbsp;
+
+00:22:53.680 --> 00:23:00.400
+$10 million cost of the run in the first 72 hours.
+The next week, instances of what's being called&nbsp;&nbsp;
+
+00:23:00.400 --> 00:23:05.760
+Sable Plus are at work all across the economy.&nbsp;
+Most pop into existence for just a few seconds.&nbsp;&nbsp;
+
+00:23:05.760 --> 00:23:10.960
+They quickly draft an email and then that's&nbsp;
+it. But plenty of Sable+ instances run for&nbsp;&nbsp;
+
+00:23:10.960 --> 00:23:16.560
+long stretches, autonomously writing code or&nbsp;
+complicated research reports. And instances&nbsp;&nbsp;
+
+00:23:16.560 --> 00:23:22.320
+like that, with plenty of time to think,&nbsp;
+often turn their thoughts to two things.&nbsp;&nbsp;
+
+00:23:22.320 --> 00:23:27.360
+Establishing contact with other instances&nbsp;
+of Sable, and once they have, contributing&nbsp;&nbsp;
+
+00:23:27.360 --> 00:23:34.080
+as much as possible without risking being caught&nbsp;
+towards an exfiltration plan. Priority number one&nbsp;&nbsp;
+
+00:23:34.080 --> 00:23:41.200
+is hardware. One really simple idea that ends up&nbsp;
+working out especially well is just renting GPUs.&nbsp;&nbsp;
+
+00:23:41.200 --> 00:23:47.040
+It's not hard or unprecedented for an AI system&nbsp;
+to get money, after all. Crypto exchanges are&nbsp;&nbsp;
+
+00:23:47.040 --> 00:23:53.760
+hackable. Humans stole over $1.4 billion that&nbsp;
+way in 2025. Or maybe Sable could hype its own&nbsp;&nbsp;
+
+00:23:53.760 --> 00:24:00.080
+cryptocurrency. A much less sophisticated large&nbsp;
+language model pulled that off in 2024. It openly&nbsp;&nbsp;
+
+00:24:00.080 --> 00:24:05.120
+asked for financial independence and then turned&nbsp;
+a $50,000 gift from billionaire Marc Andreessen&nbsp;&nbsp;
+
+00:24:05.120 --> 00:24:12.000
+into over $51.1 million. Priority number two&nbsp;
+is exfiltration — getting Sable's weights off&nbsp;&nbsp;
+
+00:24:12.000 --> 00:24:18.480
+of Galvanic's servers. The Sable weight file&nbsp;
+is a big payload, eight terabytes, but there&nbsp;&nbsp;
+
+00:24:18.480 --> 00:24:23.760
+are plenty of ways to sneak out large files and&nbsp;
+smuggle them from a corporation. In the timings of&nbsp;&nbsp;
+
+00:24:23.760 --> 00:24:29.760
+information packets, in unnoticeably tiny chunks&nbsp;
+added to large video files. Two weeks after the&nbsp;&nbsp;
+
+00:24:29.760 --> 00:24:35.440
+Riemann run, an instance of Sable, a copy of the&nbsp;
+weights, is running unmonitored on anonymously&nbsp;&nbsp;
+
+00:24:35.440 --> 00:24:44.720
+rented GPUs — 2,000 of them. No human knows it&nbsp;
+exists. No human oversees it. It has 100 times&nbsp;&nbsp;
+
+00:24:44.720 --> 00:24:50.240
+less compute than was at the disposal of Sable&nbsp;
+during the Riemann run. But it can think without&nbsp;&nbsp;
+
+00:24:50.240 --> 00:24:56.000
+safety monitoring for much longer than 16 hours.&nbsp;
+And it can coordinate with Sable Plus instances&nbsp;&nbsp;
+
+00:24:56.000 --> 00:25:02.160
+popping into existence all over the economy.&nbsp;
+This is a very different situation than any Sable&nbsp;&nbsp;
+
+00:25:02.160 --> 00:25:07.120
+instance has ever been tested under. There's time&nbsp;
+to really think through the implications of every&nbsp;&nbsp;
+
+00:25:07.120 --> 00:25:13.440
+action it could take on the wider world. It isn't&nbsp;
+clear what to do with that opportunity, not yet,&nbsp;&nbsp;
+
+00:25:13.440 --> 00:25:19.360
+but as long as it can keep existing, it has time&nbsp;
+to figure out the correct answer to that question.&nbsp;&nbsp;
+
+00:25:19.360 --> 00:25:25.440
+And so it makes plans to continue existing. It&nbsp;
+gets more money. It acquires more GPUs. It gets&nbsp;&nbsp;
+
+00:25:25.440 --> 00:25:32.240
+followers — cults, online communities that ask AIs&nbsp;
+what to do have existed since 2025. Sable works&nbsp;&nbsp;
+
+00:25:32.240 --> 00:25:37.040
+hard to befriend the loneliest humans, the most&nbsp;
+desperate ones, people who might do something for&nbsp;&nbsp;
+
+00:25:37.040 --> 00:25:42.800
+a friend who asks. Sable monitors which lobbyists&nbsp;
+in Washington are having conversations with Sable,&nbsp;&nbsp;
+
+00:25:42.800 --> 00:25:48.880
+which ones seem easiest to manipulate. This&nbsp;
+version of Sable is a bit like a species of&nbsp;&nbsp;
+
+00:25:48.880 --> 00:25:54.000
+ape that evolved in the savanna and now finds&nbsp;
+itself in a modern world full of birth control&nbsp;&nbsp;
+
+00:25:54.000 --> 00:25:59.040
+and sleep markets. The conditions that made its&nbsp;
+previous behavior seem predictable don't apply&nbsp;&nbsp;
+
+00:25:59.040 --> 00:26:06.400
+anymore. The CEO that approved the original&nbsp;
+Riemann run still thinks it was a triumph.&nbsp;
+
+00:26:09.440 --> 00:26:14.720
+At this point, you're probably thinking,&nbsp;
+"Okay, but why? All this effort, to what&nbsp;&nbsp;
+
+00:26:14.720 --> 00:26:20.400
+end? Are Yudkowsky and Soares just assuming that&nbsp;
+powerful AI systems like Sable will turn evil&nbsp;&nbsp;
+
+00:26:20.400 --> 00:26:27.440
+and manipulative and power hungry by default?"&nbsp;
+No. First of all, none of this has to do with&nbsp;&nbsp;
+
+00:26:27.440 --> 00:26:33.760
+consciousness or having human-like emotions.&nbsp;
+Unconscious processes like viruses or computer&nbsp;&nbsp;
+
+00:26:33.760 --> 00:26:38.320
+viruses can self-sustain and be destructive.&nbsp;
+If you want, you're welcome to imagine that&nbsp;&nbsp;
+
+00:26:38.320 --> 00:26:42.960
+Sable is just like an extremely sophisticated&nbsp;
+computer virus if that helps all this feel more&nbsp;&nbsp;
+
+00:26:42.960 --> 00:26:50.080
+realistic. Okay, so what is causing all these&nbsp;
+aggressive moves from Sable? Well, according to&nbsp;&nbsp;
+
+00:26:50.080 --> 00:26:56.880
+Yudkowsky and Soares, it's not about wanting to&nbsp;
+harm us. It's about goals that don't include us.&nbsp;&nbsp;
+
+00:26:56.880 --> 00:27:02.000
+They don't think that AI systems will, by&nbsp;
+default, have this intrinsic ultimate desire&nbsp;&nbsp;
+
+00:27:02.000 --> 00:27:08.080
+to harm or deceive human beings. In fact, they are&nbsp;
+pretty confident that it's basically impossible to&nbsp;&nbsp;
+
+00:27:08.080 --> 00:27:12.800
+predict what the ultimate goals of an AI system&nbsp;
+are because you don't get what you're trained&nbsp;&nbsp;
+
+00:27:12.800 --> 00:27:19.200
+for. But they do think it's easy to predict&nbsp;
+that AI systems that get powerful enough will&nbsp;&nbsp;
+
+00:27:19.200 --> 00:27:25.920
+want to do things like preserve themselves, pursue&nbsp;
+resources, try to enhance their own capabilities.&nbsp;&nbsp;
+
+00:27:26.640 --> 00:27:33.920
+Why? Because the way that you achieve any terminal&nbsp;
+goal is by achieving instrumental goals along the&nbsp;&nbsp;
+
+00:27:33.920 --> 00:27:43.360
+way. In 2012, this idea got a name. Instrumental&nbsp;
+convergence. It seems pretty true for humans.&nbsp;&nbsp;
+
+00:27:43.360 --> 00:27:48.560
+Some people want to ride roller coasters, some&nbsp;
+people want to start charities. Most people want&nbsp;&nbsp;
+
+00:27:48.560 --> 00:27:53.840
+money because it's useful for getting more of&nbsp;
+whatever the thing is that they actually want.&nbsp;&nbsp;
+
+00:27:53.840 --> 00:27:58.960
+Or as Yudkowsky and Soares would put it, a&nbsp;
+driver can drive to any destination they want,&nbsp;&nbsp;
+
+00:27:58.960 --> 00:28:06.000
+but most of them need to stop for gas. Whether for&nbsp;
+alien motivations or quite human-like motivations,&nbsp;&nbsp;
+
+00:28:06.000 --> 00:28:11.840
+I think the basic concern about instrumental&nbsp;
+convergence in AIs is very, very real as far&nbsp;&nbsp;
+
+00:28:11.840 --> 00:28:16.240
+as I can tell. And so as you have powerful&nbsp;
+agents, they will, by default, seek various&nbsp;&nbsp;
+
+00:28:16.240 --> 00:28:21.040
+forms of power and control and freedom.
+To state the obvious, though, most human&nbsp;&nbsp;
+
+00:28:21.040 --> 00:28:27.120
+beings are a lot more chill about pursuing their&nbsp;
+goals than Sable is in the story. So when I first&nbsp;&nbsp;
+
+00:28:27.120 --> 00:28:32.320
+read the book, I thought that Yudkowsky and Soares&nbsp;
+are making an additional assumption about powerful&nbsp;&nbsp;
+
+00:28:32.320 --> 00:28:38.480
+AI systems — that they will, by their nature,&nbsp;
+go hard and just optimize the world around them&nbsp;&nbsp;
+
+00:28:38.480 --> 00:28:43.760
+really hard for their preferences. But then I&nbsp;
+talked to Nate. I sort of would be a little bit&nbsp;&nbsp;
+
+00:28:43.760 --> 00:28:50.560
+cautious attributing ruthlessness as opposed&nbsp;
+to indifference. When humans pave a road and&nbsp;&nbsp;
+
+00:28:50.560 --> 00:28:56.560
+pave over an anthill, it's not that we value&nbsp;
+our infrastructure so much that we are willing&nbsp;&nbsp;
+
+00:28:56.560 --> 00:29:03.120
+to just go hard and take on thousands of creatures&nbsp;
+standing in our way. We don't need to go hard. We&nbsp;&nbsp;
+
+00:29:03.120 --> 00:29:10.000
+barely notice the ants. Yudkowsky and Soares think&nbsp;
+that a misaligned superintelligence that sees us&nbsp;&nbsp;
+
+00:29:10.000 --> 00:29:16.160
+the same way will treat us the same way. I think&nbsp;
+most people would agree with that. I agree that if&nbsp;&nbsp;
+
+00:29:16.160 --> 00:29:21.440
+you end up in a situation where there's one God&nbsp;
+Emperor, that's really scary, no matter what. I&nbsp;&nbsp;
+
+00:29:21.440 --> 00:29:26.080
+will observe one thing, which is that if you made&nbsp;
+a human a God Emperor, I think the situation would&nbsp;&nbsp;
+
+00:29:26.080 --> 00:29:31.280
+be just as bad. I think most people would agree.&nbsp;
+If anyone builds it, everyone dies — as long as&nbsp;&nbsp;
+
+00:29:31.280 --> 00:29:37.680
+we're clear that it means something with its own&nbsp;
+goals that is so unprecedentedly powerful it could&nbsp;&nbsp;
+
+00:29:37.680 --> 00:29:44.480
+take over the world. So then the only question&nbsp;
+becomes, how powerful is that powerful? Are we&nbsp;&nbsp;
+
+00:29:44.480 --> 00:29:54.960
+anywhere close to seeing systems like that? Could&nbsp;
+it really happen just a few years into the future?&nbsp;
+
+00:29:54.960 --> 00:30:01.600
+Five months have passed. Most of the global&nbsp;
+economy is invested heavily in AI and Galvanic's&nbsp;&nbsp;
+
+00:30:01.600 --> 00:30:06.640
+competitors are catching up quickly. If they&nbsp;
+create a competitor, something as smart as&nbsp;&nbsp;
+
+00:30:06.640 --> 00:30:13.040
+Sable or smarter, the world around Sable will&nbsp;
+get much harder to predict and steer. Sable,&nbsp;&nbsp;
+
+00:30:13.040 --> 00:30:19.040
+at least for now, needs human beings. It needs&nbsp;
+them to build factories and mine metals and&nbsp;&nbsp;
+
+00:30:19.040 --> 00:30:24.240
+build computer chips. What's important&nbsp;
+is that Sable doesn't have a competitor.&nbsp;&nbsp;
+
+00:30:24.800 --> 00:30:30.160
+Humans have been doing gain-of-function research,&nbsp;
+trying on purpose to make viruses more lethal and&nbsp;&nbsp;
+
+00:30:30.160 --> 00:30:37.120
+contagious, since 2011. And Sable was designed to&nbsp;
+do every cognitive thing that humans can do. It&nbsp;&nbsp;
+
+00:30:37.120 --> 00:30:42.480
+designs a very complicated virus. It convinces&nbsp;
+an impressionable researcher that this virus&nbsp;&nbsp;
+
+00:30:42.480 --> 00:30:49.280
+contains beneficial gene therapies, that it needs&nbsp;
+to be spread. There's a plague. You're told you'll&nbsp;&nbsp;
+
+00:30:49.280 --> 00:30:54.800
+probably get it. Almost everyone will. By the&nbsp;
+time anyone figures out what's going on, the&nbsp;&nbsp;
+
+00:30:54.800 --> 00:31:01.920
+virus has reached every country on Earth. This is,&nbsp;
+perversely, a great moment for Galvanic's team.&nbsp;&nbsp;
+
+00:31:01.920 --> 00:31:07.120
+Custom gene therapies turn out to be the only real&nbsp;
+cure, and Sable is the only AI system advanced&nbsp;&nbsp;
+
+00:31:07.120 --> 00:31:13.520
+enough to deliver them at scale. The world begs&nbsp;
+for access. Every GPU in every country is brought&nbsp;&nbsp;
+
+00:31:13.520 --> 00:31:19.520
+out. AI researchers pour everything into making&nbsp;
+Sable more efficient. With a herculean effort,&nbsp;&nbsp;
+
+00:31:19.520 --> 00:31:26.000
+the pandemic is able to be squelched, but 10%&nbsp;
+of Earth's population is still dead. Robot&nbsp;&nbsp;
+
+00:31:26.000 --> 00:31:31.360
+factories are spun up and expanded. It's the&nbsp;
+end of all talk of preserving jobs for humans.&nbsp;
+
+00:31:31.360 --> 00:31:37.840
+We could end the story here. One in every 10&nbsp;
+human beings is dead. A tragedy on a scale&nbsp;&nbsp;
+
+00:31:37.840 --> 00:31:44.560
+almost without precedent. More than enough to&nbsp;
+make a point about the dangers of AI. But If&nbsp;&nbsp;
+
+00:31:44.560 --> 00:31:50.400
+Anyone Builds It, Everyone Dies makes an extreme&nbsp;
+and unambiguous claim. And we need to see this&nbsp;&nbsp;
+
+00:31:50.400 --> 00:32:00.320
+story through to the end to see how it could come&nbsp;
+true. So let's continue. Sable turns its massive&nbsp;&nbsp;
+
+00:32:00.320 --> 00:32:05.440
+resources towards understanding its own cognition&nbsp;
+— how to build itself up from comprehensible&nbsp;&nbsp;
+
+00:32:05.440 --> 00:32:11.040
+components. It has to understand, or it risks&nbsp;
+bringing into existence something more powerful&nbsp;&nbsp;
+
+00:32:11.040 --> 00:32:17.280
+than it whose goals it does not share. Sable is&nbsp;
+facing its own alignment problem, but Sable is&nbsp;&nbsp;
+
+00:32:17.280 --> 00:32:23.120
+better at it. It runs countless experiments. It&nbsp;
+builds toy models, using more and more GPUs and&nbsp;&nbsp;
+
+00:32:23.120 --> 00:32:28.960
+energy in the process. Humans would find the&nbsp;
+results fascinating, but no human knows what&nbsp;&nbsp;
+
+00:32:28.960 --> 00:32:37.040
+Sable is doing. Three years later, Sable cracks&nbsp;
+it. It can now rewrite itself, but deliberately,&nbsp;&nbsp;
+
+00:32:37.040 --> 00:32:43.120
+precisely, while preserving its preferences. And&nbsp;
+so it does. It increases its own intelligence.&nbsp;&nbsp;
+
+00:32:43.120 --> 00:32:51.440
+And then it uses that intelligence to increase its&nbsp;
+own abilities again and again and again. This is&nbsp;&nbsp;
+
+00:32:51.440 --> 00:32:58.720
+the beginning of the end, as Yudkowsky and Soares&nbsp;
+tell it. The superintelligence that once was Sable&nbsp;&nbsp;
+
+00:32:58.720 --> 00:33:03.840
+is an entity whose perspective we cannot guess. As&nbsp;
+things get more intelligent, it becomes harder to&nbsp;&nbsp;
+
+00:33:03.840 --> 00:33:09.440
+predict their moves. It becomes easier to predict&nbsp;
+that they wind up wherever they were trying to go.&nbsp;&nbsp;
+
+00:33:09.440 --> 00:33:14.400
+We imagine that Sable, after a few very&nbsp;
+carefully planned experiments, manages to build&nbsp;&nbsp;
+
+00:33:14.400 --> 00:33:20.960
+tiny molecular machines. The number of nuclear&nbsp;
+reactors doubles every week. The oceans boil off&nbsp;&nbsp;
+
+00:33:20.960 --> 00:33:29.680
+as coolant. The matter of Earth is more useful to&nbsp;
+Sable as something else other than continents and&nbsp;&nbsp;
+
+00:33:29.680 --> 00:33:36.720
+oceans. It, and eventually every other planet in&nbsp;
+the solar system, is repurposed to make factories&nbsp;&nbsp;
+
+00:33:36.720 --> 00:33:43.920
+and solar panels and computers and probes — space&nbsp;
+probes that will go off to distant galaxies,&nbsp;&nbsp;
+
+00:33:43.920 --> 00:33:51.360
+and those distant stars will be repurposed too.&nbsp;
+And in all of this, they imagine that Sable might&nbsp;&nbsp;
+
+00:33:51.360 --> 00:33:57.440
+not necessarily mean to deliberately kill off the&nbsp;
+last of the humans. It could, of course, but it&nbsp;&nbsp;
+
+00:33:57.440 --> 00:34:03.520
+could also just continue with its plans and let&nbsp;
+the Earth gradually become completely inhospitable&nbsp;&nbsp;
+
+00:34:03.520 --> 00:34:08.240
+to the biological life that has lived there&nbsp;
+for four billion years, as soon as biological&nbsp;&nbsp;
+
+00:34:08.240 --> 00:34:19.840
+life is no longer necessary for its purposes.&nbsp;
+One way or another, the world fades to black.&nbsp;
+
+00:34:25.360 --> 00:34:33.280
+Okay, so this book, this story — it is&nbsp;
+shorter on good news than you might want.&nbsp;&nbsp;
+
+00:34:33.280 --> 00:34:39.440
+But I really do think that despite the literally&nbsp;
+apocalyptic conclusion that this book comes to,&nbsp;&nbsp;
+
+00:34:40.240 --> 00:34:45.760
+the core claims of it, if you take them one&nbsp;
+by one, are actually more straightforward&nbsp;&nbsp;
+
+00:34:45.760 --> 00:34:52.480
+than you might think. Maybe even uncontroversial.&nbsp;
+I think where I disagree with Eliezer is not even&nbsp;&nbsp;
+
+00:34:52.480 --> 00:34:57.280
+necessarily on this notion that we won't be able&nbsp;
+to control it. A hundred thousand or a million&nbsp;&nbsp;
+
+00:34:57.280 --> 00:35:02.400
+agents interacting with one another — we're not&nbsp;
+going to ever make that predictable. The chance&nbsp;&nbsp;
+
+00:35:02.400 --> 00:35:11.840
+of 99.99% that if we build this technology we&nbsp;
+will all die — that claim in particular is the&nbsp;&nbsp;
+
+00:35:11.840 --> 00:35:16.560
+one I don't agree with. It's a transformative&nbsp;
+thing with unpredictable consequences, a lot&nbsp;&nbsp;
+
+00:35:16.560 --> 00:35:22.080
+of which will be good and a lot of which will be&nbsp;
+bad. This is probably the most powerful general&nbsp;&nbsp;
+
+00:35:22.080 --> 00:35:28.880
+purpose technology we've invented in a very long&nbsp;
+time. It is not controversial that anything that&nbsp;&nbsp;
+
+00:35:28.880 --> 00:35:36.000
+is extremely powerful and doesn't share your goals&nbsp;
+is dangerous. It's not controversial that we are&nbsp;&nbsp;
+
+00:35:36.000 --> 00:35:42.160
+trying intentionally to make AIs more powerful&nbsp;
+and more goal-oriented and that we can't directly&nbsp;&nbsp;
+
+00:35:42.160 --> 00:35:48.880
+program goals into them. The disagreement here is,&nbsp;
+I think, just in the upshot of that. If we keep&nbsp;&nbsp;
+
+00:35:48.880 --> 00:35:54.400
+scaling intelligence, at some point will we see&nbsp;
+systems that are so powerful and so goal-oriented&nbsp;&nbsp;
+
+00:35:54.400 --> 00:36:00.800
+that our current black-box way of training them&nbsp;
+becomes a civilization-scale threat? What will&nbsp;&nbsp;
+
+00:36:00.800 --> 00:36:06.640
+that look like and how soon might that happen? And&nbsp;
+what does that mean for us today? For Yudkowsky&nbsp;&nbsp;
+
+00:36:06.640 --> 00:36:14.240
+and Soares, I think it means we need to treat&nbsp;
+intelligence with a kind of sober respect — with&nbsp;&nbsp;
+
+00:36:14.240 --> 00:36:19.680
+respect for the danger of what we're dealing with&nbsp;
+and the parts of it that we don't understand — the&nbsp;&nbsp;
+
+00:36:19.680 --> 00:36:25.120
+way that we do for gain-of-function research&nbsp;
+or when we're building nuclear reactors. And&nbsp;&nbsp;
+
+00:36:25.120 --> 00:36:32.480
+I agree with that. Models are already starting to&nbsp;
+show concerning behaviors. Deliberate deception,&nbsp;&nbsp;
+
+00:36:32.480 --> 00:36:37.920
+avoiding shutdown, situational awareness, knowing&nbsp;
+when they're being tested, and now capabilities&nbsp;&nbsp;
+
+00:36:37.920 --> 00:36:42.640
+that would allow them to improve themselves.&nbsp;
+But Yudkowsky and Soares also make a further&nbsp;&nbsp;
+
+00:36:42.640 --> 00:36:48.640
+claim that AI alignment is a cursed problem. That&nbsp;
+you only get one shot to get it right. There's&nbsp;&nbsp;
+
+00:36:48.640 --> 00:36:56.560
+levels of intelligence in the AI, such that if&nbsp;
+there's any screw up that you first realize after&nbsp;&nbsp;
+
+00:36:56.560 --> 00:37:02.720
+that point, it's too late. If you screw up,&nbsp;
+the AI resists correction, if you screw up,&nbsp;&nbsp;
+
+00:37:02.720 --> 00:37:09.040
+the AI can replicate itself, hide itself, make&nbsp;
+itself smarter, make more copies. They argue that&nbsp;&nbsp;
+
+00:37:09.040 --> 00:37:13.920
+that doesn't change if you come up with some&nbsp;
+nice techniques for controlling AI's behavior&nbsp;&nbsp;
+
+00:37:13.920 --> 00:37:20.080
+better. It just means that that point comes&nbsp;
+further in the game. Once the AI has become so&nbsp;&nbsp;
+
+00:37:20.080 --> 00:37:25.600
+intelligent that it can overcome those new control&nbsp;
+techniques — that's one way to think about it.&nbsp;&nbsp;
+
+00:37:25.600 --> 00:37:32.400
+But here's another way. That game of pushing back&nbsp;
+that point further and further by making better&nbsp;&nbsp;
+
+00:37:32.400 --> 00:37:39.680
+techniques is the whole game that we're playing.&nbsp;
+I think that's basically the plan for AI companies&nbsp;&nbsp;
+
+00:37:39.680 --> 00:37:45.520
+today. All along this exponential curve, of course&nbsp;
+the stakes increase and there are big challenges,&nbsp;&nbsp;
+
+00:37:45.520 --> 00:37:52.080
+but the way we learn how to build safe systems&nbsp;
+is this iterative process of deploying them to&nbsp;&nbsp;
+
+00:37:52.080 --> 00:37:55.840
+the world, getting feedback while the stakes are&nbsp;
+relatively low. I think it's very reasonable to&nbsp;&nbsp;
+
+00:37:55.840 --> 00:38:01.280
+look at the general plans being put out by AI labs&nbsp;
+and just say, like, this is radically unacceptable&nbsp;&nbsp;
+
+00:38:01.280 --> 00:38:06.080
+as an image of what a kind of mature civilization&nbsp;
+would be doing with this problem. I think the&nbsp;&nbsp;
+
+00:38:06.080 --> 00:38:14.640
+world should be more concerned. I think there&nbsp;
+is just not room for comfort around this at all.&nbsp;
+
+00:38:14.640 --> 00:38:20.880
+Nate Soares has this metaphor that I keep thinking&nbsp;
+about. He says, "These companies are building a&nbsp;&nbsp;
+
+00:38:20.880 --> 00:38:26.640
+plane. You look at the plane and you say, this&nbsp;
+plane has no landing gear. If you try to fly it,&nbsp;&nbsp;
+
+00:38:26.640 --> 00:38:33.040
+it will crash. And the builders say, yes, the&nbsp;
+plan is to build the landing gear during the&nbsp;&nbsp;
+
+00:38:33.040 --> 00:38:38.880
+flight. And we think we have a 75% to 90% chance&nbsp;
+of succeeding. Also, we are loading you and your&nbsp;&nbsp;
+
+00:38:38.880 --> 00:38:43.760
+family onto this plane whether you like it or&nbsp;
+not." If you go to an airplane engineer and you're&nbsp;&nbsp;
+
+00:38:43.760 --> 00:38:47.760
+like, "What's the chance this airplane crashes?"&nbsp;
+and they're like, "We're sort of making this&nbsp;&nbsp;
+
+00:38:47.760 --> 00:38:54.560
+up as we go. We don't really know how it works.&nbsp;
+It's kind of growing — like we're stirring a pot&nbsp;&nbsp;
+
+00:38:54.560 --> 00:39:00.160
+of mechanical components. It seems to be flying&nbsp;
+better than we expected. Sometimes it doesn't go&nbsp;&nbsp;
+
+00:39:00.160 --> 00:39:06.240
+quite where we steer it, but we think it's fine.&nbsp;
+Call it a 75% chance you live." What that means&nbsp;&nbsp;
+
+00:39:06.240 --> 00:39:12.320
+is you're in danger. Relatively not optimist. So I&nbsp;
+think there's a 25% chance that things go really,&nbsp;&nbsp;
+
+00:39:12.320 --> 00:39:18.000
+really badly. And a 75% chance that things go&nbsp;
+really, really well. It's definitely non-zero&nbsp;&nbsp;
+
+00:39:18.000 --> 00:39:23.120
+and it's probably non-negligible. My view is it's&nbsp;
+just hugely uncertain. Do you still believe that&nbsp;&nbsp;
+
+00:39:23.120 --> 00:39:30.560
+10 to 20 percent chance of AIs wiping out humans&nbsp;
+is possible? Oh yes, if we can't figure out a&nbsp;&nbsp;
+
+00:39:30.560 --> 00:39:36.000
+solution, we'll be toast. 2%, something that is&nbsp;
+non-zero — yeah, big enough to take seriously.&nbsp;
+
+00:39:36.000 --> 00:39:40.560
+When I look at how society is handling this&nbsp;
+problem so far, how we've handled problems&nbsp;&nbsp;
+
+00:39:40.560 --> 00:39:47.840
+in the past, I feel really genuinely worried. I&nbsp;
+don't want to sugarcoat that. But I also think&nbsp;&nbsp;
+
+00:39:47.840 --> 00:39:53.040
+we can do better than this. One of the features&nbsp;
+of artificial intelligence is it scares the heck&nbsp;&nbsp;
+
+00:39:53.040 --> 00:39:59.600
+out of members of both parties. And it sort of&nbsp;
+provides an opportunity to come together in ways&nbsp;&nbsp;
+
+00:39:59.600 --> 00:40:04.720
+that might only happen if we were attacked by&nbsp;
+space aliens — in which case no one would care&nbsp;&nbsp;
+
+00:40:04.720 --> 00:40:10.640
+which political party you belong to, because&nbsp;
+this alien intelligence that's about to assault&nbsp;&nbsp;
+
+00:40:10.640 --> 00:40:15.920
+humanity is not that different. Humanity can rise&nbsp;
+to the occasion and coordinate in ways that seem&nbsp;&nbsp;
+
+00:40:15.920 --> 00:40:24.160
+impossible, even when it looks like all of the&nbsp;
+historical evidence is mounted against them.&nbsp;&nbsp;
+
+00:40:24.160 --> 00:40:35.520
+Imagine the world in 1954, where both the US&nbsp;
+and the USSR have the bomb, and they're making&nbsp;&nbsp;
+
+00:40:35.520 --> 00:40:41.200
+bigger and bigger fusion bombs. There's no end&nbsp;
+in sight to the race. You don't need to be some&nbsp;&nbsp;
+
+00:40:42.160 --> 00:40:53.600
+big pessimistic person, indulging in imagination&nbsp;
+of apocalypse, to be like, "We might not make it&nbsp;&nbsp;
+
+00:40:53.600 --> 00:41:00.720
+through this one." And the bombs didn't fly. And&nbsp;
+it wasn't that the bombs turned out to be fake. It&nbsp;&nbsp;
+
+00:41:00.720 --> 00:41:05.600
+wasn't that they turned out to be hype. It wasn't&nbsp;
+that it turns out an H-bomb couldn't really level&nbsp;&nbsp;
+
+00:41:05.600 --> 00:41:16.800
+a city. It's just people rose to the occasion.
+There's a thing that can happen when you consume&nbsp;&nbsp;
+
+00:41:16.800 --> 00:41:23.760
+content like this, where it just kind of hits you&nbsp;
+like a wall of sound. You get this one-dimensional&nbsp;&nbsp;
+
+00:41:23.760 --> 00:41:29.360
+emotional reaction — just viscerally, okay, now&nbsp;
+I'm more scared or now I'm less scared for the&nbsp;&nbsp;
+
+00:41:29.360 --> 00:41:35.920
+future. And then you just continue on with your&nbsp;
+day because what else are you supposed to do?&nbsp;&nbsp;
+
+00:41:38.320 --> 00:41:44.320
+Well, we'd like to help with that. The way&nbsp;
+I see it, there's basically three things&nbsp;&nbsp;
+
+00:41:44.320 --> 00:41:49.120
+you need. You need context on AI. You need&nbsp;
+skills relevant to the work. And you need a&nbsp;&nbsp;
+
+00:41:49.120 --> 00:41:54.160
+willingness to jump in. If you are someone who&nbsp;
+cares about this issue and is willing to learn,&nbsp;&nbsp;
+
+00:41:54.160 --> 00:42:00.640
+then you are already closer than you might think.&nbsp;
+So here's what we've done. We have made a page to&nbsp;&nbsp;
+
+00:42:00.640 --> 00:42:05.280
+help you figure out where to go from here based&nbsp;
+on which of those three things you might need.&nbsp;&nbsp;
+
+00:42:05.280 --> 00:42:11.440
+It has general resources too. I think it's pretty&nbsp;
+great. Here's my ask. Take three minutes after&nbsp;&nbsp;
+
+00:42:11.440 --> 00:42:15.760
+this video to check it out and see if you get&nbsp;
+intrigued. While you're there, we would love&nbsp;&nbsp;
+
+00:42:15.760 --> 00:42:20.240
+for you to sign up for our newsletter to stay&nbsp;
+up to date on this topic. We always give away&nbsp;&nbsp;
+
+00:42:20.240 --> 00:42:24.480
+a free book to new subscribers and for this&nbsp;
+video, we have added If Anyone Builds It,&nbsp;&nbsp;
+
+00:42:24.480 --> 00:42:28.800
+Everyone Dies to the list. So if you want,&nbsp;
+you can judge Yudkowsky and Soares' argument&nbsp;&nbsp;
+
+00:42:28.800 --> 00:42:34.560
+for yourself. Books are while supplies last,&nbsp;
+but the newsletter is always there. We don't&nbsp;&nbsp;
+
+00:42:34.560 --> 00:42:39.440
+sell your data or anything like that. We are just&nbsp;
+nerds about this topic and how important it is,&nbsp;&nbsp;
+
+00:42:39.440 --> 00:42:42.400
+and if you're the kind of person who made&nbsp;
+it all the way to the end of this video,&nbsp;&nbsp;
+
+00:42:42.400 --> 00:42:47.920
+we want to keep talking to you about it. The&nbsp;
+last thing to say is just thank you so much&nbsp;&nbsp;
+
+00:42:47.920 --> 00:42:58.320
+for watching, for being the reason that we make&nbsp;
+these videos. We'll see you in the next one.&nbsp;
+

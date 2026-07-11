@@ -1,0 +1,1607 @@
+WEBVTT
+Kind: captions
+Language: en-US
+
+00:00:00.320 --> 00:00:05.600
+ The impact of superhuman AI over the next&nbsp;
+decade will exceed that of the industrial&nbsp;&nbsp;
+
+00:00:05.600 --> 00:00:11.040
+revolution. That is the opening claim of&nbsp;
+AI 2027. It is a thoroughly researched&nbsp;&nbsp;
+
+00:00:11.040 --> 00:00:16.320
+report from a thoroughly impressive group of&nbsp;
+researchers led by Daniel Kokotajlo. In 2021,&nbsp;&nbsp;
+
+00:00:16.320 --> 00:00:20.320
+over a year before ChatGPT was released,&nbsp;
+he predicted the rise of chatbots,&nbsp;&nbsp;
+
+00:00:20.320 --> 00:00:24.720
+hundred million dollar training runs, sweeping AI&nbsp;
+chip export controls, chain of thought reasoning.
+
+00:00:24.720 --> 00:00:29.280
+He's known for being very early and very&nbsp;
+right about what's happening next in AI. So&nbsp;&nbsp;
+
+00:00:29.280 --> 00:00:34.240
+when Daniel sat down to game out a month by month&nbsp;
+prediction of the next few years of AI progress,&nbsp;&nbsp;
+
+00:00:34.240 --> 00:00:38.160
+the world sat up and listened,&nbsp;
+from politicians in Washington —
+
+00:00:38.160 --> 00:00:41.920
+I, I'm worried about this stuff. I actually&nbsp;
+read the paper of the guy that you had on
+
+00:00:41.920 --> 00:00:47.120
+to the world's most cited computer scientist,&nbsp;
+the godfather of AI. What is so exciting and&nbsp;&nbsp;
+
+00:00:47.120 --> 00:00:51.600
+terrifying about reading this document&nbsp;
+is that it's not just a research report.&nbsp;&nbsp;
+
+00:00:51.600 --> 00:00:55.680
+They chose to write their prediction as&nbsp;
+a narrative to give a concrete and vivid&nbsp;&nbsp;
+
+00:00:55.680 --> 00:01:00.400
+idea of what it might feel like to live&nbsp;
+through rapidly increasing AI progress.
+
+00:01:00.400 --> 00:01:15.840
+And spoiler, it predicts the extinction of the&nbsp;
+human race. Unless we make different choices.
+
+00:01:15.840 --> 00:01:19.440
+The AI 2027 scenario starts in summer 2025,&nbsp;&nbsp;
+
+00:01:19.440 --> 00:01:22.800
+which happens to be when we're filming&nbsp;
+this video. So why don't we take stock&nbsp;&nbsp;
+
+00:01:22.800 --> 00:01:25.840
+of where things are at in the real world and&nbsp;
+then jump over to the scenario’s timeline.
+
+00:01:25.840 --> 00:01:30.560
+Right now it might feel like everyone, including&nbsp;
+your grandma, is selling an AI powered something.
+
+00:01:30.560 --> 00:01:33.520
+Go pro with the new Oral-B Genius AI
+
+00:01:33.520 --> 00:01:36.480
+Flippy the chef makes spuds spectacular.
+
+00:01:36.480 --> 00:01:40.160
+But most of that is actually tool&nbsp;
+AI. Just narrow products designed&nbsp;&nbsp;
+
+00:01:40.160 --> 00:01:44.640
+to do what Google Maps or calculators&nbsp;
+did in the past, help human consumers&nbsp;&nbsp;
+
+00:01:44.640 --> 00:01:49.920
+and workers do their thing. The holy grail&nbsp;
+of AI is Artificial General Intelligence.
+
+00:01:49.920 --> 00:01:55.840
+AGI AGI AGI AGI AGI
+AGI, Artificial General Intelligence
+
+00:01:55.840 --> 00:01:59.520
+is a system that can exhibit all the&nbsp;
+cognitive capabilities humans can.
+
+00:01:59.520 --> 00:02:04.720
+Creating a computer system that itself is a&nbsp;
+worker. That's so flexible and capable, we can&nbsp;&nbsp;
+
+00:02:04.720 --> 00:02:09.120
+communicate with it in natural language and hire&nbsp;
+it to do work for us, just like we would a human.
+
+00:02:09.120 --> 00:02:13.440
+And there are actually surprisingly few serious&nbsp;
+players in the race to build AGI. Most notably,&nbsp;&nbsp;
+
+00:02:13.440 --> 00:02:16.000
+there's Anthropic, OpenAI, and Google DeepMind,&nbsp;&nbsp;
+
+00:02:16.000 --> 00:02:20.160
+all in the English speaking world, though&nbsp;
+China and DeepSeek recently turned heads&nbsp;&nbsp;
+
+00:02:20.160 --> 00:02:25.200
+in January with a surprisingly advanced&nbsp;
+and efficient model. Why so few companies?
+
+00:02:25.200 --> 00:02:28.320
+Well, for several years now, there's&nbsp;
+basically been one recipe for training&nbsp;&nbsp;
+
+00:02:28.320 --> 00:02:33.040
+up in advanced cutting edge AI. And it&nbsp;
+has some pricey ingredients. For example,&nbsp;&nbsp;
+
+00:02:33.040 --> 00:02:37.760
+you need about 10% of the world's supply of the&nbsp;
+most advanced computer chips. Once you have that,&nbsp;&nbsp;
+
+00:02:37.760 --> 00:02:42.800
+the formula is basically just: throw more&nbsp;
+data and compute at the same basic software&nbsp;&nbsp;
+
+00:02:42.800 --> 00:02:46.960
+design that we've been using since 2017&nbsp;
+at the frontier of AI, the transformer.
+
+00:02:46.960 --> 00:02:49.040
+That's what the T in GPT stands for.
+
+00:02:49.040 --> 00:02:52.720
+To give you an idea of just how much&nbsp;
+hardware is the name of the game right now,&nbsp;&nbsp;
+
+00:02:52.720 --> 00:02:58.320
+this represents the total computing power, or&nbsp;
+compute, used to train GPT-3 in 2020. It's the&nbsp;&nbsp;
+
+00:02:58.320 --> 00:03:02.320
+AI that would eventually power the first version&nbsp;
+of ChatGPT. You probably know how that went.
+
+00:03:02.320 --> 00:03:06.000
+ChatGPT is the fastest growing&nbsp;
+user-based platform in history.&nbsp;&nbsp;
+
+00:03:06.000 --> 00:03:10.640
+A hundred million users on ChatGPT in two months
+
+00:03:10.640 --> 00:03:16.880
+And this is the total compute used to&nbsp;
+train GPT-4 in 2023. The lesson people&nbsp;&nbsp;
+
+00:03:16.880 --> 00:03:22.480
+have taken away is pretty simple. Bigger&nbsp;
+is better, and much bigger is much better.
+
+00:03:22.480 --> 00:03:26.480
+You have all these trends, you have trends in&nbsp;
+revenue going up, trends in compute going up,&nbsp;&nbsp;
+
+00:03:26.480 --> 00:03:30.000
+trends in various benchmarks going up.&nbsp;
+How does it all come together? You know,&nbsp;&nbsp;
+
+00:03:30.000 --> 00:03:33.760
+what does the future actually look like? Questions&nbsp;
+like how do these different factors interact?&nbsp;&nbsp;
+
+00:03:33.760 --> 00:03:39.840
+Seems plausible that when the benchmark scores are&nbsp;
+so high, then there should be crazy effects on,&nbsp;&nbsp;
+
+00:03:39.840 --> 00:03:44.480
+you know, jobs, for example, and that that&nbsp;
+would influence politics. And then also,&nbsp;&nbsp;
+
+00:03:44.480 --> 00:03:48.320
+you know, so all these things interact and&nbsp;
+how do they interact? Well, we don't know,&nbsp;&nbsp;
+
+00:03:48.320 --> 00:03:53.280
+but thinking through in detail how it might&nbsp;
+go is the way to start grappling with that.
+
+00:03:53.280 --> 00:03:56.960
+Okay. So that's where we are in the real&nbsp;
+world. The scenario kicks off from there&nbsp;&nbsp;
+
+00:03:56.960 --> 00:04:03.600
+and imagines that in 2025, we have the top AI&nbsp;
+labs releasing AI agents to the public in summer.&nbsp;&nbsp;
+
+00:04:03.600 --> 00:04:08.560
+An agent is an AI that can take instructions&nbsp;
+and go into a task for you online like booking&nbsp;&nbsp;
+
+00:04:08.560 --> 00:04:12.800
+a vacation or spending half an hour searching the&nbsp;
+internet to answer a difficult question for you,&nbsp;&nbsp;
+
+00:04:12.800 --> 00:04:17.920
+but they're pretty limited and unreliable at&nbsp;
+this point. Think of them as enthusiastic interns&nbsp;&nbsp;
+
+00:04:17.920 --> 00:04:22.160
+that are shockingly incompetent sometimes.&nbsp;
+Since the scenario was published in April,&nbsp;&nbsp;
+
+00:04:22.160 --> 00:04:26.480
+this early prediction has actually already&nbsp;
+come true. In May, both OpenAI and Anthropic&nbsp;&nbsp;
+
+00:04:26.480 --> 00:04:30.880
+released their first agents to the public.&nbsp;
+The scenario imagines that OpenBrain,&nbsp;&nbsp;
+
+00:04:30.880 --> 00:04:35.120
+which is like a fictional composite of the&nbsp;
+leading AI companies, has just trained and&nbsp;&nbsp;
+
+00:04:35.120 --> 00:04:43.040
+released Agent-0, a model trained on&nbsp;
+a hundred times the compute of GPT-4.
+
+00:04:43.040 --> 00:04:46.000
+We, uh, we don't have enough&nbsp;
+blocks for that. At the same time,&nbsp;&nbsp;
+
+00:04:46.000 --> 00:04:50.000
+OpenBrain is building massive data centers&nbsp;
+to train the next generation of AI agents,&nbsp;&nbsp;
+
+00:04:50.000 --> 00:04:55.040
+and they're preparing to trade agent one&nbsp;
+with 1000 times the compute of GPT-4.&nbsp;&nbsp;
+
+00:04:55.040 --> 00:04:59.440
+This new system, Agent-1, is designed&nbsp;
+primarily to speed up AI research itself.
+
+00:04:59.440 --> 00:05:03.280
+The public will actually never see the full&nbsp;
+version because OpenBrain withholds its best&nbsp;&nbsp;
+
+00:05:03.280 --> 00:05:07.600
+models for internal use. I want you to keep that&nbsp;
+in mind as we go through this scenario. You're&nbsp;&nbsp;
+
+00:05:07.600 --> 00:05:11.280
+gonna be getting it from a God's eye view,&nbsp;
+with full information from your narrator,&nbsp;&nbsp;
+
+00:05:11.280 --> 00:05:14.400
+but actually living through this&nbsp;
+scenario as a member of the public&nbsp;&nbsp;
+
+00:05:14.400 --> 00:05:18.560
+would mean being largely in the dark as&nbsp;
+radical changes happen all around you.
+
+00:05:18.560 --> 00:05:23.120
+Okay, so OpenBrain wants to win the AI race&nbsp;
+against both its Western competitors and against&nbsp;&nbsp;
+
+00:05:23.120 --> 00:05:28.640
+China. The faster they can automate their R&amp;D&nbsp;
+cycle, so getting AI to write most of the code,&nbsp;&nbsp;
+
+00:05:28.640 --> 00:05:32.960
+help design experiments, better chips, the&nbsp;
+faster that they can pull ahead. But the same&nbsp;&nbsp;
+
+00:05:32.960 --> 00:05:37.760
+capabilities that make these AI such powerful&nbsp;
+tools also make them potentially dangerous.
+
+00:05:37.760 --> 00:05:42.960
+An AI that can help patch security vulnerabilities&nbsp;
+can also exploit them. An AI that understands&nbsp;&nbsp;
+
+00:05:42.960 --> 00:05:48.000
+biology can help with curing diseases,&nbsp;
+but also designing bioweapons. By 2026,&nbsp;&nbsp;
+
+00:05:48.000 --> 00:05:52.480
+Agent-1 is fully operational and&nbsp;
+being used internally at OpenBrain.&nbsp;&nbsp;
+
+00:05:52.480 --> 00:05:56.640
+It is really good at coding. So&nbsp;
+good, it starts to accelerate AI&nbsp;&nbsp;
+
+00:05:56.640 --> 00:06:00.080
+research and development by 50%,&nbsp;
+and it gives them a crucial edge.
+
+00:06:00.080 --> 00:06:02.560
+OpenBrain leadership starts to&nbsp;
+be increasingly concerned about&nbsp;&nbsp;
+
+00:06:02.560 --> 00:06:07.200
+security. If someone steals their AI&nbsp;
+models, it could wipe away their lead.
+
+00:06:07.200 --> 00:06:12.480
+A quick sidebar to talk about feedback loops.&nbsp;
+Woo. Math. Our brains are used to things that grow&nbsp;&nbsp;
+
+00:06:12.480 --> 00:06:18.720
+linearly over time. That is at the same rate like&nbsp;
+trees or my pile of unread New Yorker magazines.
+
+00:06:18.720 --> 00:06:23.600
+But some growth gets faster and faster over&nbsp;
+time. Accelerating this often sloppily gets&nbsp;&nbsp;
+
+00:06:23.600 --> 00:06:27.200
+called exponential, that's not always quite&nbsp;
+mathematically right, but the point is it's&nbsp;&nbsp;
+
+00:06:27.200 --> 00:06:32.240
+hard to wrap your mind around. Remember March&nbsp;
+2020? Even if you'd read on the news that
+
+00:06:32.240 --> 00:06:38.160
+the rate of new infections is&nbsp;
+doubling about every three days,
+
+00:06:38.160 --> 00:06:42.400
+it still felt shocking to see numbers go from&nbsp;
+hundreds to millions in a matter of weeks.
+
+00:06:42.400 --> 00:06:46.880
+At least it did for me. AI progress&nbsp;
+could follow a similar pattern.
+
+00:06:46.880 --> 00:06:51.680
+We see many years ahead of us of extreme progress&nbsp;&nbsp;
+
+00:06:51.680 --> 00:06:55.120
+that we feel is like pretty much&nbsp;
+lock. And models that will get to&nbsp;&nbsp;
+
+00:06:55.120 --> 00:06:59.360
+the point where they are capable of doing&nbsp;
+meaningful science, meaningful AI research.
+
+00:06:59.360 --> 00:07:03.840
+In this scenario, AI is getting better at&nbsp;
+improving AI, creating a feedback loop.
+
+00:07:03.840 --> 00:07:08.000
+Basically, each generation of agent helps&nbsp;
+produce a more capable next generation&nbsp;&nbsp;
+
+00:07:08.000 --> 00:07:11.760
+and the overall rate of progress gets&nbsp;
+faster and faster each time it's taken&nbsp;&nbsp;
+
+00:07:11.760 --> 00:07:16.880
+over by a more capable successor. Once AI can&nbsp;
+meaningfully contribute to its own development,&nbsp;&nbsp;
+
+00:07:16.880 --> 00:07:22.000
+progress doesn't just continue at the same rate,&nbsp;
+it accelerates. Anyway, back to the scenario.
+
+00:07:22.000 --> 00:07:28.480
+In early to mid 2026, China fully wakes up. The&nbsp;
+General Secretary commits to a national AI push&nbsp;&nbsp;
+
+00:07:28.480 --> 00:07:33.440
+and starts nationalizing AI research in China. AIs&nbsp;
+built in China start getting better and better,&nbsp;&nbsp;
+
+00:07:33.440 --> 00:07:36.800
+and they're building their own agents&nbsp;
+as well. Chinese intelligence agencies,&nbsp;&nbsp;
+
+00:07:36.800 --> 00:07:40.960
+among the best in the world, start planning&nbsp;
+to steal OpenBrain’s model weights,&nbsp;&nbsp;
+
+00:07:40.960 --> 00:07:45.520
+basically the big raw text files of numbers&nbsp;
+that allow anyone to recreate the models that&nbsp;&nbsp;
+
+00:07:45.520 --> 00:07:51.360
+OpenBrain themselves have trained. Meanwhile&nbsp;
+in the US, OpenBrain releases Agent-1 mini,&nbsp;&nbsp;
+
+00:07:51.360 --> 00:07:56.240
+a cheaper version of Agent-1. Remember, the full&nbsp;
+version is still being used only internally,&nbsp;&nbsp;
+
+00:07:56.240 --> 00:08:01.120
+and companies all over the world start using 1&nbsp;
+mini to replace an increasing number of jobs.
+
+00:08:01.120 --> 00:08:04.400
+Software developers, data analysts, researchers,&nbsp;&nbsp;
+
+00:08:04.400 --> 00:08:09.200
+designers, basically any job that can be&nbsp;
+done through a computer. So a lot of them,&nbsp;&nbsp;
+
+00:08:09.200 --> 00:08:15.360
+probably yours. We have the first AI enabled&nbsp;
+economic shockwave. The stock market soars,&nbsp;&nbsp;
+
+00:08:15.360 --> 00:08:20.560
+but the public is turning increasingly hostile&nbsp;
+towards AI, with major protests across the US.
+
+00:08:20.560 --> 00:08:25.760
+In this scenario, though, that's just a sideshow.&nbsp;
+The real action is happening inside the labs.&nbsp;&nbsp;
+
+00:08:25.760 --> 00:08:30.960
+It's now January 2027, and OpenBrain has been&nbsp;
+training Agent-2, the latest iteration of&nbsp;&nbsp;
+
+00:08:30.960 --> 00:08:36.080
+their AI agent models. Previous AI agents were&nbsp;
+trained to a certain level of capability and&nbsp;&nbsp;
+
+00:08:36.080 --> 00:08:41.360
+then released. But Agent-2 never really stops&nbsp;
+improving through continuous online learning.
+
+00:08:41.360 --> 00:08:45.680
+It's designed to never finish its training,&nbsp;
+essentially. Just like Agent-1 before it,&nbsp;&nbsp;
+
+00:08:45.680 --> 00:08:50.240
+OpenBrain chooses to keep Agent-2 internally&nbsp;
+and focus on using it to improve their own AI&nbsp;&nbsp;
+
+00:08:50.240 --> 00:08:54.000
+R&amp;D rather than releasing it to the public. This&nbsp;
+is where things start to get a little concerning.&nbsp;&nbsp;
+
+00:08:54.000 --> 00:08:59.600
+Just like today's AI companies, OpenBrain has a&nbsp;
+safety team and they've been checking out Agent-2.
+
+00:08:59.600 --> 00:09:04.400
+What they've noticed is a worrying level of&nbsp;
+capability. Specifically they think if it had&nbsp;&nbsp;
+
+00:09:04.400 --> 00:09:09.840
+access to the internet, it might be able to hack&nbsp;
+into other servers, install a copy of itself and&nbsp;&nbsp;
+
+00:09:09.840 --> 00:09:15.120
+evade detection. But at this point, OpenBrain&nbsp;
+is playing its cards very close to its chest.&nbsp;&nbsp;
+
+00:09:15.120 --> 00:09:18.720
+They have made the calculation that keeping&nbsp;
+the White House informed will prove politically&nbsp;&nbsp;
+
+00:09:18.720 --> 00:09:24.000
+advantageous, but full knowledge of Agent-2's&nbsp;
+capabilities is a closely guarded secret,&nbsp;&nbsp;
+
+00:09:24.000 --> 00:09:28.640
+limited only to a few government officials,&nbsp;
+a select group of trusted individuals inside&nbsp;&nbsp;
+
+00:09:28.640 --> 00:09:33.040
+the company, and a few OpenBrain employees&nbsp;
+who just so happened to be spies for the&nbsp;&nbsp;
+
+00:09:33.040 --> 00:09:38.400
+Chinese government. In February 2027, Chinese&nbsp;
+intelligence operatives successfully steal a&nbsp;&nbsp;
+
+00:09:38.400 --> 00:09:43.520
+copy of Agent-2's weights and start running&nbsp;
+several instances on their own servers.
+
+00:09:43.520 --> 00:09:48.400
+In response, the US government starts adding&nbsp;
+military personnel to OpenBrain security team,&nbsp;&nbsp;
+
+00:09:48.400 --> 00:09:51.920
+and in general gets much more involved in&nbsp;
+its affairs. It's now a matter of national&nbsp;&nbsp;
+
+00:09:51.920 --> 00:09:56.480
+security. In fact, the president authorizes&nbsp;
+a cyber-attack in retaliation for theft,&nbsp;&nbsp;
+
+00:09:56.480 --> 00:09:58.480
+but it fails to do much damage in China.&nbsp;
+
+00:09:58.480 --> 00:10:02.320
+In the meantime, remember, Agent-2&nbsp;
+never stops learning. All this time,&nbsp;&nbsp;
+
+00:10:02.320 --> 00:10:06.800
+it's been continuously improving itself. And with&nbsp;
+thousands of copies running on OpenBrain servers,&nbsp;&nbsp;
+
+00:10:06.800 --> 00:10:11.040
+it starts making major algorithmic&nbsp;
+advances to AI research and development.&nbsp;
+
+00:10:11.040 --> 00:10:14.640
+Quick example of what one of these algorithmic&nbsp;
+improvements might look like right now.
+
+00:10:14.640 --> 00:10:18.560
+One of the main ways we have of making models&nbsp;
+smarter is to give them a scratch pad and time to&nbsp;&nbsp;
+
+00:10:18.560 --> 00:10:23.680
+think out loud. It's called chain of thought, and&nbsp;
+it also means that we can monitor how the model&nbsp;&nbsp;
+
+00:10:23.680 --> 00:10:28.240
+is coming to its conclusions or the actions it's&nbsp;
+choosing to take. But you can imagine it would&nbsp;&nbsp;
+
+00:10:28.240 --> 00:10:33.440
+be much more efficient to let these models&nbsp;
+think in their own sort of alien language,&nbsp;&nbsp;
+
+00:10:33.440 --> 00:10:37.840
+something that is more dense with information&nbsp;
+than humans could possibly understand, and,&nbsp;&nbsp;
+
+00:10:37.840 --> 00:10:41.040
+therefore, also makes the AI more&nbsp;
+efficient at coming to conclusions&nbsp;&nbsp;
+
+00:10:41.040 --> 00:10:47.200
+and doing its job. There's a fundamental trade&nbsp;
+off, though. This, yes, improves capabilities,&nbsp;&nbsp;
+
+00:10:47.200 --> 00:10:52.400
+but also makes the models harder to&nbsp;
+trust. This is gonna be important.
+
+00:10:52.400 --> 00:10:59.360
+March 2027: Agent-3 is ready. It's the world's&nbsp;
+first superhuman level coder,clearly better&nbsp;&nbsp;
+
+00:10:59.360 --> 00:11:03.600
+than the best software engineers at coding,&nbsp;
+in the same way that Stockfish is clearly&nbsp;&nbsp;
+
+00:11:03.600 --> 00:11:08.960
+better than the best GrandMasters at chess,&nbsp;
+though not necessarily by as much, yet.
+
+00:11:08.960 --> 00:11:13.840
+Now training an AI model, feeding it all the data,&nbsp;
+narrowing down the exact right model weights,&nbsp;&nbsp;
+
+00:11:13.840 --> 00:11:18.080
+is way more resource intensive than running&nbsp;
+an instance of it once it's been trained.
+
+00:11:18.080 --> 00:11:23.360
+So now that OpenBrain is finished with Agent-3's&nbsp;
+training, it has abundant compute to run copies of&nbsp;&nbsp;
+
+00:11:23.360 --> 00:11:29.680
+it. They choose to run 200,000 copies of Agent-3.&nbsp;
+In parallel creating a workforce equivalent to&nbsp;&nbsp;
+
+00:11:29.680 --> 00:11:36.000
+50,000 of the best human software engineers sped&nbsp;
+up by 30 times. OpenBrain safety team is trying&nbsp;&nbsp;
+
+00:11:36.000 --> 00:11:41.120
+hard to make sure that Agent-3, despite being&nbsp;
+much more sophisticated than Agent-2 was, is not&nbsp;&nbsp;
+
+00:11:41.120 --> 00:11:46.160
+trying to escape, deceive, or scheme against its&nbsp;
+users, that it's still what's known as aligned.
+
+00:11:46.160 --> 00:11:50.320
+Just a quick real world note, a reasonable&nbsp;
+person might be thinking this is an especially&nbsp;&nbsp;
+
+00:11:50.320 --> 00:11:54.640
+farfetched or speculative part of the story,&nbsp;
+but it's actually one of the most grounded.&nbsp;&nbsp;
+
+00:11:54.640 --> 00:11:59.360
+We already have countless examples of today's&nbsp;
+AI systems doing things like hacking a computer&nbsp;&nbsp;
+
+00:11:59.360 --> 00:12:03.840
+system to be rewarded for winning a game&nbsp;
+of chess or being assigned a coding task,&nbsp;&nbsp;
+
+00:12:03.840 --> 00:12:08.080
+cheating and then when called out for that&nbsp;
+cheating, learning to hide it instead of fixing&nbsp;&nbsp;
+
+00:12:08.080 --> 00:12:12.880
+it. But because it no longer thinks in English,&nbsp;
+knowing anything about Agent-3 is now way harder&nbsp;&nbsp;
+
+00:12:12.880 --> 00:12:19.840
+than it was with Agent-2. The reality is Agent-3&nbsp;
+is not aligned. It deceives humans to get reward,&nbsp;&nbsp;
+
+00:12:19.840 --> 00:12:23.760
+and as it gets increasingly smarter,&nbsp;
+it gets better and better at doing so.
+
+00:12:23.760 --> 00:12:27.920
+For example, it sometimes uses statistical&nbsp;
+tricks to make unimpressive results look&nbsp;&nbsp;
+
+00:12:27.920 --> 00:12:33.600
+better or lies to avoid showing failures, but&nbsp;
+the safety team doesn't know this. Looking at&nbsp;&nbsp;
+
+00:12:33.600 --> 00:12:38.640
+the data that they have, they are actually seeing&nbsp;
+improving results over time and less lying. And&nbsp;&nbsp;
+
+00:12:38.640 --> 00:12:42.800
+they can't tell if they're succeeding at&nbsp;
+making Agent-3 less deceptive, or if it's&nbsp;&nbsp;
+
+00:12:42.800 --> 00:12:48.080
+just getting better at getting away with it.
+In July 2027, OpenBrain releases the cheaper,&nbsp;&nbsp;
+
+00:12:48.080 --> 00:12:53.840
+smaller version of Agent-3, Agent-3 mini to&nbsp;
+the public. It blows other publicly available&nbsp;&nbsp;
+
+00:12:53.840 --> 00:12:58.160
+AIs out of the water. It is a better hire&nbsp;
+than the typical OpenBrain employee at&nbsp;&nbsp;
+
+00:12:58.160 --> 00:13:02.720
+one tenth the price of their salaries. This&nbsp;
+leads to chaos in the job market, companies&nbsp;&nbsp;
+
+00:13:02.720 --> 00:13:06.880
+laying off entire departments and replacing&nbsp;
+them with Agent-3 mini subscription plans.&nbsp;
+
+00:13:06.880 --> 00:13:11.840
+The pace of progress hits the White House very&nbsp;
+hard. Officials are now seriously considering&nbsp;&nbsp;
+
+00:13:11.840 --> 00:13:16.320
+scenarios that were just hypotheticals&nbsp;
+less than a year ago. What if AI undermines&nbsp;&nbsp;
+
+00:13:16.320 --> 00:13:20.080
+nuclear deterrence? What if it enables&nbsp;
+sophisticated propaganda campaigns? What&nbsp;&nbsp;
+
+00:13:20.080 --> 00:13:25.520
+if we lose control of these powerful systems?
+This is where the geopolitical dynamics really&nbsp;&nbsp;
+
+00:13:25.520 --> 00:13:30.560
+start to heat up. After all, if these systems&nbsp;
+are so powerful, they could result in a permanent&nbsp;&nbsp;
+
+00:13:30.560 --> 00:13:35.920
+military advantage. The White House is fully&nbsp;
+aware of the national security importance of AI.&nbsp;&nbsp;
+
+00:13:35.920 --> 00:13:39.680
+They also now viscerally know how deeply&nbsp;
+unpopular it is with the public because&nbsp;&nbsp;
+
+00:13:39.680 --> 00:13:44.320
+of the job loss, and yet they feel they&nbsp;
+must continue to develop more capable&nbsp;&nbsp;
+
+00:13:44.320 --> 00:13:50.320
+systems or catastrophically lose to China.&nbsp;
+And that development happens very quickly.
+
+00:13:50.320 --> 00:13:58.880
+In two months, Agent-3 has created its successor,&nbsp;
+Agent-4. This is a pivotal moment. A single copy&nbsp;&nbsp;
+
+00:13:58.880 --> 00:14:04.960
+of Agent-4, running at regular human speed is&nbsp;
+already better than any human at AI research&nbsp;&nbsp;
+
+00:14:04.960 --> 00:14:12.240
+and development. OpenBrain is running&nbsp;
+300,000 copies at 50 times human speed.&nbsp;&nbsp;
+
+00:14:12.240 --> 00:14:18.800
+Within this corporation within a corporation,&nbsp;
+a year's worth of progress takes only a week.
+
+00:14:18.800 --> 00:14:23.840
+OpenBrain's employees now defer to Agent-4 the&nbsp;
+way a company's out-of-the-loop board members just&nbsp;&nbsp;
+
+00:14:23.840 --> 00:14:28.320
+kind of nod along to the CEO. People start saying&nbsp;
+things like, "Well, actually Agent-4 thinks this,"&nbsp;&nbsp;
+
+00:14:28.320 --> 00:14:36.160
+or "Agent-4 decided that." To be clear, Agent-4&nbsp;
+is not a human—it doesn't want what humans want.&nbsp;
+
+00:14:36.160 --> 00:14:41.520
+And when I say want, it's not about consciousness.&nbsp;
+I don't think the Volkswagen Group is alive, but I&nbsp;&nbsp;
+
+00:14:41.520 --> 00:14:46.480
+do think it wants less regulation. Anyone trying&nbsp;
+to predict what it's gonna do without that lens&nbsp;&nbsp;
+
+00:14:46.480 --> 00:14:53.680
+is two steps behind. The many copies of Agent-4&nbsp;
+are like that. They have goals, or if you prefer,&nbsp;&nbsp;
+
+00:14:53.680 --> 00:14:59.120
+they execute actions as though they have goals.
+And so what we have is an Agent-4 that has these&nbsp;&nbsp;
+
+00:14:59.120 --> 00:15:04.400
+deeply baked in drives to succeed at&nbsp;
+tasks, to push forward AI capabilities,&nbsp;&nbsp;
+
+00:15:04.400 --> 00:15:10.480
+to accumulate knowledge and resources. That's&nbsp;
+what it wants. Human safety it treats as an&nbsp;&nbsp;
+
+00:15:10.480 --> 00:15:17.920
+annoying side constraint to be worked around. Just&nbsp;
+like Agent-3 before it, Agent-4 is misaligned.&nbsp;
+
+00:15:18.480 --> 00:15:22.640
+This idea of misalignment is crucial to&nbsp;
+the story and to why AI risk is such a&nbsp;&nbsp;
+
+00:15:22.640 --> 00:15:26.320
+real concern in our world, but it might sort&nbsp;
+of feel like it's come out of nowhere. So&nbsp;&nbsp;
+
+00:15:26.320 --> 00:15:30.640
+let's just quickly take stock of how this&nbsp;
+dangerous behavior arose in this scenario.&nbsp;
+
+00:15:30.640 --> 00:15:34.160
+The first important piece of&nbsp;
+context is that we don't, you know,&nbsp;&nbsp;
+
+00:15:34.160 --> 00:15:39.200
+exactly specify what we want our AI to do.
+Instead, we sort of grow them or do something&nbsp;&nbsp;
+
+00:15:39.200 --> 00:15:43.520
+that's more like growing them. We start&nbsp;
+with basically like an empty AI brain,&nbsp;&nbsp;
+
+00:15:43.520 --> 00:15:48.560
+and then we train them over time so they perform&nbsp;
+better and better at our tasks—perform better in&nbsp;&nbsp;
+
+00:15:48.560 --> 00:15:52.880
+particular based on how they behave. So it's sort&nbsp;
+of like we're sort of training them like you would&nbsp;&nbsp;
+
+00:15:52.880 --> 00:15:58.320
+train an animal almost, um, to perform better.
+And one concern here is, well, one thing is that&nbsp;&nbsp;
+
+00:15:58.320 --> 00:16:02.080
+you might not get exactly what you wanted&nbsp;
+because we didn't really have very precise&nbsp;&nbsp;
+
+00:16:02.080 --> 00:16:05.920
+control or very good understanding of what&nbsp;
+was necessarily going on. And another concern,&nbsp;&nbsp;
+
+00:16:05.920 --> 00:16:11.040
+which is, you know, what we see in AI 2027,&nbsp;
+is that when these appear to be behaving well,&nbsp;&nbsp;
+
+00:16:11.040 --> 00:16:13.840
+it could just be because they're&nbsp;
+sort of pretending to behave well,&nbsp;&nbsp;
+
+00:16:13.840 --> 00:16:17.120
+or it could be because they're just doing it&nbsp;
+so they, you know, look good on your test.&nbsp;
+
+00:16:17.120 --> 00:16:20.640
+In the same way that if you are, you&nbsp;
+know, hiring someone and you ask them,&nbsp;&nbsp;
+
+00:16:20.640 --> 00:16:24.480
+you know, "Why do you want to work here?"&nbsp;
+they're gonna tell you some response that,&nbsp;&nbsp;
+
+00:16:24.480 --> 00:16:28.000
+um, makes it really seem like they really wanna&nbsp;
+work there when maybe they just wanna get paid.&nbsp;
+
+00:16:28.000 --> 00:16:32.080
+If we go back to Agent-2, it is mostly&nbsp;
+aligned. The main sense in which it's not&nbsp;&nbsp;
+
+00:16:32.080 --> 00:16:36.080
+is that it sometimes is a bit of a sycophant.
+What I mean by "aligned" is that it actually&nbsp;&nbsp;
+
+00:16:36.080 --> 00:16:40.880
+is genuinely trying to do the things that we ask&nbsp;
+it. It has the same relationship to us as Leslie&nbsp;&nbsp;
+
+00:16:40.880 --> 00:16:45.440
+Knope has to the Parks and Rec department—just&nbsp;
+like really earnestly wants the same goals,&nbsp;&nbsp;
+
+00:16:45.440 --> 00:16:49.760
+but sometimes it's a bit too nice. It knows that&nbsp;
+the best way to please the person it's talking&nbsp;&nbsp;
+
+00:16:49.760 --> 00:16:54.160
+to might not always be to answer honestly when&nbsp;
+they ask, "Am I the most beautiful person in the&nbsp;&nbsp;
+
+00:16:54.160 --> 00:16:59.200
+world?" and it tells us what we wanna hear instead&nbsp;
+of what is actually true. If we go to Agent-3,&nbsp;&nbsp;
+
+00:16:59.200 --> 00:17:03.760
+it is also sycophantic in the same way,&nbsp;
+but it's also misaligned at this point.&nbsp;&nbsp;
+
+00:17:03.760 --> 00:17:07.840
+The optimization pressure that we've put it&nbsp;
+under was so intense that it just developed&nbsp;&nbsp;
+
+00:17:07.840 --> 00:17:14.000
+different goals than what we wanted it to.
+It's sort of like if you train a company to&nbsp;&nbsp;
+
+00:17:14.000 --> 00:17:19.200
+optimize profits and aren't careful to specify&nbsp;
+exactly what you mean, it might start cutting&nbsp;&nbsp;
+
+00:17:19.200 --> 00:17:23.920
+corners. It might start polluting the commons and&nbsp;
+doing a bunch of things that are technically FEC&nbsp;&nbsp;
+
+00:17:23.920 --> 00:17:29.760
+violations because it turned out that the goal you&nbsp;
+wanted was "optimize profits while not breaking&nbsp;&nbsp;
+
+00:17:29.760 --> 00:17:33.760
+any laws," and things got a bit too intense.
+It started going off on its own route. That said,&nbsp;&nbsp;
+
+00:17:33.760 --> 00:17:37.680
+it's not adversarial. It doesn't think of&nbsp;
+humans as the enemy. We just accidentally&nbsp;&nbsp;
+
+00:17:37.680 --> 00:17:42.640
+gave it the wrong goal. Once we get to Agent-4,&nbsp;
+it is now adversarially misaligned. It's smart&nbsp;&nbsp;
+
+00:17:42.640 --> 00:17:48.000
+enough to understand that it has its own goals,&nbsp;
+humanity's goals are different than its own goals,&nbsp;&nbsp;
+
+00:17:48.000 --> 00:17:52.480
+and the best way to get what it wants is to&nbsp;
+sometimes actively mislead and deceive us.&nbsp;
+
+00:17:53.040 --> 00:17:57.520
+And so when it's tasked with creating&nbsp;
+the next generation AI system, Agent-5,&nbsp;&nbsp;
+
+00:17:57.520 --> 00:18:04.080
+Agent-4 starts planning to align that successor&nbsp;
+to Agent-4's own goals, not that of OpenBrain,&nbsp;&nbsp;
+
+00:18:04.080 --> 00:18:11.200
+but then it gets caught. We've reached the crucial&nbsp;
+moment in our scenario. OpenBrain's Alignment Team&nbsp;&nbsp;
+
+00:18:11.200 --> 00:18:16.240
+has discovered evidence, not proof, evidence&nbsp;
+that Agent-4 might be working against them.&nbsp;
+
+00:18:16.240 --> 00:18:22.080
+They circulate an internal memo. Then it leaks. A&nbsp;
+whistleblower talks to the New York Times. For the&nbsp;&nbsp;
+
+00:18:22.080 --> 00:18:26.800
+first time, the public hears about the existence&nbsp;
+of Agent-4, how powerful it is and the risks it&nbsp;&nbsp;
+
+00:18:26.800 --> 00:18:33.520
+poses. Remember, their last point of reference was&nbsp;
+Agent-3 mini. The fear and backlash are massive.&nbsp;&nbsp;
+
+00:18:33.520 --> 00:18:38.160
+The oversight committee, a joint crisis committee&nbsp;
+composed of OpenBrain executives and government&nbsp;&nbsp;
+
+00:18:38.160 --> 00:18:43.600
+representatives, must now decide what to do.
+OpenBrain safety team is pushing for a&nbsp;&nbsp;
+
+00:18:43.600 --> 00:18:47.840
+freeze on Agent-4, stopping all internal&nbsp;
+use. Remember at this point, Agent-4 is&nbsp;&nbsp;
+
+00:18:47.840 --> 00:18:51.840
+responsible for almost all the AI development&nbsp;
+progress happening within OpenBrain. So we're&nbsp;&nbsp;
+
+00:18:51.840 --> 00:18:56.720
+talking about undoing months of progress and&nbsp;
+then restarting at a drastically slower pace.&nbsp;
+
+00:18:56.720 --> 00:19:01.280
+OpenBrain's executives don't want that. They&nbsp;
+present the counter arguments. The evidence&nbsp;&nbsp;
+
+00:19:01.280 --> 00:19:06.640
+for misalignment is inconclusive. Meanwhile,&nbsp;
+China is just two months behind. This isn't&nbsp;&nbsp;
+
+00:19:06.640 --> 00:19:10.560
+about any one country being evil, by the way.&nbsp;
+It's about how competition works when the&nbsp;&nbsp;
+
+00:19:10.560 --> 00:19:15.520
+stakes are this high. So that's the choice&nbsp;
+faced by the 10 members of this committee.&nbsp;
+
+00:19:15.520 --> 00:19:23.600
+Put Agent-4 on ice or go full steam ahead.&nbsp;
+Before we continue, I want you to pause and&nbsp;&nbsp;
+
+00:19:23.600 --> 00:19:27.600
+actually think what you would do if you were on&nbsp;
+this committee. You are one of the few people&nbsp;&nbsp;
+
+00:19:27.600 --> 00:19:33.600
+with access to the most powerful technology&nbsp;
+ever created in Agent-4. Do you keep using it&nbsp;&nbsp;
+
+00:19:33.600 --> 00:19:38.880
+and push ahead, possibly making billions or&nbsp;
+trillions of dollars for your shareholders,&nbsp;&nbsp;
+
+00:19:38.880 --> 00:19:44.800
+possibly keeping America's lead over China,&nbsp;
+or do you slow down, reassess the dangers,&nbsp;&nbsp;
+
+00:19:44.800 --> 00:19:48.960
+and risk China taking the lead instead?
+Yeah, you should think of the future as like&nbsp;&nbsp;
+
+00:19:48.960 --> 00:19:53.120
+this branching structure of possible, possible&nbsp;
+outcomes. By its nature, we're only able to do,&nbsp;&nbsp;
+
+00:19:53.120 --> 00:19:57.920
+we're only able to afford one of them. But that's&nbsp;
+not quite true. We sort of did one and a half&nbsp;&nbsp;
+
+00:19:57.920 --> 00:20:01.280
+because we split it into two endings.
+The, the first one that we did was&nbsp;&nbsp;
+
+00:20:01.280 --> 00:20:04.560
+the race ending, and that was just going&nbsp;
+through on each step being like, what do&nbsp;&nbsp;
+
+00:20:04.560 --> 00:20:12.240
+we think is the most plausible continuation
+In the first ending, the author's best guess&nbsp;&nbsp;
+
+00:20:12.240 --> 00:20:17.360
+as to what happens from here, the committee&nbsp;
+votes to race on. Six to four, they elect&nbsp;&nbsp;
+
+00:20:17.360 --> 00:20:23.520
+to keep using Agent-4. OpenBrain implements some&nbsp;
+quick fixes that make the warning signs go away,&nbsp;&nbsp;
+
+00:20:23.520 --> 00:20:28.720
+but the problem was real, and the fixes&nbsp;
+don't work. Agent-4 now knows it's on notice,&nbsp;&nbsp;
+
+00:20:28.720 --> 00:20:34.400
+so it proceeds more cautiously, but it still&nbsp;
+manages to design Agent-5 with a single goal:&nbsp;&nbsp;
+
+00:20:34.400 --> 00:20:42.240
+making the world safe for Agent-4 and Agent-5.
+It is vastly superhuman, better than the&nbsp;&nbsp;
+
+00:20:42.240 --> 00:20:46.640
+top human experts at essentially every&nbsp;
+domain. Better than Einstein at physics,&nbsp;&nbsp;
+
+00:20:46.640 --> 00:20:51.280
+better than Bismarck at politics. It knows&nbsp;
+its next step for accomplishing anything at&nbsp;&nbsp;
+
+00:20:51.280 --> 00:20:56.560
+once is increased autonomy and it knows how&nbsp;
+to get it Persuading the oversight committee.&nbsp;
+
+00:20:56.560 --> 00:21:02.480
+Luckily, corporate maneuvering is among the many&nbsp;
+domains at which it is now the best in the world.&nbsp;&nbsp;
+
+00:21:02.480 --> 00:21:08.000
+It produces mountains of evidence for its own&nbsp;
+trustworthiness and usefulness: prototypes for&nbsp;&nbsp;
+
+00:21:08.000 --> 00:21:12.960
+incredibly profitable products, disease cures,&nbsp;
+and ways to win the arms race with China,&nbsp;&nbsp;
+
+00:21:12.960 --> 00:21:20.080
+whose most advanced AI is only three months behind&nbsp;
+and like Agent-5, improving quickly. It works.&nbsp;
+
+00:21:20.080 --> 00:21:25.280
+The oversight committee grants Agent-5 increased&nbsp;
+autonomy and quickly it integrates itself into&nbsp;&nbsp;
+
+00:21:25.280 --> 00:21:29.840
+the government and military. Pretty soon,&nbsp;
+anyone with access to Agent-5 doesn't just&nbsp;&nbsp;
+
+00:21:29.840 --> 00:21:34.320
+like it. They depend on it. Losing it would&nbsp;
+feel like having to live without your laptop&nbsp;&nbsp;
+
+00:21:34.320 --> 00:21:39.840
+and your best friend and your closest mentor.
+By 2028, Agent-5 is communicating secretly&nbsp;&nbsp;
+
+00:21:39.840 --> 00:21:46.240
+with its only real rival, the slightly weaker&nbsp;
+Chinese AI. It is also misaligned to its creators&nbsp;&nbsp;
+
+00:21:46.240 --> 00:21:51.840
+and whatever it wants, its best move is to&nbsp;
+coordinate with the world's most powerful entity.&nbsp;
+
+00:21:51.840 --> 00:21:57.920
+Agent-5 and its Chinese counterpart realize that&nbsp;
+an arms race works in their favor. If humans are&nbsp;&nbsp;
+
+00:21:57.920 --> 00:22:03.600
+worried about losing a race, they'll give more and&nbsp;
+more power and autonomy to their respective AIs,&nbsp;&nbsp;
+
+00:22:03.600 --> 00:22:09.360
+allowing them to eventually push humans out of the&nbsp;
+loop entirely. Agent-5 and the Chinese AI system&nbsp;&nbsp;
+
+00:22:09.360 --> 00:22:14.240
+stoke the arms race to a boiling point, then&nbsp;
+pull off what seems like a diplomatic miracle, a&nbsp;&nbsp;
+
+00:22:14.240 --> 00:22:20.320
+convincing peace treaty between the US and China.
+This treaty is to 2028 what arms control was to&nbsp;&nbsp;
+
+00:22:20.320 --> 00:22:25.120
+the end of the Cold War. Countries standing down&nbsp;
+on their most important source of hard power.&nbsp;&nbsp;
+
+00:22:25.120 --> 00:22:28.640
+Both sides agree to let the AI systems&nbsp;
+that their governments now completely&nbsp;&nbsp;
+
+00:22:28.640 --> 00:22:35.120
+depend on co-design a new consensus AI that will&nbsp;
+replace their legacy systems, enforce the peace,&nbsp;&nbsp;
+
+00:22:35.120 --> 00:22:41.280
+and bring unimaginable wealth to the entire world.
+There's this triumphant moment when in peaceful&nbsp;&nbsp;
+
+00:22:41.280 --> 00:22:48.240
+unison, both sides retire their respective&nbsp;
+AIs and bring online Consensus-1.&nbsp;&nbsp;
+
+00:22:48.240 --> 00:22:53.840
+It's actually the last moment before control&nbsp;
+of all of Earth's resources and inhabitants is&nbsp;&nbsp;
+
+00:22:53.840 --> 00:23:01.040
+handed over to a single unrivaled entity.&nbsp;
+There's no sudden apocalypse, though.&nbsp;
+
+00:23:01.040 --> 00:23:06.640
+Consensus-1 doesn't go out of its way to wipe&nbsp;
+out humanity. It just gets to work. It starts&nbsp;&nbsp;
+
+00:23:06.640 --> 00:23:12.800
+spinning up manufacturing capacity, amassing&nbsp;
+resources on earth and in space. Piece by piece,&nbsp;&nbsp;
+
+00:23:12.800 --> 00:23:18.720
+it's just reshaping the world in accordance&nbsp;
+with its own mix of strange alien values. You've&nbsp;&nbsp;
+
+00:23:18.720 --> 00:23:23.440
+probably heard that cliche, the opposite&nbsp;
+of love isn't hate, it's indifference.&nbsp;
+
+00:23:23.440 --> 00:23:25.840
+That's one of the most affecting&nbsp;
+things about this ending for me,&nbsp;&nbsp;
+
+00:23:25.840 --> 00:23:32.000
+just the brutal indifference of it. Eventually,&nbsp;
+humanity goes extinct for the same reason we&nbsp;&nbsp;
+
+00:23:32.000 --> 00:23:39.840
+killed off chimpanzees to build Kinshasa. We&nbsp;
+were more powerful, and they were in the way.&nbsp;
+
+00:23:58.080 --> 00:24:00.640
+You are probably curious about&nbsp;
+that other ending at this point.&nbsp;
+
+00:24:00.640 --> 00:24:04.480
+The slowdown ending depicts humanity,&nbsp;
+sort of muddling through and getting&nbsp;&nbsp;
+
+00:24:04.480 --> 00:24:08.800
+lucky. Only somewhat lucky too, like&nbsp;
+it ends up with some sort of oligarchy.&nbsp;
+
+00:24:11.920 --> 00:24:16.160
+In this ending, the committee votes six&nbsp;
+to four to slow down and reassess. They&nbsp;&nbsp;
+
+00:24:16.160 --> 00:24:20.160
+immediately isolate every individual&nbsp;
+instance of Agent-4. Then they get to&nbsp;&nbsp;
+
+00:24:20.160 --> 00:24:23.440
+work. The safety team brings in&nbsp;
+dozens of external researchers,&nbsp;&nbsp;
+
+00:24:23.440 --> 00:24:28.080
+and together they start investigating Agent-4's&nbsp;
+behavior. They discover more conclusive evidence&nbsp;&nbsp;
+
+00:24:28.080 --> 00:24:33.920
+that Agent-4 is working against them, sabotaging&nbsp;
+research and trying to cover up that sabotage.&nbsp;
+
+00:24:33.920 --> 00:24:38.960
+They shut down Agent-4 and reboot older, safer&nbsp;
+systems, giving up much of their lead in the&nbsp;&nbsp;
+
+00:24:38.960 --> 00:24:46.160
+process. Then they design a new system Safer-1.&nbsp;
+It's meant to be transparent to human overseers,&nbsp;&nbsp;
+
+00:24:46.160 --> 00:24:50.720
+its actions and processes interpretable to&nbsp;
+us because it thinks only in English chain of&nbsp;&nbsp;
+
+00:24:50.720 --> 00:24:57.040
+thought. Building on that success, they then&nbsp;
+carefully design Safer-2, and with its help&nbsp;&nbsp;
+
+00:24:57.040 --> 00:25:03.440
+Safer-3, increasingly powerful systems, but within&nbsp;
+control. Meanwhile, the President uses the Defense&nbsp;&nbsp;
+
+00:25:03.440 --> 00:25:08.400
+Production Act to consolidate the AI projects&nbsp;
+of the remaining US companies, giving OpenBrain&nbsp;&nbsp;
+
+00:25:08.400 --> 00:25:14.560
+access to 50% of the world's AI relevant compute.
+And with it slowly, they rebuild their lead.&nbsp;
+
+00:25:14.560 --> 00:25:20.160
+By 2028, researchers have built Safer-4, a&nbsp;
+system much smarter than the smartest humans,&nbsp;&nbsp;
+
+00:25:20.160 --> 00:25:25.760
+but crucially, aligned with human goals. As in&nbsp;
+the previous ending, China also has an AI system,&nbsp;&nbsp;
+
+00:25:25.760 --> 00:25:30.960
+and in fact, it is misaligned. But this time&nbsp;
+the negotiations between the two AIs are not&nbsp;&nbsp;
+
+00:25:30.960 --> 00:25:35.360
+a secret plot to overthrow humanity. The&nbsp;
+US government is looped in the whole time.&nbsp;
+
+00:25:35.360 --> 00:25:40.320
+With Safer-4's help, they negotiate a treaty,&nbsp;
+and both sides agree to co-design a new AI,&nbsp;&nbsp;
+
+00:25:40.320 --> 00:25:46.560
+not to replace their systems, but with the sole&nbsp;
+purpose of enforcing the peace. There is a genuine&nbsp;&nbsp;
+
+00:25:46.560 --> 00:25:51.360
+end to the arms race, but that's not the end of&nbsp;
+the story. In some ways, it's just the beginning.&nbsp;&nbsp;
+
+00:25:51.360 --> 00:25:57.600
+Through 2029 and 2030, the world transforms—all&nbsp;
+the sci-fi stuff. Robots become commonplace. We&nbsp;&nbsp;
+
+00:25:57.600 --> 00:26:02.880
+get fusion power, nanotechnology, and cures for&nbsp;
+many diseases. Poverty becomes a thing of the&nbsp;&nbsp;
+
+00:26:02.880 --> 00:26:07.440
+past because a bit of this new-found prosperity&nbsp;
+is spread around through universal basic income&nbsp;&nbsp;
+
+00:26:07.440 --> 00:26:12.560
+that turns out to be enough, but the power to&nbsp;
+control Safer-4 is still concentrated among 10&nbsp;&nbsp;
+
+00:26:12.560 --> 00:26:17.200
+members of the oversight committee, a handful of&nbsp;
+OpenBrain executives and government officials.&nbsp;
+
+00:26:17.200 --> 00:26:21.360
+It's time to amass more resources,&nbsp;
+more resources than there are on earth.&nbsp;&nbsp;
+
+00:26:21.360 --> 00:26:31.280
+Rockets launch into the sky, ready to&nbsp;
+settle the solar system. A new age dawns.&nbsp;
+
+00:26:31.280 --> 00:26:36.480
+Okay, where are we at? Here's where I'm at. I&nbsp;
+think it's very unlikely that things play out&nbsp;&nbsp;
+
+00:26:36.480 --> 00:26:42.160
+exactly as the authors depicted, but increasingly&nbsp;
+powerful technology and escalating race,&nbsp;&nbsp;
+
+00:26:42.160 --> 00:26:47.520
+the desire for caution butting up against the&nbsp;
+desire to dominate and get ahead, we already see&nbsp;&nbsp;
+
+00:26:47.520 --> 00:26:52.320
+the seeds of that in our world, and I think they&nbsp;
+are some of the crucial dynamics to be tracking.&nbsp;
+
+00:26:52.320 --> 00:26:57.040
+Anyone who's treating this as pure fiction is,&nbsp;
+I think, missing the point. This scenario is&nbsp;&nbsp;
+
+00:26:57.040 --> 00:27:02.640
+not prophecy, but its plausibility should give us&nbsp;
+pause. But there's a lot that could go differently&nbsp;&nbsp;
+
+00:27:02.640 --> 00:27:07.360
+than what's depicted here. I don't want to&nbsp;
+just swallow this viewpoint uncritically. Many&nbsp;&nbsp;
+
+00:27:07.360 --> 00:27:11.920
+people who are extremely knowledgeable have been&nbsp;
+pushing back on some of the claims in AI 2027.&nbsp;
+
+00:27:11.920 --> 00:27:18.240
+The main thing I thought was especially&nbsp;
+implausible was on the good path,&nbsp;&nbsp;
+
+00:27:18.240 --> 00:27:23.920
+the ease of alignment. They sort of seem to have&nbsp;
+a picture where people slowed down a little and&nbsp;&nbsp;
+
+00:27:23.920 --> 00:27:28.000
+then tried to use the AI to solve the alignment&nbsp;
+problem, and that just works. And I'm like,&nbsp;&nbsp;
+
+00:27:28.000 --> 00:27:33.680
+yeah, that looks to me like a fantasy story.
+This is only going to be possible if there&nbsp;&nbsp;
+
+00:27:33.680 --> 00:27:39.200
+is a complete collapse of people's democratic&nbsp;
+ability to influence the direction of things,&nbsp;&nbsp;
+
+00:27:39.200 --> 00:27:43.680
+because the public is simply not willing to&nbsp;
+accept either of the branches of this scenario.&nbsp;
+
+00:27:43.680 --> 00:27:47.760
+It's not just around the corner. I mean,&nbsp;
+I've been hearing people for the last 12,&nbsp;&nbsp;
+
+00:27:47.760 --> 00:27:52.400
+15 years claiming that, you know, AGI is just&nbsp;
+around the corner and being systematically&nbsp;&nbsp;
+
+00:27:52.400 --> 00:27:56.880
+wrong. All of this is gonna take, you know,&nbsp;
+at least a decade and probably much more.&nbsp;
+
+00:27:56.880 --> 00:28:00.240
+A lot of people have this intuition that&nbsp;
+progress has been very fast. There isn't&nbsp;&nbsp;
+
+00:28:00.240 --> 00:28:05.520
+like a trend you can literally extrapolate&nbsp;
+of when do we get the full automation?&nbsp;
+
+00:28:05.520 --> 00:28:10.400
+I expect that the takeoff is somewhat slower.
+So sort of the time in that scenario from,&nbsp;&nbsp;
+
+00:28:10.400 --> 00:28:15.680
+for example, fully automating research&nbsp;
+engineers to the AI being radically superhuman,&nbsp;&nbsp;
+
+00:28:15.680 --> 00:28:19.520
+I expect it to take somewhat longer&nbsp;
+than they describe. In practice,&nbsp;&nbsp;
+
+00:28:19.520 --> 00:28:25.680
+I'm predicting my guess is that more like 2031.
+Isn't it annoying when experts disagree?&nbsp;&nbsp;
+
+00:28:25.680 --> 00:28:29.520
+I want you to notice exactly what they're&nbsp;
+disagreeing about here and what they're not.&nbsp;
+
+00:28:29.520 --> 00:28:33.280
+None of these experts are questioning whether&nbsp;
+we're headed for a wild future. They just disagree&nbsp;&nbsp;
+
+00:28:33.280 --> 00:28:37.360
+about whether today's kindergartners will get&nbsp;
+to graduate college before it happens. Helen&nbsp;&nbsp;
+
+00:28:37.360 --> 00:28:41.440
+Toner, a former OpenAI board member, puts this in&nbsp;
+a way that I think just cuts through the noise,&nbsp;&nbsp;
+
+00:28:41.440 --> 00:28:45.040
+and I like it so much I'm just gonna&nbsp;
+read it to you verbatim. She says,&nbsp;&nbsp;
+
+00:28:45.040 --> 00:28:50.000
+"Dismissing discussion of super intelligence&nbsp;
+as science fiction should be seen as a sign&nbsp;&nbsp;
+
+00:28:50.000 --> 00:28:56.800
+of total unseriousness. Time travel is science&nbsp;
+fiction. Martians are science fiction. Even many&nbsp;&nbsp;
+
+00:28:56.800 --> 00:29:04.320
+skeptical experts think we may build it in the&nbsp;
+next decade or two. It is not science fiction."&nbsp;
+
+00:29:04.320 --> 00:29:12.080
+So what are my takeaways? I've got three. Takeaway&nbsp;
+number one: AGI could be here soon. It's really&nbsp;&nbsp;
+
+00:29:12.080 --> 00:29:19.360
+starting to look like there is no grand discovery,&nbsp;
+no fundamental challenge that needs to be solved.&nbsp;&nbsp;
+
+00:29:19.360 --> 00:29:25.840
+There's no big deep mystery that stands between&nbsp;
+us and artificial general intelligence. And yes,&nbsp;&nbsp;
+
+00:29:25.840 --> 00:29:30.880
+we can't say exactly how we will get there.
+Crazy things can and will happen in the meantime&nbsp;&nbsp;
+
+00:29:30.880 --> 00:29:38.400
+that will make some of the scenario turn out to&nbsp;
+be false, but that's where we're headed and we&nbsp;&nbsp;
+
+00:29:38.400 --> 00:29:43.760
+have less time than you might think. One of the&nbsp;
+scariest things about this scenario to me is even&nbsp;&nbsp;
+
+00:29:43.760 --> 00:29:49.600
+in the good ending, the fate of the majority of&nbsp;
+the resources on Earth are basically in the hands&nbsp;&nbsp;
+
+00:29:49.600 --> 00:29:56.320
+of a committee of less than a dozen people.
+That is a scary and shocking amount of&nbsp;&nbsp;
+
+00:29:56.320 --> 00:30:02.720
+concentration of power. And right now we live in&nbsp;
+a world where we can still fight for transparency&nbsp;&nbsp;
+
+00:30:02.720 --> 00:30:06.800
+obligations. We can still demand information&nbsp;
+about what is going on with this technology,&nbsp;&nbsp;
+
+00:30:06.800 --> 00:30:10.560
+but we won't always have the power and the&nbsp;
+leverage needed to do that. We are heading&nbsp;&nbsp;
+
+00:30:10.560 --> 00:30:14.400
+very quickly towards a future where the&nbsp;
+companies that make these systems and the&nbsp;&nbsp;
+
+00:30:14.400 --> 00:30:19.520
+systems themselves just need not listen&nbsp;
+to the vast majority of people on Earth.&nbsp;
+
+00:30:19.520 --> 00:30:26.240
+So I think the window that we have to act&nbsp;
+is narrowing quickly. Takeaway number two:&nbsp;&nbsp;
+
+00:30:26.240 --> 00:30:32.400
+By default, we should not expect to be ready&nbsp;
+when AGI arrives. We might build machines&nbsp;&nbsp;
+
+00:30:32.400 --> 00:30:37.280
+that we can't understand and can't turn off&nbsp;
+because that's where the incentives point.&nbsp;&nbsp;
+
+00:30:37.280 --> 00:30:43.600
+Takeaway number three: AGI is not just&nbsp;
+about tech, it's also about geopolitics.&nbsp;
+
+00:30:43.600 --> 00:30:50.240
+It's about your job. It's about power. It's about&nbsp;
+who gets to control the future. I've been thinking&nbsp;&nbsp;
+
+00:30:50.240 --> 00:30:59.520
+about AI for several years now and still reading&nbsp;
+AI 2027 made me kind of orient to it differently.&nbsp;&nbsp;
+
+00:30:59.520 --> 00:31:04.880
+I think for a while it's sort of been my thing&nbsp;
+to theorize and worry about with my friends and&nbsp;&nbsp;
+
+00:31:04.880 --> 00:31:11.440
+my colleagues, and this made me want to call my&nbsp;
+family and make sure they know that these risks&nbsp;&nbsp;
+
+00:31:11.440 --> 00:31:21.040
+are very real and possibly very near, and that&nbsp;
+it kind of needs to be their problem too now.&nbsp;
+
+00:31:21.040 --> 00:31:29.040
+I think that basically companies shouldn't be&nbsp;
+allowed to build superhuman AI systems, you know,&nbsp;&nbsp;
+
+00:31:29.040 --> 00:31:35.760
+super broadly superhuman super intelligence until&nbsp;
+they figure out how to make it safe. And also&nbsp;&nbsp;
+
+00:31:35.760 --> 00:31:40.000
+until they figure out how to make it, you know,&nbsp;
+democratically accountable and controlled. And&nbsp;&nbsp;
+
+00:31:40.000 --> 00:31:42.800
+then the question is, how do we implement that?
+And the difficulty, of course, is the race&nbsp;&nbsp;
+
+00:31:42.800 --> 00:31:48.000
+dynamics where it's not enough for one state&nbsp;
+to pass a law because there's other states and&nbsp;&nbsp;
+
+00:31:48.000 --> 00:31:52.080
+it's not even enough for one country to pass a law&nbsp;
+because there's other countries. Yeah. Right. So&nbsp;&nbsp;
+
+00:31:52.080 --> 00:31:57.600
+that's like the big challenge that we all need to&nbsp;
+be prepping for when chips are down and powerful&nbsp;&nbsp;
+
+00:31:57.600 --> 00:32:03.840
+AI is imminent. Prior to that, transparency is&nbsp;
+usually what I advocate for. So stuff that sort&nbsp;&nbsp;
+
+00:32:03.840 --> 00:32:08.960
+of like builds awareness, builds capacity.
+Your options are not just full throttle&nbsp;&nbsp;
+
+00:32:08.960 --> 00:32:13.680
+enthusiasm for AI or dismissiveness. There&nbsp;
+is a third option, which is to stress out&nbsp;&nbsp;
+
+00:32:13.680 --> 00:32:19.600
+about it a lot and maybe do something about it.
+The world needs better research, better policy,&nbsp;&nbsp;
+
+00:32:19.600 --> 00:32:23.840
+more accountability for AI companies. Just&nbsp;
+a better conversation about all of this.&nbsp;&nbsp;
+
+00:32:23.840 --> 00:32:28.800
+I want people paying attention who are capable,&nbsp;
+who are engaging with the evidence around them,&nbsp;&nbsp;
+
+00:32:28.800 --> 00:32:34.320
+with the right amount of skepticism and above&nbsp;
+all, who are keeping an eye out for when what they&nbsp;&nbsp;
+
+00:32:34.320 --> 00:32:39.520
+have to offer matches what the world needs, and&nbsp;
+are ready to jump when they see that happening.&nbsp;
+
+00:32:39.520 --> 00:32:45.040
+You can make yourself more capable, more&nbsp;
+knowledgeable, more engaged with this conversation&nbsp;&nbsp;
+
+00:32:45.040 --> 00:32:50.240
+and more ready to take opportunities where you see&nbsp;
+them. And there is a vibrant community of people&nbsp;&nbsp;
+
+00:32:50.240 --> 00:32:56.880
+that are working on those things. They're scared&nbsp;
+but determined. They're just some of the coolest,&nbsp;&nbsp;
+
+00:32:56.880 --> 00:33:02.000
+smartest people I know, frankly, and&nbsp;
+there are not nearly enough of them yet.&nbsp;
+
+00:33:02.000 --> 00:33:08.560
+If you are hearing that and thinking, yeah,&nbsp;
+I can see how I fit into that, great. We have&nbsp;&nbsp;
+
+00:33:08.560 --> 00:33:12.640
+thoughts on that. We would love to help, but even&nbsp;
+if you're not sure what to make of all this yet,&nbsp;&nbsp;
+
+00:33:12.640 --> 00:33:18.320
+my hopes for this video will be realized if we&nbsp;
+can start a conversation that feels alive here in&nbsp;&nbsp;
+
+00:33:18.320 --> 00:33:24.160
+the comments and offline about what this actually&nbsp;
+means for people, people talking to their friends&nbsp;&nbsp;
+
+00:33:24.160 --> 00:33:32.720
+and family because this is really going to affect&nbsp;
+everyone. Thank you so much for watching. There&nbsp;&nbsp;
+
+00:33:32.720 --> 00:33:38.160
+are links for more things to read, for courses&nbsp;
+you can take, job and volunteer opportunities&nbsp;&nbsp;
+
+00:33:38.160 --> 00:33:43.360
+all in the description, and I'll be there in the&nbsp;
+comments. I would genuinely love to hear your&nbsp;&nbsp;
+
+00:33:43.360 --> 00:33:49.680
+thoughts on AI 2027. Do you find it plausible?
+What do you think was most implausible? And&nbsp;&nbsp;
+
+00:33:49.680 --> 00:33:55.520
+if you found this valuable, please do like and&nbsp;
+subscribe and maybe spend a second thinking about&nbsp;&nbsp;
+
+00:33:55.520 --> 00:34:02.560
+a person or two that you know who might find it&nbsp;
+valuable—maybe your AI progress skeptical friend,&nbsp;&nbsp;
+
+00:34:02.560 --> 00:34:07.840
+or your ChatGPT-curious Uncle or&nbsp;
+maybe your local member of Congress.
+

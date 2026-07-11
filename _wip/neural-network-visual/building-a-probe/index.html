@@ -183,43 +183,6 @@
       box-shadow: 0 0 0 2px rgba(217, 119, 6, 0.18);
     }
 
-    /* Auto-play controls strip (only visible on beat 2) */
-    .bp-controls {
-      display: flex;
-      gap: 0.5rem;
-      justify-content: center;
-      align-items: center;
-      padding: 0.45rem 0.6rem;
-      margin-top: 0.25rem;
-      font-size: 0.78rem;
-    }
-    .bp-controls__btn {
-      font-family: inherit;
-      font-size: 0.74rem;
-      letter-spacing: 0.05em;
-      text-transform: uppercase;
-      padding: 0.35rem 0.7rem;
-      background: transparent;
-      color: rgba(17, 24, 39, 0.7);
-      border: 1px solid rgba(17, 24, 39, 0.2);
-      border-radius: 5px;
-      cursor: pointer;
-      transition: all 0.12s ease;
-    }
-    .bp-controls__btn:hover:not([disabled]) {
-      background: rgba(17, 24, 39, 0.06);
-      color: rgba(17, 24, 39, 0.95);
-      border-color: rgba(17, 24, 39, 0.4);
-    }
-    .bp-controls__btn[disabled] { opacity: 0.4; cursor: not-allowed; }
-    .bp-controls__status {
-      font-size: 0.72rem;
-      color: rgba(17, 24, 39, 0.55);
-      font-variant-numeric: tabular-nums;
-      letter-spacing: 0.02em;
-      margin-right: 0.5rem;
-    }
-
     /* --- Dataset list (left column) --- */
     .bp-dataset {
       padding: 0.7rem 0.85rem;
@@ -293,65 +256,107 @@
       background: #fff;
       box-shadow: 0 0 0 2px rgba(17, 24, 39, 0.08);
     }
-    .bp-dataset__autoplay {
-      margin-top: 0.7rem;
-      width: 100%;
-      font-family: inherit;
-      font-size: 0.74rem;
-      letter-spacing: 0.05em;
-      text-transform: uppercase;
-      padding: 0.4rem 0.6rem;
-      background: rgba(17, 24, 39, 0.85);
-      color: #fdf6e3;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-      transition: background 0.1s ease;
-    }
-    .bp-dataset__autoplay:hover:not([disabled]) { background: rgba(17, 24, 39, 1); }
-    .bp-dataset__autoplay[disabled] { opacity: 0.4; cursor: not-allowed; }
-
-    /* --- Model interior (middle column) --- */
-    .bp-model {
-      padding: 0.85rem;
+    /* --- Shared Beat 2 panels --- */
+    .bp-panel,
+    .bp-model,
+    .bp-plot {
+      padding: 0.9rem;
       background: rgba(255, 250, 240, 0.72);
       border: 1px solid rgba(92, 74, 52, 0.14);
       border-radius: 10px;
-      min-height: 480px;
+      min-height: 560px;
       display: flex;
       flex-direction: column;
-      gap: 0.6rem;
+      gap: 0.75rem;
     }
-    .bp-model__header {
+    .bp-stage--drop .bp-panel {
+      height: 560px;
+    }
+    .bp-panel__header,
+    .bp-model__header,
+    .bp-plot__header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 0.75rem;
+      font-size: 0.75rem;
+      color: rgba(17, 24, 39, 0.55);
+      letter-spacing: 0;
+      text-transform: none;
+    }
+    .bp-panel__step,
+    .bp-plot__step {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 1.2px;
+      color: rgba(17, 24, 39, 0.55);
+    }
+    .bp-panel__meta {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      text-transform: none;
+      letter-spacing: 0;
+      font-size: 0.7rem;
+      color: rgba(17, 24, 39, 0.4);
+      white-space: nowrap;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding-top: 0.1rem;
+    }
+    .bp-panel__title,
+    .bp-plot__title {
+      font-size: 1rem;
+      font-weight: 600;
+      letter-spacing: 0.01em;
+      color: rgba(17, 24, 39, 0.86);
+      text-transform: none;
+      line-height: 1.2;
+    }
+    .bp-panel__subhead {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      gap: 0.5rem;
-      font-size: 0.75rem;
-      color: rgba(17, 24, 39, 0.55);
-      letter-spacing: 0.04em;
-      text-transform: uppercase;
+      gap: 0.75rem;
+      min-height: 32px;
     }
+    .bp-action-btn,
     .bp-model__toggle {
       font-family: inherit;
-      font-size: 0.7rem;
-      letter-spacing: 0.04em;
+      font-size: 0.68rem;
+      letter-spacing: 0.03em;
       text-transform: uppercase;
-      padding: 0.28rem 0.6rem;
+      min-height: 30px;
+      padding: 0.3rem 0.58rem;
       background: transparent;
       color: rgba(17, 24, 39, 0.6);
       border: 1px solid rgba(17, 24, 39, 0.22);
-      border-radius: 5px;
+      border-radius: 6px;
       cursor: pointer;
       transition: all 0.12s ease;
       display: inline-flex;
+      justify-content: center;
       align-items: center;
       gap: 0.3rem;
+      white-space: nowrap;
     }
+    .bp-action-btn:hover:not([disabled]),
     .bp-model__toggle:hover {
       background: rgba(17, 24, 39, 0.05);
       color: rgba(17, 24, 39, 0.92);
       border-color: rgba(17, 24, 39, 0.4);
+    }
+    .bp-action-btn[disabled] {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+    .bp-action-btn--primary {
+      background: rgba(17, 24, 39, 0.86);
+      border-color: rgba(17, 24, 39, 0.86);
+      color: #fdf6e3;
+    }
+    .bp-action-btn--primary:hover:not([disabled]) {
+      background: rgba(17, 24, 39, 1);
+      color: #fdf6e3;
     }
     .bp-model__toggle--active {
       background: rgba(217, 119, 6, 0.12);
@@ -365,6 +370,8 @@
       display: block;
       width: 100%;
       height: auto;
+      flex: 1;
+      min-height: 0;
     }
     .bp-model__step {
       font-size: 0.78rem;
@@ -374,26 +381,37 @@
       transition: opacity 0.15s ease;
       font-style: italic;
     }
+    @media (max-width: 640px) {
+      .bp-panel__header,
+      .bp-panel__subhead {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .bp-panel__meta,
+      .bp-action-btn {
+        width: 100%;
+      }
+    }
 
     /* --- 2D plot (right column) --- */
-    .bp-plot {
-      padding: 0.85rem;
-      background: rgba(255, 250, 240, 0.72);
-      border: 1px solid rgba(92, 74, 52, 0.14);
-      border-radius: 10px;
-      min-height: 480px;
-      display: flex;
-      flex-direction: column;
-      gap: 0.6rem;
+    .bp-plot--landing {
+      animation: bp-plot-panel-flash 0.8s ease-out;
     }
-    .bp-plot__header {
-      display: flex;
-      justify-content: space-between;
-      align-items: baseline;
-      font-size: 0.75rem;
-      color: rgba(17, 24, 39, 0.55);
-      letter-spacing: 0.04em;
-      text-transform: uppercase;
+    @keyframes bp-plot-panel-flash {
+      0% {
+        background: rgba(252, 211, 77, 0.34);
+        border-color: rgba(217, 119, 6, 0.48);
+        box-shadow: 0 0 0 0 rgba(217, 119, 6, 0.18);
+      }
+      45% {
+        background: rgba(255, 250, 240, 0.95);
+        box-shadow: 0 0 0 5px rgba(217, 119, 6, 0.12);
+      }
+      100% {
+        background: rgba(255, 250, 240, 0.72);
+        border-color: rgba(92, 74, 52, 0.14);
+        box-shadow: none;
+      }
     }
     .bp-plot__header span:last-child {
       font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
@@ -402,7 +420,14 @@
       font-size: 0.7rem;
       color: rgba(17, 24, 39, 0.4);
     }
-    .bp-plot__svg { display: block; width: 100%; height: auto; }
+    .bp-plot__svg {
+      display: block;
+      width: 100%;
+      height: auto;
+      flex: 1;
+      min-height: 0;
+      max-height: 455px;
+    }
     .bp-plot__caption {
       font-size: 0.78rem;
       color: rgba(17, 24, 39, 0.55);
@@ -632,6 +657,9 @@
       const l22 = Math.sqrt(Math.max(inner, 1e-9));
       return { l11, l21, l22 };
     }
+    function roundActivationCoord(v) {
+      return Math.round(v * 10) / 10;
+    }
 
     // Build the dataset of (sentence, label, (x, y)) tuples once at module
     // load. Positions are deterministic given the seed.
@@ -645,10 +673,13 @@
       return SENTENCES.map((s) => {
         const [z1, z2] = gaussianPair(rng);
         const mu = s.label === "true" ? muTrue : muFalse;
+        const x = roundActivationCoord(mu[0] + L.l11 * z1);
+        const y = roundActivationCoord(mu[1] + L.l21 * z1 + L.l22 * z2);
         return {
           ...s,
-          x: mu[0] + L.l11 * z1,
-          y: mu[1] + L.l21 * z1 + L.l22 * z2,
+          activation: [x, y],
+          x,
+          y,
         };
       });
     })();
@@ -696,6 +727,11 @@
       const v1 = (rng() * 2 - 1).toFixed(1);
       const v2 = (rng() * 2 - 1).toFixed(1);
       return `${v1} … ${v2}`;
+    }
+
+    function activationPreview(sentence) {
+      if (!sentence) return "activation dims: [--, --]";
+      return `activation dims: [${sentence.activation[0].toFixed(1)}, ${sentence.activation[1].toFixed(1)}]`;
     }
 
     // ==================================================================
@@ -794,8 +830,8 @@
       },
       {
         id: 1,
-        title: "Sentences become dots",
-        caption: html`Each sentence runs through the model and lands as one dot on the right. The cascade auto-plays so you can watch the cloud build. Want to see what's happening inside the model? Click the <strong>🔍 look inside</strong> button.`,
+        title: "Create Activations From the Dataset",
+        caption: null,
       },
       {
         id: 2,
@@ -867,10 +903,10 @@
 
     const PHASE_TIMINGS_SIMPLE = [
       { phase: 1, at: 0    },
-      { phase: 2, at: 220  },
-      { phase: 3, at: 500  },
-      { phase: 4, at: 700  },
-      { phase: 5, at: 1000 },
+      { phase: 2, at: 380  },
+      { phase: 3, at: 760  },
+      { phase: 4, at: 1060 },
+      { phase: 5, at: 1480 },
     ];
     const PHASE_TIMINGS_DETAILED = [
       { phase: 1, at: 0    },
@@ -883,15 +919,15 @@
     const PHASE_CAPTIONS_SIMPLE = {
       1: "A sentence goes in.",
       2: "The model processes it.",
-      3: "Out comes one vector (squished to 2 numbers for the plot).",
-      4: "And lands as a dot.",
+      3: "Out comes the 2D activation we will plot.",
+      4: "The activation appears as one point in activation space.",
       5: "",
     };
     const PHASE_CAPTIONS_DETAILED = {
-      1: "Words become token vectors.",
-      2: "A wave of computation runs up through the layers.",
-      3: "We grab the activation from layer 7, last token (squished to 2D).",
-      4: "And drop it on the plot.",
+      1: "Input sentence is split into tokens and encoded as vectors.",
+      2: "Each layer updates those token vectors; the last token accumulates context.",
+      3: "We extract the last-token activation after layer 7.",
+      4: "That activation travels to the plot and becomes one dot.",
       5: "",
     };
 
@@ -905,9 +941,9 @@
     //
     // DetailedModelInterior — the "look inside" view. Tokens become input
     //                        pills, a wave of computation runs through
-    //                        Layer 1 → Layer 2 → ⋮ → Layer 7 (extracted),
-    //                        each layer showing its attention + feedforward
-    //                        sublayers. The extracted cell glows orange.
+    //                        Layer 1 → Layer 2 → ⋮ → Layer 7, with an
+    //                        update sweep and the final last-token activation
+    //                        highlighted as the extracted object.
 
     function tokenLayout(activeSentence) {
       const tokens = activeSentence ? tokenize(activeSentence.text) : [];
@@ -918,29 +954,29 @@
       return { tokens, nTokens, innerW, colWidth, tokenColX };
     }
 
-    function ModelInteriorSimple({ activeSentence, phase }) {
-      const { tokens, innerW, colWidth, tokenColX } = tokenLayout(activeSentence);
-      const tokenPillW = Math.min(colWidth - 8, 64);
+    function ModelInteriorSimple({ activeSentence, onToggleDetail }) {
+      const { innerW } = tokenLayout(activeSentence);
 
-      // Layout reads as three discrete labeled steps so the reader sees
-      // "input → run → extract" without any caption text below the SVG.
-      const step1LabelY = 20;
-      const wordsY      = 50;
-      const arrowY1     = 78;
+      // The default view is deliberately spare: one sentence card, one small
+      // LLM box, one extracted coordinate pair. The detailed view handles
+      // tokens and layers.
+      const step1LabelY = 30;
+      const sentenceY   = 50;
+      const sentenceH   = 58;
+      const arrowY1     = 130;
 
-      const step2LabelY = 102;
-      const boxTop      = 116;
-      const boxHeight   = 200;
-      const boxBottom   = boxTop + boxHeight;     // 316
-      const arrowY2     = boxBottom + 18;         // 334
+      const step2LabelY = 162;
+      const boxTop      = 184;
+      const boxHeight   = 88;
+      const boxWidth    = innerW - 104;
+      const boxX        = (M_W - boxWidth) / 2;
+      const arrowY2     = boxTop + boxHeight + 30;
 
-      const step3LabelY = 360;
-      const outputPillY = 376;
-      const outputPillH = 30;
+      const step3LabelY = 336;
+      const outputPillY = 358;
+      const outputPillH = 38;
 
-      const showInput  = phase >= 1 && tokens.length > 0;
-      const pulseOn    = phase === 2;
-      const showOutput = phase >= 3 && tokens.length > 0;
+      const showContent = Boolean(activeSentence);
 
       return html`
         <svg
@@ -951,98 +987,130 @@
         >
           <text x=${M_PAD} y=${step1LabelY}
                 fontSize="10" fontWeight="600" letterSpacing="1.2"
-                fill="rgba(17, 24, 39, 0.55)">STEP 1.  INPUT DATA EXAMPLES</text>
+                fill="rgba(17, 24, 39, 0.55)">STEP 1.  INPUT DATA EXAMPLE</text>
 
-          ${showInput && tokens.map((t, i) => {
-            const c = TOKEN_COLORS[i % TOKEN_COLORS.length];
-            return html`
-              <g key=${"w" + i}>
-                <rect
-                  x=${tokenColX(i) - tokenPillW / 2}
-                  y=${wordsY - 12}
-                  width=${tokenPillW}
-                  height=${22}
-                  rx="5"
-                  fill=${c.fill}
-                  stroke=${c.stroke}
-                  strokeWidth="1"
-                />
-                <text
-                  x=${tokenColX(i)}
-                  y=${wordsY + 3}
-                  fontSize="11"
-                  fill=${c.text}
-                  textAnchor="middle"
-                  fontWeight="500"
-                >${t.length > 9 ? t.slice(0, 8) + "…" : t}</text>
-              </g>
-            `;
-          })}
-
-          ${showInput && html`
-            <text x=${M_W / 2} y=${arrowY1} fontSize="14" fill="rgba(17, 24, 39, 0.4)" textAnchor="middle">↓</text>
-          `}
-
-          <text x=${M_PAD} y=${step2LabelY}
-                fontSize="10" fontWeight="600" letterSpacing="1.2"
-                fill="rgba(17, 24, 39, 0.55)">STEP 2.  RUN LLM</text>
-
-          <rect
-            x=${M_PAD + 20}
-            y=${boxTop}
-            width=${innerW - 40}
-            height=${boxHeight}
-            rx="14"
-            fill="rgba(255, 255, 255, 0.92)"
-            stroke="rgba(17, 24, 39, 0.32)"
-            strokeWidth="1.5"
-          />
-
-          ${pulseOn && html`
-            <g key=${"pulse-" + (activeSentence ? activeSentence.text : "")}>
+          ${showContent && html`
+            <g key=${"sentence-" + activeSentence.text}>
               <rect
-                x=${M_PAD + 22}
-                y=${boxTop + 2}
-                width=${innerW - 44}
-                height=${boxHeight - 4}
-                rx="12"
-                fill="rgba(252, 211, 77, 0.55)"
+                x=${M_PAD + 10}
+                y=${sentenceY}
+                width=${innerW - 20}
+                height=${sentenceH}
+                rx="6"
+                fill="rgba(255, 255, 255, 0.96)"
+                stroke=${LABEL_COLORS[activeSentence.label]}
+                strokeWidth="1.25"
+              />
+              <foreignObject
+                x=${M_PAD + 18}
+                y=${sentenceY + 8}
+                width=${innerW - 36}
+                height=${sentenceH - 16}
               >
-                <animate
-                  attributeName="opacity"
-                  values="0;1;0"
-                  dur="0.32s"
-                  fill="freeze"
-                />
-              </rect>
+                <div
+                  xmlns="http://www.w3.org/1999/xhtml"
+                  style=${{
+                    height: "100%",
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    gap: "2px",
+                    textAlign: "center",
+                    overflow: "hidden",
+                    lineHeight: "1.15",
+                  }}
+                >
+                  <div
+                    style=${{
+                      maxWidth: "100%",
+                      fontSize: "12px",
+                      fontWeight: 500,
+                      color: "rgba(17, 24, 39, 0.85)",
+                      overflowWrap: "anywhere",
+                    }}
+                  >${activeSentence.text}</div>
+                  <div
+                    style=${{
+                      fontSize: "9.5px",
+                      fontWeight: 700,
+                      letterSpacing: "0.8px",
+                      color: LABEL_COLORS[activeSentence.label],
+                    }}
+                  >LABEL: ${activeSentence.label.toUpperCase()}</div>
+                </div>
+              </foreignObject>
             </g>
           `}
 
-          <text
-            x=${M_W / 2}
-            y=${boxTop + boxHeight / 2 + 5}
-            fontSize="11"
-            fill="rgba(17, 24, 39, 0.38)"
-            textAnchor="middle"
-            fontStyle="italic"
-          >click 🔍 above to look inside</text>
+          ${showContent && html`
+            <text x=${M_W / 2} y=${arrowY1} fontSize="14" fill="rgba(17, 24, 39, 0.4)" textAnchor="middle">↓</text>
+          `}
 
-          ${showOutput && html`
+          ${showContent && html`
+            <text x=${M_PAD} y=${step2LabelY}
+                  fontSize="10" fontWeight="600" letterSpacing="1.2"
+                  fill="rgba(17, 24, 39, 0.55)">STEP 2.  RUN THROUGH MODEL</text>
+          `}
+
+          ${showContent && html`
+            <g key=${"llm-" + activeSentence.text}>
+              <rect
+                x=${boxX}
+                y=${boxTop}
+                width=${boxWidth}
+                height=${boxHeight}
+                rx="6"
+                fill="rgba(255, 255, 255, 0.92)"
+                stroke="rgba(17, 24, 39, 0.32)"
+                strokeWidth="1.5"
+              />
+              <text
+                x=${M_W / 2}
+                y=${boxTop + 33}
+                fontSize="21"
+                fill="rgba(17, 24, 39, 0.74)"
+                textAnchor="middle"
+                fontWeight="700"
+                letterSpacing="1"
+              >LLM</text>
+              <foreignObject
+                x=${boxX + 50}
+                y=${boxTop + 49}
+                width=${boxWidth - 100}
+                height="34"
+              >
+                <button
+                  xmlns="http://www.w3.org/1999/xhtml"
+                  type="button"
+                  className="bp-model__toggle"
+                  onClick=${onToggleDetail}
+                  aria-label="Look inside the model"
+                  title="Look inside the model"
+                  style=${{ width: "100%", minWidth: "0", justifyContent: "center", background: "rgba(255, 255, 255, 0.75)" }}
+                >look inside</button>
+              </foreignObject>
+            </g>
+          `}
+
+          ${showContent && html`
             <text x=${M_W / 2} y=${arrowY2} fontSize="14" fill="rgba(17, 24, 39, 0.4)" textAnchor="middle">↓</text>
           `}
 
-          <text x=${M_PAD} y=${step3LabelY}
-                fontSize="10" fontWeight="600" letterSpacing="1.2"
-                fill="rgba(17, 24, 39, 0.55)">STEP 3.  EXTRACT ACTIVATIONS</text>
+          ${showContent && html`
+            <text x=${M_PAD} y=${step3LabelY}
+                  fontSize="10" fontWeight="600" letterSpacing="1.2"
+                  fill="rgba(17, 24, 39, 0.55)">STEP 3.  EXTRACT ACTIVATION</text>
+          `}
 
-          ${showOutput && html`
+          ${showContent && html`
             <g>
               <rect
                 x=${M_PAD + 40}
                 y=${outputPillY}
                 width=${innerW - 80}
                 height=${outputPillH}
-                rx=${outputPillH / 2}
+                rx="6"
                 fill="rgba(255, 255, 255, 0.96)"
                 stroke="rgba(17, 24, 39, 0.4)"
                 strokeWidth="1.25"
@@ -1054,7 +1122,7 @@
                 fontFamily="ui-monospace, Menlo, Consolas, monospace"
                 fill="rgba(17, 24, 39, 0.75)"
                 textAnchor="middle"
-              >[ ${fakeVecPreview(activeSentence ? activeSentence.text : "·", 1)} ]</text>
+              >${activationPreview(activeSentence)}</text>
             </g>
           `}
         </svg>
@@ -1068,24 +1136,26 @@
       const layerPillW = Math.min(colWidth - 6, 52);
 
       // Layout
-      const wordsY        = 36;
-      const arrowsY       = 56;
-      const inputPillsY   = 78;
+      const wordsY        = 38;
+      const encodeLabelY  = 68;
+      const arrowsY       = 86;
+      const inputPillsY   = 108;
       const inputPillH    = 18;
 
       const layerH        = 50;
       const layerGap      = 6;
-      const layer1Top     = 110;
-      const layer2Top     = layer1Top + layerH + layerGap;          // 166
-      const ellipsisTop   = layer2Top + layerH + layerGap;          // 222
+      const layersLabelY  = 136;
+      const layer1Top     = 150;
+      const layer2Top     = layer1Top + layerH + layerGap;
+      const ellipsisTop   = layer2Top + layerH + layerGap;
       const ellipsisH     = 28;
-      const layer7Top     = ellipsisTop + ellipsisH + layerGap;     // 256
-      const layer7Bottom  = layer7Top + layerH;                     // 306
+      const layer7Top     = ellipsisTop + ellipsisH + layerGap;
+      const layer7Bottom  = layer7Top + layerH;
 
-      const arrowOutY     = layer7Bottom + 14;                      // 320
-      const outputPillY   = layer7Bottom + 28;                      // 334
+      const arrowOutY     = layer7Bottom + 14;
+      const outputPillY   = layer7Bottom + 28;
       const outputPillH   = 22;
-      const extractLabelY = outputPillY + outputPillH + 16;         // 372
+      const extractLabelY = outputPillY + outputPillH + 16;
 
       const extractColIdx = Math.max(tokens.length - 1, 0);
       const showWords      = phase >= 1 && tokens.length > 0;
@@ -1094,11 +1164,13 @@
       const showOutput     = phase >= 3 && tokens.length > 0;
       const highlight      = phase >= 4;
 
-      // Helper: render one transformer layer card (attention row + ffn row).
-      function renderLayer({ y, label, highlightLast, k }) {
+      // Helper: render one transformer layer card. During phase 2, token
+      // vectors flash in sequence so the layer stack reads as state updates,
+      // not as decorative numbers moving through boxes.
+      function renderLayer({ y, label, highlightLast, k, waveDelay }) {
         const attnY = y + 22;
         const ffnY  = y + 38;
-        const stroke = highlightLast ? "rgba(217, 119, 6, 0.85)" : "rgba(17, 24, 39, 0.18)";
+        const stroke = "rgba(17, 24, 39, 0.18)";
         return html`
           <g key=${k}>
             <rect
@@ -1109,13 +1181,33 @@
               rx="7"
               fill="rgba(255, 255, 255, 0.88)"
               stroke=${stroke}
-              strokeWidth=${highlightLast ? "2" : "1"}
+              strokeWidth="1"
             />
+            ${waveOn && html`
+              <rect
+                x=${M_PAD + 4}
+                y=${y}
+                width=${innerW - 8}
+                height=${layerH}
+                rx="7"
+                fill="rgba(252, 211, 77, 0.26)"
+                opacity="0"
+              >
+                <animate
+                  attributeName="opacity"
+                  values="0;1;0"
+                  keyTimes="0;0.25;1"
+                  begin=${waveDelay + "s"}
+                  dur="0.24s"
+                  fill="freeze"
+                />
+              </rect>
+            `}
             <text
               x=${M_PAD + 12}
               y=${y + 13}
               fontSize="9"
-              fill=${highlightLast ? "rgba(146, 64, 14, 1)" : "rgba(17, 24, 39, 0.55)"}
+              fill="rgba(17, 24, 39, 0.55)"
               fontWeight="600"
               letterSpacing="0.3"
             >${label}</text>
@@ -1126,7 +1218,7 @@
               fill="rgba(17, 24, 39, 0.32)"
               textAnchor="end"
               fontStyle="italic"
-            >attn · ffn</text>
+            >updates token vectors</text>
 
             ${tokens.map((_, i) => {
               const c = TOKEN_COLORS[i % TOKEN_COLORS.length];
@@ -1143,7 +1235,17 @@
                     stroke=${c.stroke}
                     strokeWidth="0.5"
                     opacity="0.85"
-                  />
+                  >
+                    ${waveOn && html`
+                      <animate
+                        attributeName="opacity"
+                        values="0.45;1;0.85"
+                        begin=${(waveDelay + i * 0.018) + "s"}
+                        dur="0.22s"
+                        fill="freeze"
+                      />
+                    `}
+                  </rect>
                   <rect
                     x=${tokenColX(i) - layerPillW / 2}
                     y=${ffnY - sublayerPillH / 2}
@@ -1154,7 +1256,18 @@
                     stroke=${isExtractCell ? "rgba(217, 119, 6, 1)" : c.stroke}
                     strokeWidth=${isExtractCell ? "1.5" : "0.5"}
                     opacity=${isExtractCell ? 1 : 0.85}
-                  />
+                    filter=${isExtractCell ? "url(#bp-glow-detailed)" : undefined}
+                  >
+                    ${waveOn && html`
+                      <animate
+                        attributeName="opacity"
+                        values="0.45;1;0.85"
+                        begin=${(waveDelay + 0.08 + i * 0.018) + "s"}
+                        dur="0.22s"
+                        fill="freeze"
+                      />
+                    `}
+                  </rect>
                 </g>
               `;
             })}
@@ -1181,7 +1294,7 @@
 
           <text x=${M_PAD} y=${20}
                 fontSize="10" fontWeight="600" letterSpacing="1.2"
-                fill="rgba(17, 24, 39, 0.55)">INPUT DATA EXAMPLES</text>
+                fill="rgba(17, 24, 39, 0.55)">STEP 1.  INPUT DATA EXAMPLE</text>
 
           ${showWords && tokens.map((t, i) => {
             const c = TOKEN_COLORS[i % TOKEN_COLORS.length];
@@ -1208,6 +1321,12 @@
               </g>
             `;
           })}
+
+          ${showInputPills && html`
+            <text x=${M_PAD} y=${encodeLabelY}
+                  fontSize="10" fontWeight="600" letterSpacing="1.2"
+                  fill="rgba(17, 24, 39, 0.55)">STEP 2.  ENCODE TOKENS</text>
+          `}
 
           ${showInputPills && tokens.map((_, i) => html`
             <text
@@ -1247,8 +1366,14 @@
           })}
 
           ${activeSentence && html`
-            ${renderLayer({ y: layer1Top, label: "Layer 1", highlightLast: false, k: "L1" })}
-            ${renderLayer({ y: layer2Top, label: "Layer 2", highlightLast: false, k: "L2" })}
+            <text x=${M_PAD} y=${layersLabelY}
+                  fontSize="10" fontWeight="600" letterSpacing="1.2"
+                  fill="rgba(17, 24, 39, 0.55)">STEP 3.  PASS THROUGH LAYERS</text>
+          `}
+
+          ${activeSentence && html`
+            ${renderLayer({ y: layer1Top, label: "Layer 1", highlightLast: false, k: "L1", waveDelay: 0 })}
+            ${renderLayer({ y: layer2Top, label: "Layer 2", highlightLast: false, k: "L2", waveDelay: 0.13 })}
             <text
               x=${M_W / 2}
               y=${ellipsisTop + 12}
@@ -1265,7 +1390,27 @@
               textAnchor="middle"
               fontStyle="italic"
             >layers 3 – 6</text>
-            ${renderLayer({ y: layer7Top, label: "Layer 7 (extracted)", highlightLast: highlight, k: "L7" })}
+            ${waveOn && html`
+              <rect
+                x=${M_PAD + 4}
+                y=${ellipsisTop - 2}
+                width=${innerW - 8}
+                height=${ellipsisH + 4}
+                rx="6"
+                fill="rgba(252, 211, 77, 0.22)"
+                opacity="0"
+              >
+                <animate
+                  attributeName="opacity"
+                  values="0;1;0"
+                  keyTimes="0;0.25;1"
+                  begin="0.24s"
+                  dur="0.2s"
+                  fill="freeze"
+                />
+              </rect>
+            `}
+            ${renderLayer({ y: layer7Top, label: "Layer 7", highlightLast: highlight, k: "L7", waveDelay: 0.34 })}
           `}
 
           ${waveOn && html`
@@ -1301,7 +1446,7 @@
               <text x=${M_W / 2} y=${arrowOutY} fontSize="14" fill="rgba(17, 24, 39, 0.45)" textAnchor="middle">↓</text>
               <text x=${M_W / 2 + 14} y=${arrowOutY}
                     fontSize="10" fontWeight="600" letterSpacing="1.2"
-                    fill="rgba(17, 24, 39, 0.55)">EXTRACT ACTIVATIONS</text>
+                    fill="rgba(17, 24, 39, 0.55)">STEP 4.  EXTRACT ACTIVATION</text>
             </g>
           `}
 
@@ -1312,7 +1457,7 @@
                 y=${outputPillY}
                 width=${innerW - 120}
                 height=${outputPillH}
-                rx=${outputPillH / 2}
+                rx="6"
                 fill="rgba(255, 255, 255, 0.96)"
                 stroke="rgba(17, 24, 39, 0.4)"
                 strokeWidth="1.25"
@@ -1325,7 +1470,7 @@
                 fill="rgba(17, 24, 39, 0.75)"
                 textAnchor="middle"
                 fontWeight="500"
-              >[ ${fakeVecPreview(activeSentence ? activeSentence.text : "·", 1)} ]</text>
+              >${activationPreview(activeSentence)}</text>
             </g>
           `}
 
@@ -1337,7 +1482,7 @@
               fill="rgba(17, 24, 39, 0.55)"
               textAnchor="middle"
               fontStyle="italic"
-            >(from layer 7, last token)</text>
+            >last-token activation after layer 7</text>
           `}
 
           ${!activeSentence && html`
@@ -1377,6 +1522,7 @@
       hoveredIdx,
       onHover,
       showLegend,
+      featuredIdx,
     }) {
       const innerW = P_W - P_PAD.left - P_PAD.right;
       const innerH = P_H - P_PAD.top - P_PAD.bottom;
@@ -1450,6 +1596,8 @@
       // Dot dimming during the mass-mean focus acts.
       const dimFalse = mmStage === 1;
       const dimTrue  = mmStage === 2;
+      const landingDot = justLandedIdx >= 0 ? droppedDots[justLandedIdx] : null;
+      const showIncomingActivation = landingDot && landingPhase === 4;
 
       return html`
         <svg
@@ -1534,6 +1682,7 @@
             ${droppedDots.map((d, i) => {
               const sentenceIdx = droppedIdxs[i];
               const isJust = i === justLandedIdx;
+              const isFeatured = sentenceIdx === featuredIdx;
               const isHovered = sentenceIdx === hoveredIdx;
               const anyHovered = hoveredIdx !== null;
               const dimmed = anyHovered && !isHovered;
@@ -1542,11 +1691,11 @@
               const dotFill = isLanding ? DOT_NEUTRAL : labelColor;
               const dotStroke = isLanding
                 ? DOT_NEUTRAL
-                : ((isHovered || isJust) ? labelColor : "none");
-              const radius = isHovered ? 7 : (isJust ? 7 : 4);
+                : ((isHovered || isJust || isFeatured) ? labelColor : "none");
+              const radius = isHovered ? 8 : (isFeatured ? 8 : (isJust ? 7 : 4));
               // Mass-mean act dimming: stage 1 fades falses, stage 2 fades trues.
               const mmDim = (dimFalse && d.label === "false") || (dimTrue && d.label === "true");
-              let baseOpacity = isHovered || isJust ? 1 : 0.55;
+              let baseOpacity = isHovered || isJust || isFeatured ? 1 : 0.55;
               if (dimmed) baseOpacity = 0.18;
               else if (mmDim) baseOpacity = 0.18;
               return html`
@@ -1558,7 +1707,7 @@
                   fill=${dotFill}
                   fillOpacity=${baseOpacity}
                   stroke=${dotStroke}
-                  strokeWidth=${isHovered ? 2.5 : 2}
+                  strokeWidth=${isHovered || isFeatured ? 2.5 : 2}
                   style=${{
                     transition: "r 0.18s ease, fill-opacity 0.35s ease, fill 0.32s ease, stroke 0.32s ease",
                     cursor: onHover ? "pointer" : "default",
@@ -1568,6 +1717,68 @@
                 />
               `;
             })}
+
+            {/* The current example stays visually called out until the next
+                example is chosen. Its label is the sentence, colored by class. */}
+            ${featuredIdx !== null && droppedIdxs.includes(featuredIdx) && (() => {
+              const d = BAKED[featuredIdx];
+              const dx = scale.sx(d.x);
+              const dy = scale.sy(d.y);
+              const label = d.text;
+              const ttCharW = 5.8;
+              const ttPadX = 8;
+              const ttH = 24;
+              const ttW = Math.min(260, Math.max(118, label.length * ttCharW + ttPadX * 2));
+              const ttHalfW = ttW / 2;
+              const leftEdge = P_PAD.left + 4;
+              const rightEdge = P_PAD.left + innerW - 4;
+              let ttCx = dx;
+              if (ttCx - ttHalfW < leftEdge) ttCx = leftEdge + ttHalfW;
+              if (ttCx + ttHalfW > rightEdge) ttCx = rightEdge - ttHalfW;
+              const above = dy > P_PAD.top + 40;
+              const ttCy = above ? dy - 28 : dy + 30;
+              const fill = d.label === "true" ? "rgba(31, 111, 235, 0.96)" : "rgba(229, 115, 31, 0.96)";
+              return html`
+                <g key=${"featured-label-" + featuredIdx} style=${{ pointerEvents: "none" }}>
+                  <rect
+                    x=${ttCx - ttHalfW}
+                    y=${ttCy - ttH / 2}
+                    width=${ttW}
+                    height=${ttH}
+                    rx="6"
+                    fill=${fill}
+                  />
+                  <text
+                    x=${ttCx}
+                    y=${ttCy + 4}
+                    fontSize="10.5"
+                    fontFamily="inherit"
+                    fill="#fffaf0"
+                    textAnchor="middle"
+                    fontWeight="600"
+                  >${label.length > 38 ? label.slice(0, 35) + "..." : label}</text>
+                </g>
+              `;
+            })()}
+
+            {/* During the cascade, keep the landing cue simple: the panel
+                flashes and the destination dot pulses. */}
+            ${showIncomingActivation && html`
+              <g key=${"landing-pulse-" + justLandedIdx} style=${{ pointerEvents: "none" }}>
+                <circle
+                  cx=${scale.sx(landingDot.x)}
+                  cy=${scale.sy(landingDot.y)}
+                  r="10"
+                  fill="none"
+                  stroke=${LABEL_COLORS[landingDot.label]}
+                  strokeWidth="2.5"
+                  opacity="0.9"
+                >
+                  <animate attributeName="r" values="3;18;10" dur="0.7s" fill="freeze" />
+                  <animate attributeName="opacity" values="0;0.95;0.2" dur="0.7s" fill="freeze" />
+                </circle>
+              </g>
+            `}
 
             {/* Class-mean X markers, faded in progressively across mmStage 1→2. */}
             ${meanF && showFalseX && html`
@@ -1812,13 +2023,15 @@
 
     function BuildingAProbe() {
       const [beat, setBeat] = useState(0);
-      const [droppedIdxs, setDroppedIdxs] = useState([]);
-      const [activeSentenceIdx, setActiveSentenceIdx] = useState(null);
-      const [phase, setPhase] = useState(0);
+      const [droppedIdxs, setDroppedIdxs] = useState([0]);
+      const [activeSentenceIdx, setActiveSentenceIdx] = useState(0);
+      const [phase, setPhase] = useState(5);
       const [autoPlaying, setAutoPlaying] = useState(false);
       const [logregFrameIdx, setLogregFrameIdx] = useState(0);
       const [hoveredIdx, setHoveredIdx] = useState(null);
       const [detailedView, setDetailedView] = useState(false);
+      const [currentExampleIdx, setCurrentExampleIdx] = useState(0);
+      const [featuredIdx, setFeaturedIdx] = useState(0);
 
       // Mass-mean construction stages (Beat 4 / display 4):
       //   0 = hidden (beat < 3)
@@ -1937,12 +2150,19 @@
             setAutoPlaying(false);
             return;
           }
+          if (!detailedViewRef.current && count >= 3) {
+            setDroppedIdxs((prev) => Array.from(new Set([...prev, ...queue])));
+            setActiveSentenceIdx(null);
+            setPhase(0);
+            setAutoPlaying(false);
+            return;
+          }
           const [nextIdx, ...rest] = queue;
           dropOne(nextIdx);
           const isSlow = count < 4;
           const delay = detailedViewRef.current
             ? (isSlow ? 1450 : 980)
-            : (isSlow ? 1150 : 780);
+            : (isSlow ? 1650 : 1160);
           autoPlayTimer.current = setTimeout(() => playNext(rest, count + 1), delay);
         };
         playNext(remaining, startCount);
@@ -1977,10 +2197,36 @@
         setActiveSentenceIdx(null);
         setPhase(0);
         setDroppedIdxs([]);
+        setFeaturedIdx(null);
         autoStartTimer.current = setTimeout(() => {
           if (startAutoPlayRef.current) startAutoPlayRef.current();
         }, 400);
       }, []);
+
+      const advanceAndPlotExample = useCallback(() => {
+        if (autoPlayTimer.current) clearTimeout(autoPlayTimer.current);
+        phaseTimers.current.forEach(clearTimeout);
+        phaseTimers.current = [];
+        setAutoPlaying(false);
+        const nextIdx = Math.min(SENTENCES.length - 1, currentExampleIdx + 1);
+        setCurrentExampleIdx(nextIdx);
+        setActiveSentenceIdx(nextIdx);
+        setFeaturedIdx(nextIdx);
+        setPhase(4);
+        setDroppedIdxs((prev) => prev.includes(nextIdx) ? prev : [...prev, nextIdx]);
+        const t = setTimeout(() => setPhase(5), 850);
+        phaseTimers.current.push(t);
+      }, [currentExampleIdx]);
+
+      useEffect(() => {
+        if (beat === 1 && droppedIdxs.length === 0) {
+          setCurrentExampleIdx(0);
+          setActiveSentenceIdx(0);
+          setFeaturedIdx(0);
+          setPhase(5);
+          setDroppedIdxs([0]);
+        }
+      }, [beat]);
 
       // Beat-change side effects
       useEffect(() => {
@@ -1992,19 +2238,14 @@
         }
         if (autoStartTimer.current) clearTimeout(autoStartTimer.current);
 
-        // Entering beat 1: auto-start the cascade after a 500ms grace
-        // so the caption has time to register. (Uses the ref to grab the
-        // latest startAutoPlay regardless of intervening re-renders.)
-        if (beat === 1 && droppedIdxs.length === 0 && !autoPlaying) {
-          autoStartTimer.current = setTimeout(() => {
-            if (startAutoPlayRef.current) startAutoPlayRef.current();
-          }, 500);
-        }
+        // Beat 2 is manual: Next example advances the displayed sentence and
+        // adds that activation to the plotted dataset.
 
         // Beat 2+ requires all dots dropped — silently auto-fill if needed
         if (beat >= 2 && droppedIdxs.length < SENTENCES.length) {
           setDroppedIdxs(SENTENCES.map((_, i) => i));
           setActiveSentenceIdx(null);
+          setFeaturedIdx(null);
           setPhase(0);
         }
 
@@ -2041,10 +2282,14 @@
 
       // Derived render data
       const droppedDots = droppedIdxs.map((i) => BAKED[i]);
-      const activeSentence = activeSentenceIdx != null ? BAKED[activeSentenceIdx] : null;
+      const activeSentence = beat === 1
+        ? BAKED[currentExampleIdx]
+        : (activeSentenceIdx != null ? BAKED[activeSentenceIdx] : null);
       const justLandedIdx = (phase >= 4 && activeSentenceIdx != null)
         ? droppedIdxs.indexOf(activeSentenceIdx)
         : -1;
+      const visibleDroppedDots = beat === 1 && droppedDots.length === 0 ? [BAKED[0]] : droppedDots;
+      const visibleDroppedIdxs = beat === 1 && droppedIdxs.length === 0 ? [0] : droppedIdxs;
 
       const trueSentences  = SENTENCES.map((s, i) => ({ ...s, i })).filter((s) => s.label === "true");
       const falseSentences = SENTENCES.map((s, i) => ({ ...s, i })).filter((s) => s.label === "false");
@@ -2091,7 +2336,7 @@
             </div>
           </div>
 
-          <p className="bp-caption">${currentBeat.caption}</p>
+          ${currentBeat.caption && html`<p className="bp-caption">${currentBeat.caption}</p>`}
 
           ${beat === 0 && html`
             <div className="bp-stage bp-stage--dataset">
@@ -2118,32 +2363,47 @@
 
           ${beat === 1 && html`
             <div className="bp-stage bp-stage--drop">
-              <div className="bp-model">
-                <div className="bp-model__header">
-                  <span>The model (toy)</span>
+              <div className="bp-model bp-panel">
+                <div className="bp-panel__header">
+                  <span className="bp-panel__title">Create activations from examples</span>
+                  ${detailedView && html`
+                    <button
+                      type="button"
+                      className="bp-model__toggle bp-model__toggle--active"
+                      onClick=${() => setDetailedView(false)}
+                      aria-pressed=${detailedView}
+                      aria-label="Return to simple model view"
+                      title="Return to simple model view"
+                    >simple view</button>
+                  `}
+                </div>
+                <div className="bp-panel__subhead">
+                  <span className="bp-panel__meta">${currentExampleIdx + 1} / ${SENTENCES.length}</span>
                   <button
                     type="button"
-                    className=${"bp-model__toggle" + (detailedView ? " bp-model__toggle--active" : "")}
-                    onClick=${() => setDetailedView(!detailedView)}
-                    aria-pressed=${detailedView}
-                    aria-label=${detailedView ? "Hide model details" : "Look inside the model"}
-                    title=${detailedView ? "Hide model details" : "Look inside the model"}
-                  >🔍 ${detailedView ? "simple view" : "look inside"}</button>
+                    className="bp-action-btn"
+                    onClick=${advanceAndPlotExample}
+                    disabled=${currentExampleIdx >= SENTENCES.length - 1}
+                  >next example</button>
                 </div>
                 ${detailedView
                   ? html`<${ModelInteriorDetailed} activeSentence=${activeSentence} phase=${phase} />`
-                  : html`<${ModelInteriorSimple} activeSentence=${activeSentence} phase=${phase} />`}
+                  : html`<${ModelInteriorSimple}
+                      activeSentence=${activeSentence}
+                      onToggleDetail=${() => { setPhase(4); setDetailedView(true); }}
+                    />`}
                 ${detailedView && html`<div className="bp-model__step">${phaseCaption}</div>`}
               </div>
 
-              <div className="bp-plot">
-                <div className="bp-plot__header">
-                  <span>Step 4. Link activations to label</span>
-                  <span>${droppedDots.length} / ${SENTENCES.length}</span>
+              <div className=${"bp-plot bp-panel" + (phase === 4 ? " bp-plot--landing" : "")}>
+                <div className="bp-panel__header">
+                  <span className="bp-panel__title">Data in activation space</span>
+                  <span className="bp-panel__meta">${visibleDroppedDots.length} / ${SENTENCES.length}</span>
                 </div>
+                <div className="bp-panel__subhead" aria-hidden="true"></div>
                 <${PlotPanel}
-                  droppedDots=${droppedDots}
-                  droppedIdxs=${droppedIdxs}
+                  droppedDots=${visibleDroppedDots}
+                  droppedIdxs=${visibleDroppedIdxs}
                   justLandedIdx=${justLandedIdx}
                   landingPhase=${phase}
                   mmStage=${0}
@@ -2154,29 +2414,9 @@
                   hoveredIdx=${hoveredIdx}
                   onHover=${setHoveredIdx}
                   showLegend=${true}
+                  featuredIdx=${featuredIdx}
                 />
-                <div className="bp-plot__caption">
-                  ${droppedDots.length === 0
-                      ? "Dots will start landing in a moment…"
-                      : `${droppedDots.length} of ${SENTENCES.length} sentences plotted · hover any dot to see its sentence.`}
-                </div>
               </div>
-            </div>
-
-            <div className="bp-controls" role="group" aria-label="Auto-play controls">
-              <span className="bp-controls__status">${droppedDots.length} / ${SENTENCES.length}</span>
-              ${autoPlaying
-                ? html`<button type="button" className="bp-controls__btn" onClick=${pauseAutoPlay}>⏸ Pause</button>`
-                : (droppedIdxs.length < SENTENCES.length
-                    ? html`<button type="button" className="bp-controls__btn" onClick=${startAutoPlay}>▶ Play</button>`
-                    : null)}
-              <button
-                type="button"
-                className="bp-controls__btn"
-                onClick=${skipToEnd}
-                disabled=${droppedIdxs.length === SENTENCES.length}
-              >⏭ Skip to end</button>
-              <button type="button" className="bp-controls__btn" onClick=${replay}>↻ Replay</button>
             </div>
           `}
 
@@ -2200,6 +2440,7 @@
                   hoveredIdx=${hoveredIdx}
                   onHover=${setHoveredIdx}
                   showLegend=${true}
+                  featuredIdx=${null}
                 />
                 <div className="bp-plot__caption">
                   ${beat === 2 && "Trues cluster up, falses cluster down — but with overlap. Hover any dot to see its sentence."}

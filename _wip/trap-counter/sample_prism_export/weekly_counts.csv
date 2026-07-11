@@ -1,0 +1,7 @@
+image_id,batch_id,filename,genotype,status,predicted_count,reviewed_count,uncertain,reviewer_notes,model_version
+1,1,2026-06-11_TrapQuant_N2_009.tif,N2,reviewed,0,12,False,,hybrid
+2,1,2026-06-11_TrapQuant_N2_010.tif,N2,reviewed,0,9,False,,hybrid
+3,1,2026-06-11_TrapQuant_N2_011.tif,N2,reviewed,0,14,False,,hybrid
+4,1,2026-06-11_TrapQuant_drd-5AddDrd-5line1_001.tif,drd-5 line1,reviewed,0,5,False,,hybrid
+5,1,2026-06-11_TrapQuant_drd-5AddDrd-5line1_002.tif,drd-5 line1,reviewed,0,7,False,,hybrid
+6,1,2026-06-11_TrapQuant_drd-5AddDrd-5line2_003.tif,drd-5 line2,reviewed,0,3,False,,hybrid

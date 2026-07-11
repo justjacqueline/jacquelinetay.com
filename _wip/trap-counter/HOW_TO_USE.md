@@ -19,7 +19,12 @@ window.**
 2. **Review each image.** Click an image in the list. On the picture:
    - **Click** an empty spot to add a trap.
    - **Drag** a marker to move it.
-   - **Click** a marker and press **Delete** (or use *Delete Point*) to remove it.
+   - **Click** a marker and press **Delete** (or use **Delete selected**) to remove it.
+   - **Shift-click** several markers to select several traps, then press
+     **Delete selected**.
+   - Use the **Tool** dropdown for **Box select** or **Lasso select**, draw around
+     the traps to select, then press **Delete selected**. Drawing again replaces
+     the selection; Shift-drawing adds more.
    Your edits **save automatically** — the chip in the top right shows
    *All changes saved*. There is no save button to remember.
 3. **Two numbers** are shown per image:

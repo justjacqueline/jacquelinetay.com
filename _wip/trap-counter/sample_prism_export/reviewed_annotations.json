@@ -1,0 +1,62 @@
+[
+  {
+    "image_id": 1,
+    "filename": "2026-06-11_TrapQuant_N2_009.tif",
+    "width": 2560,
+    "height": 1920,
+    "uncertain": false,
+    "notes": "",
+    "model_version": "hybrid",
+    "points": []
+  },
+  {
+    "image_id": 2,
+    "filename": "2026-06-11_TrapQuant_N2_010.tif",
+    "width": 2560,
+    "height": 1920,
+    "uncertain": false,
+    "notes": "",
+    "model_version": "hybrid",
+    "points": []
+  },
+  {
+    "image_id": 3,
+    "filename": "2026-06-11_TrapQuant_N2_011.tif",
+    "width": 2560,
+    "height": 1920,
+    "uncertain": false,
+    "notes": "",
+    "model_version": "hybrid",
+    "points": []
+  },
+  {
+    "image_id": 4,
+    "filename": "2026-06-11_TrapQuant_drd-5AddDrd-5line1_001.tif",
+    "width": 2560,
+    "height": 1920,
+    "uncertain": false,
+    "notes": "",
+    "model_version": "hybrid",
+    "points": []
+  },
+  {
+    "image_id": 5,
+    "filename": "2026-06-11_TrapQuant_drd-5AddDrd-5line1_002.tif",
+    "width": 2560,
+    "height": 1920,
+    "uncertain": false,
+    "notes": "",
+    "model_version": "hybrid",
+    "points": []
+  },
+  {
+    "image_id": 6,
+    "filename": "2026-06-11_TrapQuant_drd-5AddDrd-5line2_003.tif",
+    "width": 2560,
+    "height": 1920,
+    "uncertain": false,
+    "notes": "",
+    "model_version": "hybrid",
+    "points": []
+  }
+]

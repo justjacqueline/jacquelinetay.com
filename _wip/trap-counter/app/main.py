@@ -24,6 +24,7 @@ DATA_DIR = BASE_DIR / "data"
 ORIGINALS_DIR = DATA_DIR / "originals"
 PREVIEWS_DIR = DATA_DIR / "previews"
 EXPORTS_DIR = DATA_DIR / "exports"
+DATA_DIR.mkdir(parents=True, exist_ok=True)
 DB = Database(DATA_DIR / "trap_counter.sqlite3")
 for directory in (ORIGINALS_DIR, PREVIEWS_DIR, EXPORTS_DIR):
     directory.mkdir(parents=True, exist_ok=True)
@@ -176,6 +177,17 @@ def save_review(image_id: int, payload: AnnotationPayload) -> dict:
     DB.save_review(image_id, points, payload.uncertain, payload.notes)
     row = DB.get_image(image_id)
     return image_payload(row)
+
+
+@app.post("/api/images/{image_id}/reset", response_model=ImageOut)
+def reset_to_prediction(image_id: int) -> dict:
+    row = DB.get_image(image_id)
+    if row is None:
+        raise HTTPException(status_code=404, detail="Image not found")
+    if row["status"] not in {"predicted", "reviewed"}:
+        raise HTTPException(status_code=409, detail="AI prediction is not ready")
+    DB.reset_review(image_id)
+    return image_payload(DB.get_image(image_id))
 
 
 @app.put("/api/images/{image_id}/validate", response_model=ImageOut)
