@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Worm GFP Analyzer</title>
+    <link rel="stylesheet" href="styles.css?v=29">
+  </head>
+  <body>
+    <main class="app-shell">
+      <aside class="sidebar">
+        <div>
+          <h1>Worm GFP Analyzer</h1>
+          <p class="sample-name">Sample: cytoGFP pmk-1, matched DIC/GFP stack</p>
+        </div>
+
+        <section class="plane-dashboard" aria-label="Plane approval dashboard">
+          <div class="plane-dashboard-head">
+            <span>Planes</span>
+            <span id="planeProgress">0 / 49 complete</span>
+          </div>
+          <div class="plane-strip" id="planeDashboard"></div>
+        </section>
+
+        <nav class="stage-tabs" aria-label="Workflow stage">
+          <button class="active" type="button" data-stage-tab="worm">Worm</button>
+          <button type="button" data-stage-tab="gfp">GFP</button>
+          <button type="button" data-stage-tab="results">Results</button>
+        </nav>
+
+        <section class="panel stage-panel" id="wormPanel" data-stage-panel="worm">
+          <div class="stage-head">
+            <div>
+              <h2>Worm Mask from DIC</h2>
+              <span class="stage-subtitle">Draw or generate the worm outline on the DIC image.</span>
+            </div>
+            <span class="stage-badge" id="wormBadge">Needs review</span>
+          </div>
+          <button id="approveOutlineBtn" type="button" class="approval-button">Approve worm mask</button>
+
+          <div class="subpanel">
+            <h3>Manual Boundary</h3>
+            <div class="tool-grid">
+              <button class="active worm-tool" data-tool="worm-outline">Add/edit boundary points</button>
+              <button id="makeOutlineBtn">Close boundary (C)</button>
+              <button id="autoHandlesBtn">Smooth handles</button>
+              <button id="clearCurveBtn">Clear worm</button>
+            </div>
+          </div>
+
+          <div class="subpanel">
+            <h3>DIC-Assisted Body Path</h3>
+            <div class="button-row">
+              <button id="draftOutlineBtn">Start body path</button>
+              <button id="generateGuideBtn">Generate boundary from DIC</button>
+            </div>
+            <p class="helper">Click tail, optional bends through the worm, then head. DIC edges are used to place the editable boundary.</p>
+          </div>
+
+          <details class="subpanel">
+            <summary>Advanced pixel fixes</summary>
+            <div class="tool-grid">
+              <button class="worm-tool" data-tool="worm-add">Paint worm pixels</button>
+              <button class="worm-tool" data-tool="worm-erase">Erase worm pixels</button>
+            </div>
+            <label class="control">
+              <span>Pixel brush size</span>
+              <input id="brushSize" type="range" min="4" max="80" value="24">
+            </label>
+          </details>
+
+          <button id="undoBtn" type="button">Undo</button>
+          <p class="helper" id="outlineStatus">Click anchors manually, or Start body path: tail, bends, head, then Generate boundary from DIC.</p>
+        </section>
+
+        <section class="panel stage-panel" id="gfpPanel" data-stage-panel="gfp" hidden>
+          <div class="stage-head">
+            <div>
+              <h2>GFP Mask from GFP Image</h2>
+              <span class="stage-subtitle">Tune the threshold on the GFP image, then brush small corrections.</span>
+            </div>
+            <span class="stage-badge" id="gfpBadge">Locked</span>
+          </div>
+          <button id="approveGfpBtn" type="button" class="approval-button">Approve GFP mask</button>
+          <div class="legend">
+            <span><i class="swatch threshold"></i>Selected</span>
+            <span><i class="swatch add"></i>Added</span>
+            <span><i class="swatch erase"></i>Removed</span>
+          </div>
+          <div class="tool-grid">
+            <button class="gfp-tool" data-tool="gfp-add">Add GFP area</button>
+            <button class="gfp-tool" data-tool="gfp-erase">Remove GFP area</button>
+          </div>
+          <label class="control">
+            <span>Selection threshold</span>
+            <input id="gfpThreshold" type="range" min="0" max="255" value="72">
+          </label>
+          <label class="control">
+            <span>Ignore specks smaller than</span>
+            <input id="minObject" type="range" min="0" max="800" value="80">
+          </label>
+          <button id="resetGfpEditsBtn" type="button">Clear manual GFP edits</button>
+          <p class="helper" id="gfpStatus">GFP mask only counts pixels inside the approved worm mask.</p>
+        </section>
+
+        <section class="metrics" data-stage-panel="results" hidden>
+          <h2>Results</h2>
+          <div>
+            <span>Total worm area</span>
+            <strong id="wormArea">0 px</strong>
+          </div>
+          <div>
+            <span>GFP-positive area</span>
+            <strong id="gfpArea">0 px</strong>
+          </div>
+          <div>
+            <span>GFP percent</span>
+            <strong id="gfpPercent">0.00%</strong>
+          </div>
+          <div>
+            <span>Integrated GFP</span>
+            <strong id="integratedGfp">0</strong>
+          </div>
+          <div class="button-row">
+            <button id="downloadMasksBtn">Save masks</button>
+            <button id="downloadCsvBtn">Export CSV</button>
+          </div>
+        </section>
+      </aside>
+
+      <section class="workspace">
+        <canvas id="imageCanvas" width="1024" height="1024"></canvas>
+        <div class="statusbar">
+          <span id="statusText">Loading sample...</span>
+          <span id="cursorText">Boundary editing</span>
+        </div>
+      </section>
+    </main>
+
+    <script src="app.js?v=29"></script>
+  </body>
+</html>
