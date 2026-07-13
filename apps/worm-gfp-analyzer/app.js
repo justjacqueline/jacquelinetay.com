@@ -272,6 +272,10 @@ function clampGfpCorrectionsToWorm() {
 }
 
 function updateGfpStatus() {
+  if (!state.outlineApproved) {
+    els.gfpStatus.textContent = "Viewing GFP is allowed for choosing the plane. Approve the worm mask before editing or approving GFP.";
+    return;
+  }
   let thresholdCount = 0;
   let finalCount = 0;
   let addCount = 0;
@@ -308,7 +312,7 @@ function renderPlaneDashboard() {
     if (plane === state.plane) classes.push("current");
     if (approval.worm && approval.gfp) classes.push("complete");
     tiles.push(`
-      <button class="${classes.join(" ")}" type="button" data-plane="${plane}" data-stage-target="${approval.worm ? "gfp" : "worm"}" aria-label="Plane ${plane}">
+      <button class="${classes.join(" ")}" type="button" data-plane="${plane}" data-stage-target="worm" aria-label="Plane ${plane}">
         <span class="plane-num">${plane}</span>
         <span class="plane-lights">
           <span class="plane-light ${approval.worm ? "done" : ""}" data-plane="${plane}" data-stage-target="worm" title="Worm mask"></span>
@@ -1152,6 +1156,7 @@ function updateOutlineStatus() {
   } else {
     els.outlineStatus.textContent = `${points} anchors placed. Click path to add, drag anchors/handles, double-click anchor to delete.`;
   }
+  updateGfpStatus();
   updateWorkflowUi();
 }
 
@@ -1169,22 +1174,17 @@ function setActiveTool(tool) {
 }
 
 function setActiveStage(stage) {
-  if (stage === "gfp" && !state.outlineApproved) {
-    state.stage = "worm";
+  state.stage = stage;
+  if (stage === "worm") {
     state.view = "dic";
-    els.gfpStatus.textContent = "Approve the DIC worm mask before moving to GFP selection.";
-  } else {
-    state.stage = stage;
-    if (stage === "worm") {
-      state.view = "dic";
-      state.tool = "worm-outline";
-    } else if (stage === "gfp") {
-      state.view = "gfp";
-      if (!state.tool.startsWith("gfp")) state.tool = "gfp-add";
-    } else if (stage === "results") {
-      state.view = "mask";
-      if (state.tool.startsWith("gfp")) state.tool = "worm-outline";
-    }
+    state.tool = "worm-outline";
+  } else if (stage === "gfp") {
+    state.view = "gfp";
+    if (state.outlineApproved && !state.tool.startsWith("gfp")) state.tool = "gfp-add";
+    if (!state.outlineApproved) state.tool = "worm-outline";
+  } else if (stage === "results") {
+    state.view = "mask";
+    if (state.tool.startsWith("gfp")) state.tool = "worm-outline";
   }
   updateWorkflowUi();
   render();
@@ -1192,11 +1192,8 @@ function setActiveStage(stage) {
 
 function setActiveView(view) {
   state.view = view;
-  if (view === "gfp" && !state.outlineApproved) {
-    state.view = "dic";
-    els.gfpStatus.textContent = "Approve the DIC worm mask before moving to GFP selection.";
-  }
-  if (state.view === "gfp" && !state.tool.startsWith("gfp")) state.tool = "gfp-add";
+  if (state.view === "gfp" && state.outlineApproved && !state.tool.startsWith("gfp")) state.tool = "gfp-add";
+  if (state.view === "gfp" && !state.outlineApproved && state.tool.startsWith("gfp")) state.tool = "worm-outline";
   if (state.view !== "gfp" && state.tool.startsWith("gfp")) state.tool = "worm-outline";
   if (state.view === "gfp") state.stage = "gfp";
   else if (state.stage === "gfp") state.stage = "worm";
@@ -1212,9 +1209,9 @@ function setActiveView(view) {
 
 function updateWorkflowUi() {
   if (!els.wormPanel) return;
-  if (!state.outlineApproved && state.stage === "gfp") state.stage = "worm";
-  if (!state.outlineApproved && state.view === "gfp") state.view = "dic";
+  if (!state.outlineApproved && state.stage === "results") state.stage = "worm";
   if (state.view !== "gfp" && state.tool.startsWith("gfp")) state.tool = "worm-outline";
+  if (!state.outlineApproved && state.tool.startsWith("gfp")) state.tool = "worm-outline";
   const inWormStage = state.stage === "worm";
   const inGfpStage = state.stage === "gfp";
   document.querySelectorAll("[data-stage-panel]").forEach((panel) => {
@@ -1222,7 +1219,7 @@ function updateWorkflowUi() {
   });
   document.querySelectorAll("[data-stage-tab]").forEach((button) => {
     button.classList.toggle("active", button.dataset.stageTab === state.stage);
-    button.disabled = button.dataset.stageTab === "gfp" && !state.outlineApproved;
+    button.disabled = button.dataset.stageTab === "results" && !state.outlineApproved;
   });
   document.querySelectorAll("[data-view]").forEach((button) => {
     button.classList.toggle("active", button.dataset.view === state.view);
@@ -1727,9 +1724,7 @@ function bindEvents() {
     const plane = Number(target.dataset.plane);
     const requestedStage = target.dataset.stageTarget || "worm";
     if (plane !== state.plane) await loadPlane(plane);
-    const approval = planeApprovalState(plane);
-    const nextStage = requestedStage === "gfp" && !approval.worm ? "worm" : requestedStage;
-    setActiveStage(nextStage);
+    setActiveStage(requestedStage);
   });
   document.querySelectorAll("[data-debug]").forEach((button) => {
     button.addEventListener("click", () => {
