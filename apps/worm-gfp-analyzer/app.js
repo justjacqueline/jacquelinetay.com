@@ -1230,11 +1230,11 @@ function updateWorkflowUi() {
   els.wormPanel.classList.toggle("active-stage", inWormStage);
   els.gfpPanel.classList.toggle("active-stage", inGfpStage);
   els.wormPanel.classList.toggle("approved", state.outlineApproved);
-  els.gfpPanel.classList.toggle("locked", !state.outlineApproved);
+  els.gfpPanel.classList.toggle("locked", !state.outlineApproved && !inGfpStage);
   els.wormBadge.textContent = state.outlineApproved ? "YES APPROVED" : "Needs review";
-  els.gfpBadge.textContent = !state.outlineApproved ? "Locked" : state.gfpApproved ? "YES APPROVED" : "Needs review";
+  els.gfpBadge.textContent = !state.outlineApproved ? (inGfpStage ? "Preview" : "Available") : state.gfpApproved ? "YES APPROVED" : "Needs review";
   els.wormBadge.dataset.state = state.outlineApproved ? "approved" : "review";
-  els.gfpBadge.dataset.state = !state.outlineApproved ? "locked" : state.gfpApproved ? "approved" : "review";
+  els.gfpBadge.dataset.state = !state.outlineApproved ? (inGfpStage ? "ready" : "locked") : state.gfpApproved ? "approved" : "review";
 
   document.querySelectorAll(".gfp-tool, #resetGfpEditsBtn, #gfpThreshold, #minObject, #approveGfpBtn").forEach((el) => {
     el.disabled = !state.outlineApproved || !inGfpStage;
