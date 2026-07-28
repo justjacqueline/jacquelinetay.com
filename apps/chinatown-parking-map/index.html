@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Chinatown Area C Parking Map - Jacqueline Tay</title>
+  <meta name="description" content="A working map prototype for Area C permit parking, street sweeping, meters, and verification notes near Chinatown.">
+  <link rel="canonical" href="https://jacquelinetay.com/apps/chinatown-parking-map/">
+  <link rel="icon" href="/assets/favicon.png" type="image/png">
+  <link rel="apple-touch-icon" href="/assets/favicon.png">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2.1.1/css/pico.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css">
+  <link rel="stylesheet" href="/assets/site.css">
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body class="parking-app">
+  <header>
+    <nav class="container-fluid app-nav">
+      <ul>
+        <li>
+          <strong class="site-brand">
+            <a href="/shelf/" aria-label="Jacqueline Tay - shelf">
+              <img class="site-logo" src="/assets/logo-home.png" alt="" width="1036" height="191" decoding="async">
+            </a>
+          </strong>
+        </li>
+      </ul>
+      <ul>
+        <li><a href="/shelf/">Shelf</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main class="parking-shell">
+    <aside class="parking-panel" aria-label="Parking map controls">
+      <div class="panel-heading">
+        <p class="eyebrow">Street sweeping</p>
+        <h1>When do I move?</h1>
+      </div>
+
+      <section class="control-group" aria-labelledby="status-heading">
+        <div class="status-card">
+          <div>
+            <h2 id="status-heading">Map data</h2>
+            <p id="data-status">Loading bundled city data...</p>
+          </div>
+          <details class="data-details">
+            <summary>Data options</summary>
+            <button id="load-data" type="button" class="load-button">Refresh city data</button>
+          </details>
+        </div>
+      </section>
+
+      <section class="control-group" aria-labelledby="time-heading">
+        <h2 id="time-heading">Parked at</h2>
+        <label for="check-date">Parking date</label>
+        <input id="check-date" type="date">
+        <label for="check-time">Parking time</label>
+        <input id="check-time" type="time">
+      </section>
+
+      <section class="control-group legend" aria-labelledby="legend-heading">
+        <h2 id="legend-heading">Line colors</h2>
+        <div class="legend-row"><span class="swatch conflict"></span>Move soon or sweep is active</div>
+        <div class="legend-row"><span class="swatch paid"></span>Move later this week</div>
+        <div class="legend-row"><span class="swatch c-valid"></span>No sweep found in the next 8 days</div>
+        <div class="legend-row"><span class="swatch unknown"></span>Double-check signs</div>
+      </section>
+
+      <details class="control-group source-list">
+        <summary>Sources</summary>
+        <a href="https://data.sfgov.org/d/yhqp-riqs" target="_blank" rel="noopener noreferrer">Street sweeping</a>
+        <a href="https://data.sfgov.org/Transportation/Parking-regulations-except-non-metered-color-curb-/hi6h-neyh" target="_blank" rel="noopener noreferrer">Parking regulations</a>
+        <a href="https://data.sfgov.org/Transportation/Parking-Meters/8vzz-qzz9" target="_blank" rel="noopener noreferrer">Parking meters</a>
+        <a href="https://data.sfgov.org/Transportation/Blue-Curb-Spaces/g69s-9jxr" target="_blank" rel="noopener noreferrer">Blue curb spaces</a>
+      </details>
+    </aside>
+
+    <section class="map-region" aria-label="Area C parking map">
+      <div id="map"></div>
+      <div class="map-banner">
+        <strong>Click the side of the street where you parked.</strong>
+        <span>The popup tells you the next street-sweeping move-by time first.</span>
+      </div>
+    </section>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="./app.js"></script>
+</body>
+</html>

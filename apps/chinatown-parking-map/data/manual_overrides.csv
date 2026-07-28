@@ -1,0 +1,2 @@
+id,street,from_street,to_street,side,rule,hours,extent,verification_date,source,confidence,notes
+sample-area-c,Example Street,Example Cross Street,Example Cross Street,Unknown,Replace with verified curb rule,Replace with posted hours,Replace with curb extent,,Starter placeholder,Needs verification,Do not store private locations in this file
