@@ -127,27 +127,36 @@ main > h1 {
   font-weight: 600;
 }
 
+.shelf-page main.container {
+  max-width: 46rem;
+}
+
 .shelf-hero {
-  margin-bottom: calc(var(--pico-block-spacing-vertical) * 1.35);
-  max-width: 40rem;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(12rem, 18rem);
+  gap: 1.25rem;
+  align-items: baseline;
+  margin: 1.45rem 0 1.6rem;
 }
 
 .shelf-hero h1 {
-  --pico-font-size: 1.625rem;
-  --pico-line-height: 1.25;
-  --pico-typography-spacing-top: 1rem;
+  --pico-font-size: clamp(1.45rem, 3.1vw, 2.05rem);
+  --pico-line-height: 1.12;
+  --pico-typography-spacing-top: 0;
+  max-width: 16ch;
   font-weight: 600;
-  margin-bottom: 0.35rem;
+  letter-spacing: -0.02em;
+  margin: 0;
 }
 
 .shelf-subtitle {
-  font-size: 1rem;
+  font-size: 0.84rem;
   font-weight: 400;
   line-height: 1.5;
   letter-spacing: 0;
   color: var(--pico-muted-color);
-  margin: 0;
-  max-width: 36rem;
+  margin: 0 0 0.4rem;
+  max-width: 23rem;
 }
 
 .lead {
@@ -160,40 +169,52 @@ main > h1 {
 .shelf-grid {
   display: flex;
   flex-direction: column;
+  gap: 0;
+  border-top: 1px solid rgba(17, 24, 39, 0.22);
+}
+
+.shelf-filter-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   gap: 1rem;
+  margin-bottom: 0.55rem;
+  color: var(--pico-muted-color);
+  font-size: 0.74rem;
 }
 
-/* Whole card is one link (no nested <a> inside <article>). */
-a.shelf-card-hit {
-  display: block;
-  text-decoration: none;
-  color: inherit;
-  border-radius: 0.75rem;
-}
-
-a.shelf-card-hit:focus-visible {
-  outline: 2px solid var(--pico-primary-focus);
-  outline-offset: 3px;
-}
-
-a.shelf-card-hit:hover article.shelf-item header h2 {
-  color: var(--pico-primary-hover);
+.shelf-filter-bar button {
+  border: 0;
+  background: transparent;
+  color: var(--pico-color);
+  padding: 0;
+  font: inherit;
   text-decoration: underline;
+  cursor: pointer;
 }
 
-/* Flat card: undo Pico’s two-tone <article> header strip */
 article.shelf-item {
+  display: grid;
+  grid-template-columns: minmax(12rem, 0.85fr) minmax(14rem, 1.1fr) minmax(7rem, 0.45fr);
+  gap: clamp(0.75rem, 2vw, 1.35rem);
+  align-items: baseline;
   margin-bottom: 0;
-  padding: 1.25rem 1.35rem;
-  border: 1px solid var(--pico-muted-border-color);
-  border-radius: 0.75rem;
-  background: var(--pico-card-background-color);
-  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+  padding: 0.56rem 0;
+  border: 0;
+  border-bottom: 1px solid rgba(17, 24, 39, 0.16);
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  transition: padding-left 0.16s ease, border-color 0.16s ease;
+}
+
+article.shelf-item:hover {
+  padding-left: 0.45rem;
+  border-bottom-color: rgba(17, 24, 39, 0.42);
 }
 
 article.shelf-item > header {
   margin: 0;
-  margin-bottom: 0.5rem;
   padding: 0;
   border: none;
   background: transparent;
@@ -201,15 +222,25 @@ article.shelf-item > header {
 }
 
 article.shelf-item header h2 {
-  --pico-font-size: 1.0625rem;
-  --pico-line-height: 1.35;
+  --pico-font-size: 0.91rem;
+  --pico-line-height: 1.24;
   --pico-font-weight: 600;
   margin: 0;
   color: var(--pico-color);
+  letter-spacing: -0.01em;
+}
+
+article.shelf-item header h2 a {
+  color: inherit;
+  text-decoration: none;
+}
+
+article.shelf-item header h2 a:hover {
+  text-decoration: underline;
 }
 
 /* Off-site shelf cards: title shows external hint. */
-a.shelf-card-hit--external article.shelf-item--external header h2::after {
+article.shelf-item--external header h2::after {
   content: " \2197";
   font-size: 0.82em;
   font-weight: 500;
@@ -219,11 +250,11 @@ a.shelf-card-hit--external article.shelf-item--external header h2::after {
 }
 
 article.shelf-item > p.shelf-card-subtitle {
-  font-size: 1rem;
-  font-weight: 500;
-  line-height: 1.45;
+  font-size: 0.78rem;
+  font-weight: 400;
+  line-height: 1.42;
   color: var(--pico-muted-color);
-  margin: 0 0 0.5rem;
+  margin: 0;
 }
 
 .shelf-card-body p {
@@ -241,18 +272,59 @@ article.shelf-item > p.shelf-card-subtitle {
 .tag-row {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.35rem;
+  justify-content: flex-end;
+  gap: 0.05rem 0.32rem;
   margin: 0;
+  line-height: 1.1;
 }
 
 .tag {
-  font-size: 0.6875rem;
+  font-size: 0.58rem;
   font-weight: 500;
-  padding: 0.2rem 0.55rem;
-  border-radius: 999px;
+  line-height: 1.1;
+  padding: 0;
+  border-radius: 0;
   border: none;
   color: var(--pico-muted-color);
-  background: #e4eae6;
+  background: transparent;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.tag::before {
+  content: "#";
+  opacity: 0.55;
+}
+
+.tag:hover,
+.tag.active {
+  color: var(--pico-color);
+  text-decoration: underline;
+}
+
+@media (max-width: 760px) {
+  .shelf-hero,
+  article.shelf-item {
+    grid-template-columns: 1fr;
+  }
+
+  .shelf-hero {
+    gap: 0.8rem;
+    margin-top: 2rem;
+  }
+
+  article.shelf-item {
+    gap: 0.45rem;
+    padding: 1rem 0;
+  }
+
+  .tag-row {
+    justify-content: flex-start;
+  }
+
+  article.shelf-item:hover {
+    padding-left: 0;
+  }
 }
 
 /* Chart shell */

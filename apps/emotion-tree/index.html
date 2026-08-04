@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Emotion Tree - Jacqueline Tay</title>
+  <meta name="description" content="A small branching tool for noticing multiple emotional parts at once.">
+  <link rel="canonical" href="https://jacquelinetay.com/apps/emotion-tree/">
+  <link rel="icon" href="/assets/favicon.png" type="image/png">
+  <link rel="apple-touch-icon" href="/assets/favicon.png">
+  <meta property="og:site_name" content="Jacqueline Tay">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Emotion Tree - Jacqueline Tay">
+  <meta property="og:description" content="A small branching tool for noticing multiple emotional parts at once.">
+  <meta property="og:url" content="https://jacquelinetay.com/apps/emotion-tree/">
+  <meta property="og:image" content="https://jacquelinetay.com/assets/logo-home.png">
+  <meta property="og:image:alt" content="Jacqueline Tay">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Emotion Tree - Jacqueline Tay">
+  <meta name="twitter:description" content="A small branching tool for noticing multiple emotional parts at once.">
+  <meta name="twitter:image" content="https://jacquelinetay.com/assets/logo-home.png">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2.1.1/css/pico.min.css">
+  <link rel="stylesheet" href="/assets/site.css">
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body class="emotion-tree-app">
+  <header>
+    <nav class="container">
+      <ul>
+        <li>
+          <strong class="site-brand">
+            <a href="/shelf/" aria-label="Jacqueline Tay - shelf">
+              <img class="site-logo" src="/assets/logo-home.png" alt="" width="1036" height="191" decoding="async">
+            </a>
+          </strong>
+        </li>
+      </ul>
+    </nav>
+  </header>
+
+  <main class="emotion-shell">
+    <section class="emotion-heading" aria-labelledby="page-title">
+      <p class="breadcrumb"><a href="/shelf/">Shelf</a> · Apps</p>
+      <h1 id="page-title">Emotion Tree</h1>
+      <p>Map more than one emotional part at a time. Within each part, choose as many answers as fit.</p>
+    </section>
+
+    <section class="view-switcher" aria-label="Emotion Tree view">
+      <button id="partsViewBtn" type="button">Parts</button>
+      <button id="summaryBtn" type="button">Summary</button>
+    </section>
+
+    <section id="workspaceView" class="emotion-layout">
+      <aside class="track-list" aria-label="Emotional parts">
+        <div class="panel-title-row">
+          <div>
+            <div class="panel-heading-line">
+              <h2>Parts</h2>
+              <button id="addTrackBtn" class="add-part-button" type="button">Add part</button>
+            </div>
+            <span id="trackCount" aria-live="polite"></span>
+          </div>
+        </div>
+        <div id="trackList"></div>
+        <div class="track-panel-footer">
+          <button id="resetAllBtn" type="button">Reset all parts</button>
+        </div>
+      </aside>
+
+      <section class="track-workspace" aria-live="polite">
+        <div id="activeTrack"></div>
+      </section>
+    </section>
+
+    <section id="summaryView" class="summary-view" hidden></section>
+  </main>
+
+  <script src="./app.js"></script>
+</body>
+</html>

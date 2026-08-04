@@ -22,7 +22,7 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2.1.1/css/pico.min.css">
   <link rel="stylesheet" href="/assets/site.css">
 </head>
-<body>
+<body class="shelf-page">
   <header>
     <nav class="container">
       <ul>
@@ -41,88 +41,112 @@
       <h1>What&rsquo;s on the shelf?</h1>
       <p class="shelf-subtitle">New projects, experiments, and ideas, with more to come.</p>
     </div>
-    <div class="shelf-grid">
-      <a class="shelf-card-hit" href="/charts/worry-automation/">
-        <article class="shelf-item">
-          <header>
-            <h2>How worried are Americans about their work being automated?</h2>
-          </header>
-          <p class="shelf-card-subtitle">After 2022, early to mid-career Americans are almost split on whether AI will take their jobs</p>
-          <div class="tag-row" role="list">
-            <span class="tag" role="listitem">data visualization</span>
-            <span class="tag" role="listitem">AI</span>
-          </div>
-        </article>
-      </a>
-      <a
-        class="shelf-card-hit shelf-card-hit--external"
-        href="https://how-can-i-help-others.netlify.app/"
-        target="_blank"
-        rel="noopener noreferrer"
-      >
-        <article class="shelf-item shelf-item--external">
-          <header>
-            <h2>How can you help others?</h2>
-          </header>
-          <p class="shelf-card-subtitle">Explore how moral weights change a donation&rsquo;s impact</p>
-          <div class="tag-row" role="list">
-            <span class="tag" role="listitem">interactive explainer</span>
-            <span class="tag" role="listitem">data visualization</span>
-            <span class="tag" role="listitem">global health</span>
-            <span class="tag" role="listitem">charitable giving</span>
-          </div>
-        </article>
-      </a>
-      <a class="shelf-card-hit" href="/apps/help-me-make-decisions/">
-        <article class="shelf-item">
-          <header>
-            <h2>Help me make decisions</h2>
-          </header>
-          <p class="shelf-card-subtitle">Actually, a tool to help yourself make decisions</p>
-          <div class="tag-row" role="list">
-            <span class="tag" role="listitem">interactive tool</span>
-            <span class="tag" role="listitem">decisions</span>
-          </div>
-        </article>
-      </a>
-      <a class="shelf-card-hit" href="/apps/chinatown-parking-map/">
-        <article class="shelf-item">
-          <header>
-            <h2>Chinatown Area C parking map</h2>
-          </header>
-          <p class="shelf-card-subtitle">A curb-by-curb prototype for permit parking, street sweeping, meters, and sign checks</p>
-          <div class="tag-row" role="list">
-            <span class="tag" role="listitem">interactive map</span>
-            <span class="tag" role="listitem">San Francisco</span>
-            <span class="tag" role="listitem">parking</span>
-          </div>
-        </article>
-      </a>
-      <a class="shelf-card-hit" href="/apps/worm-gfp-analyzer/">
-        <article class="shelf-item">
-          <header>
-            <h2>Worm GFP Analyzer</h2>
-          </header>
-          <p class="shelf-card-subtitle">A trial microscopy workflow for reviewing worm masks and GFP-positive area</p>
-          <div class="tag-row" role="list">
-            <span class="tag" role="listitem">interactive tool</span>
-            <span class="tag" role="listitem">microscopy</span>
-          </div>
-        </article>
-      </a>
-      <a class="shelf-card-hit" href="/apps/trap-counter-practice/">
-        <article class="shelf-item">
-          <header>
-            <h2>Trap counter practice</h2>
-          </header>
-          <p class="shelf-card-subtitle">A trial microscopy annotation page for practicing point review</p>
-          <div class="tag-row" role="list">
-            <span class="tag" role="listitem">interactive tool</span>
-            <span class="tag" role="listitem">microscopy</span>
-          </div>
-        </article>
-      </a>
+    <div class="shelf-filter-bar" aria-label="Shelf filters">
+      <span id="filter-label">All projects</span>
+      <button id="clear-filter" type="button" hidden>Clear</button>
+    </div>
+    <div class="shelf-grid" id="shelf-grid">
+      <article class="shelf-item" data-date="2026-08-04" data-tags="interactive tool,emotions">
+        <header>
+          <h2><a href="/apps/emotion-tree/">Emotion Tree</a></h2>
+        </header>
+        <p class="shelf-card-subtitle">A branching tool for noticing multiple emotional parts at once</p>
+        <div class="tag-row" role="list">
+          <button class="tag" type="button" data-tag="interactive tool" role="listitem">interactive tool</button>
+          <button class="tag" type="button" data-tag="emotions" role="listitem">emotions</button>
+        </div>
+      </article>
+      <article class="shelf-item" data-date="2026-07-28" data-tags="interactive map,San Francisco,parking">
+        <header>
+          <h2><a href="/apps/chinatown-parking-map/">Chinatown Area C parking map</a></h2>
+        </header>
+        <p class="shelf-card-subtitle">A curb-by-curb prototype for permit parking, street sweeping, meters, and sign checks</p>
+        <div class="tag-row" role="list">
+          <button class="tag" type="button" data-tag="interactive map" role="listitem">interactive map</button>
+          <button class="tag" type="button" data-tag="San Francisco" role="listitem">San Francisco</button>
+          <button class="tag" type="button" data-tag="parking" role="listitem">parking</button>
+        </div>
+      </article>
+      <article class="shelf-item" data-date="2026-07-13" data-tags="interactive tool,microscopy">
+        <header>
+          <h2><a href="/apps/worm-gfp-analyzer/">Worm GFP Analyzer</a></h2>
+        </header>
+        <p class="shelf-card-subtitle">A trial microscopy workflow for reviewing worm masks and GFP-positive area</p>
+        <div class="tag-row" role="list">
+          <button class="tag" type="button" data-tag="interactive tool" role="listitem">interactive tool</button>
+          <button class="tag" type="button" data-tag="microscopy" role="listitem">microscopy</button>
+        </div>
+      </article>
+      <article class="shelf-item" data-date="2026-06-30" data-tags="interactive tool,microscopy">
+        <header>
+          <h2><a href="/apps/trap-counter-practice/">Trap counter practice</a></h2>
+        </header>
+        <p class="shelf-card-subtitle">A trial microscopy annotation page for practicing point review</p>
+        <div class="tag-row" role="list">
+          <button class="tag" type="button" data-tag="interactive tool" role="listitem">interactive tool</button>
+          <button class="tag" type="button" data-tag="microscopy" role="listitem">microscopy</button>
+        </div>
+      </article>
+      <article class="shelf-item" data-date="2026-04-22" data-tags="interactive tool,decisions">
+        <header>
+          <h2><a href="/apps/help-me-make-decisions/">Help me make decisions</a></h2>
+        </header>
+        <p class="shelf-card-subtitle">Actually, a tool to help yourself make decisions</p>
+        <div class="tag-row" role="list">
+          <button class="tag" type="button" data-tag="interactive tool" role="listitem">interactive tool</button>
+          <button class="tag" type="button" data-tag="decisions" role="listitem">decisions</button>
+        </div>
+      </article>
+      <article class="shelf-item shelf-item--external" data-date="2026-04-21" data-tags="interactive explainer,data visualization,global health,charitable giving">
+        <header>
+          <h2><a href="https://how-can-i-help-others.netlify.app/" target="_blank" rel="noopener noreferrer">How can you help others?</a></h2>
+        </header>
+        <p class="shelf-card-subtitle">Explore how moral weights change a donation&rsquo;s impact</p>
+        <div class="tag-row" role="list">
+          <button class="tag" type="button" data-tag="interactive explainer" role="listitem">interactive explainer</button>
+          <button class="tag" type="button" data-tag="data visualization" role="listitem">data visualization</button>
+          <button class="tag" type="button" data-tag="global health" role="listitem">global health</button>
+          <button class="tag" type="button" data-tag="charitable giving" role="listitem">charitable giving</button>
+        </div>
+      </article>
+      <article class="shelf-item" data-date="2026-04-21" data-tags="data visualization,AI">
+        <header>
+          <h2><a href="/charts/worry-automation/">How worried are Americans about their work being automated?</a></h2>
+        </header>
+        <p class="shelf-card-subtitle">After 2022, early to mid-career Americans are almost split on whether AI will take their jobs</p>
+        <div class="tag-row" role="list">
+          <button class="tag" type="button" data-tag="data visualization" role="listitem">data visualization</button>
+          <button class="tag" type="button" data-tag="AI" role="listitem">AI</button>
+        </div>
+      </article>
     </div>
   </main>
+  <script>
+    const shelfGrid = document.getElementById('shelf-grid');
+    const filterLabel = document.getElementById('filter-label');
+    const clearFilter = document.getElementById('clear-filter');
+    const shelfItems = Array.from(shelfGrid.querySelectorAll('.shelf-item'));
+
+    shelfItems
+      .sort((a, b) => (b.dataset.date || '').localeCompare(a.dataset.date || ''))
+      .forEach(item => shelfGrid.appendChild(item));
+
+    function setShelfFilter(tag) {
+      shelfItems.forEach(item => {
+        const tags = (item.dataset.tags || '').split(',').map(value => value.trim());
+        item.hidden = tag ? !tags.includes(tag) : false;
+      });
+      document.querySelectorAll('.tag').forEach(button => {
+        button.classList.toggle('active', !!tag && button.dataset.tag === tag);
+      });
+      filterLabel.textContent = tag ? `Filtered by #${tag}` : 'All projects';
+      clearFilter.hidden = !tag;
+    }
+
+    document.querySelectorAll('.tag').forEach(button => {
+      button.addEventListener('click', () => setShelfFilter(button.dataset.tag));
+    });
+    clearFilter.addEventListener('click', () => setShelfFilter(''));
+  </script>
 </body>
 </html>
