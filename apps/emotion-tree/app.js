@@ -31,8 +31,7 @@ const QUESTIONS = {
 };
 
 const TEXTURE_OPTIONS = [
-  { id: "activated", label: "Activated", desc: "Charged, alert, fast, urgent, eager, or hard to settle." },
-  { id: "depleted", label: "Heavy / depleted", desc: "Low, collapsed, tired, slow, helpless, or drained." },
+  { id: "activated", label: "High", desc: "Activated, heavy, charged, full, urgent, eager, weighted, or hard to settle." },
   { id: "settled", label: "Fairly settled", desc: "Steady, warm, quiet, clear, grounded, or spacious." },
   { id: "unclear_energy", label: "Unclear", desc: "The energy is hard to read right now." }
 ];
@@ -40,17 +39,25 @@ const TEXTURE_OPTIONS = [
 const QUESTION_ORDER = ["comfort", "family"];
 
 const FAMILY_COLORS = {
-  fear_threat: { color: "#5f7384", soft: "#dbe4e7", border: "#9eb0bb" },
-  loss_hurt: { color: "#8a7296", soft: "#e7dfe9", border: "#b9a7c1" },
-  disconnection: { color: "#668178", soft: "#dfe8e3", border: "#a5b9b1" },
-  aversion: { color: "#7b8456", soft: "#e7ead8", border: "#b2ba8d" },
-  anger_friction: { color: "#a35b4f", soft: "#f0ddd8", border: "#c99084" },
-  self_consciousness: { color: "#a56d78", soft: "#f0dee2", border: "#c99aa3" },
-  connection_comfort: { color: "#b76f5e", soft: "#f2e1dc", border: "#d09b8e" },
-  safety_trust: { color: "#52735c", soft: "#dfe8de", border: "#94ad99" },
-  interest: { color: "#4f8180", soft: "#dceaea", border: "#94b9b8" },
-  positive_activation: { color: "#b08a38", soft: "#f0e5c7", border: "#d0b56d" },
-  ease: { color: "#738562", soft: "#e4ead9", border: "#aab995" }
+  fear_threat: { color: "#9a554c", soft: "#f1e0dc", border: "#caa09a" },
+  loss_hurt: { color: "#a25d54", soft: "#f2e2df", border: "#cea8a2" },
+  disconnection: { color: "#8f4d46", soft: "#eeddd9", border: "#c59b95" },
+  aversion: { color: "#7f463f", soft: "#ead9d5", border: "#bb928b" },
+  anger_friction: { color: "#ad5b4a", soft: "#f3dfda", border: "#d1a095" },
+  self_consciousness: { color: "#965149", soft: "#efdedb", border: "#c69c96" },
+  connection_comfort: { color: "#527965", soft: "#e0e9e2", border: "#9ab4a3" },
+  safety_trust: { color: "#47725d", soft: "#dde7e0", border: "#91ae9b" },
+  interest: { color: "#3f7a6b", soft: "#dce9e5", border: "#8fb5aa" },
+  positive_activation: { color: "#5c8064", soft: "#e2eade", border: "#9eb798" },
+  ease: { color: "#63805f", soft: "#e4eadf", border: "#a4b79b" },
+  unclear: { color: "#6f756f", soft: "#e6e7e2", border: "#b2b7af" }
+};
+
+const COMFORT_COLORS = {
+  comfortable: { color: "#527965", soft: "#e0e9e2", border: "#9ab4a3" },
+  uncomfortable: { color: "#9a554c", soft: "#f1e0dc", border: "#caa09a" },
+  mixed: { color: "#7e6858", soft: "#eee4dc", border: "#bda99a" },
+  unclear: FAMILY_COLORS.unclear
 };
 
 const FAMILY_RESULTS = {
@@ -532,19 +539,48 @@ function allFamilyOptions() {
   return [...QUESTIONS.family.uncomfortableOptions, ...QUESTIONS.family.comfortableOptions];
 }
 
+function familyValence(familyId) {
+  if (QUESTIONS.family.uncomfortableOptions.some((option) => option.id === familyId)) return "uncomfortable";
+  if (QUESTIONS.family.comfortableOptions.some((option) => option.id === familyId)) return "comfortable";
+  return "unclear";
+}
+
+function sortFamiliesForBalance(familyCounts) {
+  const valenceOrder = { uncomfortable: 0, unclear: 1, comfortable: 2 };
+  return [...familyCounts.keys()].sort((a, b) => {
+    const valenceDiff = valenceOrder[familyValence(a)] - valenceOrder[familyValence(b)];
+    if (valenceDiff !== 0) return valenceDiff;
+    return (familyCounts.get(b) || 0) - (familyCounts.get(a) || 0);
+  });
+}
+
 function familyMeta(familyId) {
   return allFamilyOptions().find((option) => option.id === familyId) || { id: familyId, label: familyId, desc: "" };
 }
 
-function familyColorStyle(familyId) {
+function textureAlphaForFamily(track, familyId) {
+  if (!track) return "0.92";
+  const textures = new Set(track.familyTextures?.[familyId] || []);
+  if (textures.has("activated")) return "1";
+  if (textures.has("settled")) return "0.62";
+  if (textures.has("unclear_energy")) return "0.5";
+  return "0.82";
+}
+
+function familyColorStyle(familyId, track = null) {
   const colors = FAMILY_COLORS[familyId] || { color: "#5a665f", soft: "#e4eae6", border: "#aeb8b1" };
-  return `--family-color:${colors.color};--family-soft:${colors.soft};--family-border:${colors.border};`;
+  return `--family-color:${colors.color};--family-soft:${colors.soft};--family-border:${colors.border};--family-alpha:${textureAlphaForFamily(track, familyId)};`;
+}
+
+function optionColorStyle(questionId, optionId, track) {
+  if (questionId === "family") return familyColorStyle(optionId, track);
+  const colors = COMFORT_COLORS[optionId] || FAMILY_COLORS.unclear;
+  return `--family-color:${colors.color};--family-soft:${colors.soft};--family-border:${colors.border};--family-alpha:0.92;`;
 }
 
 function textureClassForFamily(track, familyId) {
   const textures = new Set(track.familyTextures?.[familyId] || []);
-  if (textures.has("activated")) return "texture-activated";
-  if (textures.has("depleted")) return "texture-depleted";
+  if (textures.has("activated") || textures.has("depleted")) return "texture-activated";
   if (textures.has("settled")) return "texture-settled";
   if (textures.has("unclear_energy")) return "texture-unclear";
   return "texture-none";
@@ -600,7 +636,7 @@ function renderTrackFamilyDots(track) {
   }
   return `
     <span class="track-family-dots" aria-label="Selected family colors">
-      ${families.map((familyId) => `<span style="${familyColorStyle(familyId)}"></span>`).join("")}
+      ${families.map((familyId) => `<span style="${familyColorStyle(familyId, track)}"></span>`).join("")}
     </span>
   `;
 }
@@ -655,6 +691,7 @@ function renderQuestion(track) {
           <button
             type="button"
             class="option-button ${selected.has(option.id) ? "selected" : ""}"
+            style="${optionColorStyle(question.id, option.id, track)}"
             aria-pressed="${selected.has(option.id) ? "true" : "false"}"
             onclick="toggleOption('${option.id}')"
           >
@@ -706,7 +743,7 @@ function renderFamilyCard(track, familyId) {
   const selectedWords = new Set(track.selectedWords?.[familyId] || []);
   const need = possibleNeedsForFamily(track, familyId);
   return `
-    <article class="family-card ${textureClassForFamily(track, familyId)}" style="${familyColorStyle(familyId)}">
+    <article class="family-card ${textureClassForFamily(track, familyId)}" style="${familyColorStyle(familyId, track)}">
       <header class="family-card-header">
         <h3>${escapeHtml(family.label)}</h3>
         <p>${escapeHtml(family.desc)}</p>
@@ -786,14 +823,17 @@ function buildSummary() {
 }
 
 function renderFamilyDistribution(familyCounts) {
-  const entries = [...familyCounts.entries()].sort((a, b) => b[1] - a[1]);
-  if (!entries.length) return `<p class="empty-note">Choose broad families to see the color state.</p>`;
-  const total = entries.reduce((sum, [, count]) => sum + count, 0);
+  const families = sortFamiliesForBalance(familyCounts);
+  if (!families.length) return `<p class="empty-note">Choose broad families to see the color state.</p>`;
+  const total = families.reduce((sum, familyId) => sum + familyCounts.get(familyId), 0);
   return `
-    <div class="color-stack" aria-label="Family color distribution">
-      ${entries.map(([familyId, count]) => `
+    <div class="color-stack" aria-label="Uncomfortable families on the left, comfortable families on the right">
+      ${families.map((familyId) => {
+        const count = familyCounts.get(familyId);
+        return `
         <span style="${familyColorStyle(familyId)} width:${Math.max(8, (count / total) * 100)}%;" title="${escapeHtml(familyHoverLabel(familyId, count))}"></span>
-      `).join("")}
+      `;
+      }).join("")}
     </div>
   `;
 }
@@ -808,7 +848,7 @@ function familyHoverLabel(familyId, count) {
 }
 
 function renderSummaryTable(summary) {
-  const families = [...summary.familyCounts.keys()].sort((a, b) => summary.familyCounts.get(b) - summary.familyCounts.get(a));
+  const families = sortFamiliesForBalance(summary.familyCounts);
   if (!families.length) return `<p class="empty-note">Choose broad families to fill in the table.</p>`;
   return `
     <div class="summary-table-wrap">
@@ -846,9 +886,9 @@ function renderSummaryTableCell(track, familyId, needCounts) {
     .sort((a, b) => (needCounts.get(b) || 0) - (needCounts.get(a) || 0))
     .slice(0, 4);
   return `
-    <td class="summary-filled-cell" style="${familyColorStyle(familyId)}">
+    <td class="summary-filled-cell" style="${familyColorStyle(familyId, track)}">
       <div class="summary-cell-fill">
-        <strong>${words.length ? escapeHtml(words.join(", ")) : "selected"}</strong>
+        <strong>${words.length ? escapeHtml(words.join(", ")) : "Possible:"}</strong>
         <span>${needs.length ? escapeHtml(needs.join(", ")) : "No needs yet."}</span>
       </div>
     </td>

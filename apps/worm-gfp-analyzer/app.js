@@ -29,6 +29,10 @@ const state = {
   debugCleanup: 3,
   debugMasks: null,
   drawing: false,
+  dragDirty: false,
+  paintDirty: false,
+  renderQueued: false,
+  gfpMaskTimer: null,
   undoStack: [],
   planeStates: new Map(),
 };
@@ -103,6 +107,8 @@ function snapshotPlaneState() {
     outlineClosed: state.outlineClosed,
     outlineApproved: state.outlineApproved,
     gfpApproved: state.gfpApproved,
+    gfpThreshold: Number(els.gfpThreshold.value),
+    minObject: Number(els.minObject.value),
   });
 }
 
@@ -123,6 +129,8 @@ function restorePlaneState(plane) {
   state.outlineClosed = saved.outlineClosed;
   state.outlineApproved = saved.outlineApproved;
   state.gfpApproved = saved.gfpApproved || false;
+  if (saved.gfpThreshold !== undefined) els.gfpThreshold.value = saved.gfpThreshold;
+  if (saved.minObject !== undefined) els.minObject.value = saved.minObject;
   return true;
 }
 
@@ -172,6 +180,16 @@ function autoGfpMask(saveUndo = true) {
   updateGfpStatus();
   updateWorkflowUi();
   render();
+}
+
+function scheduleAutoGfpMask() {
+  clearTimeout(state.gfpMaskTimer);
+  els.gfpStatus.textContent = "Updating GFP selection...";
+  state.gfpMaskTimer = setTimeout(() => {
+    state.gfpMaskTimer = null;
+    state.gfpApproved = false;
+    autoGfpMask(false);
+  }, 90);
 }
 
 function applyGfpCorrections(baseMask) {
@@ -414,7 +432,7 @@ function draftOutline() {
   state.outlineApproved = false;
   state.gfpApproved = false;
   setActiveTool("worm-outline");
-  els.outlineStatus.textContent = "Body path mode: click tail, optional bends, then head. Click Generate boundary from DIC when done.";
+  els.outlineStatus.textContent = "Body path mode: click tail, optional bends, then head. Click Generate from body path when done.";
   updateCursorText();
   render();
 }
@@ -1150,7 +1168,7 @@ function updateOutlineStatus() {
   if (state.outlineApproved) {
     els.outlineStatus.textContent = "YES APPROVED. GFP measurements are using this worm mask.";
   } else if (points < 3) {
-    els.outlineStatus.textContent = "Use Manual Boundary, or Start body path to generate a boundary from DIC.";
+    els.outlineStatus.textContent = "Click around the worm, then close the boundary and approve the mask.";
   } else if (!state.outlineClosed) {
     els.outlineStatus.textContent = `${points} anchors placed. Click Close boundary to fill the worm mask.`;
   } else {
@@ -1268,6 +1286,7 @@ function updateCursorText(point = null) {
 }
 
 function render() {
+  state.renderQueued = false;
   if (state.view === "debug") {
     renderDebugView();
     return;
@@ -1341,7 +1360,14 @@ function render() {
   els.statusText.textContent = `${state.view.toUpperCase()} view`;
 }
 
+function requestRender() {
+  if (state.renderQueued) return;
+  state.renderQueued = true;
+  requestAnimationFrame(render);
+}
+
 function renderDebugView() {
+  state.renderQueued = false;
   if (!state.debugMasks) refreshDebugMasks();
   const image = ctx.createImageData(state.width, state.height);
   const data = image.data;
@@ -1619,9 +1645,11 @@ function paintAt(x, y) {
           if (value) {
             state.gfpManualAdd[idx] = 1;
             state.gfpManualErase[idx] = 0;
+            state.gfpMask[idx] = 1;
           } else {
             state.gfpManualErase[idx] = 1;
             state.gfpManualAdd[idx] = 0;
+            state.gfpMask[idx] = 0;
           }
         }
       }
@@ -1631,15 +1659,16 @@ function paintAt(x, y) {
     state.outlineApproved = false;
     state.gfpApproved = false;
     updateOutlineStatus();
+    autoGfpMask(false);
   } else {
     state.gfpApproved = false;
+    state.paintDirty = true;
+    requestRender();
   }
-  autoGfpMask(false);
-  updateGfpStatus();
 }
 
 function downloadBlob(name, type, content) {
-  const blob = new Blob([content], { type });
+  const blob = content instanceof Blob ? content : new Blob([content], { type });
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
   a.href = url;
@@ -1648,57 +1677,204 @@ function downloadBlob(name, type, content) {
   URL.revokeObjectURL(url);
 }
 
-function downloadMasks() {
+function getPlaneExportState(plane) {
+  if (plane === state.plane) snapshotPlaneState();
+  const saved = state.planeStates.get(plane);
+  const empty = new Uint8Array(state.width * state.height);
+  return {
+    plane,
+    anchors: saved ? saved.anchors : [],
+    wormMask: saved ? saved.wormMask : empty,
+    gfpMask: saved ? saved.gfpMask : empty,
+    outlineApproved: saved ? saved.outlineApproved : false,
+    gfpApproved: saved ? saved.gfpApproved : false,
+    gfpThreshold: saved?.gfpThreshold ?? Number(els.gfpThreshold.value),
+    minObject: saved?.minObject ?? Number(els.minObject.value),
+  };
+}
+
+function measurePlaneMasks(exportState, gfpPixels) {
+  let wormArea = 0;
+  let gfpArea = 0;
+  let integrated = 0;
+  for (let i = 0; i < exportState.wormMask.length; i += 1) {
+    if (exportState.wormMask[i]) wormArea += 1;
+    if (exportState.gfpMask[i] && exportState.wormMask[i]) {
+      gfpArea += 1;
+      integrated += gfpPixels[i];
+    }
+  }
+  return {
+    wormArea,
+    gfpArea,
+    gfpPercent: wormArea ? (gfpArea / wormArea) * 100 : 0,
+    integratedGfp: Math.round(integrated),
+  };
+}
+
+function hasOutlinedPlane(exportState) {
+  return exportState.wormMask.some((value) => value);
+}
+
+function createMaskPngBlob(exportState) {
   const image = ctx.createImageData(state.width, state.height);
   const data = image.data;
-  for (let i = 0, j = 0; i < state.wormMask.length; i += 1, j += 4) {
-    data[j] = state.wormMask[i] ? 44 : 0;
-    data[j + 1] = state.gfpMask[i] ? 230 : 0;
-    data[j + 2] = state.wormMask[i] ? 220 : 0;
-    data[j + 3] = state.wormMask[i] || state.gfpMask[i] ? 255 : 0;
+  for (let i = 0, j = 0; i < exportState.wormMask.length; i += 1, j += 4) {
+    data[j] = exportState.wormMask[i] ? 44 : 0;
+    data[j + 1] = exportState.gfpMask[i] ? 230 : 0;
+    data[j + 2] = exportState.wormMask[i] ? 220 : 0;
+    data[j + 3] = exportState.wormMask[i] || exportState.gfpMask[i] ? 255 : 0;
   }
   const offscreen = document.createElement("canvas");
   offscreen.width = state.width;
   offscreen.height = state.height;
   offscreen.getContext("2d").putImageData(image, 0, 0);
-  offscreen.toBlob((blob) => {
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `worm-gfp-masks-plane-${state.plane}.png`;
-    a.click();
-    URL.revokeObjectURL(url);
-  });
+  return new Promise((resolve) => offscreen.toBlob(resolve, "image/png"));
 }
 
-function downloadCsv() {
-  let wormArea = 0;
-  let gfpArea = 0;
-  let integrated = 0;
-  for (let i = 0; i < state.wormMask.length; i += 1) {
-    if (state.wormMask[i]) wormArea += 1;
-    if (state.gfpMask[i] && state.wormMask[i]) {
-      gfpArea += 1;
-      integrated += state.gfp[i];
-    }
+function makeCrc32Table() {
+  const table = new Uint32Array(256);
+  for (let i = 0; i < 256; i += 1) {
+    let c = i;
+    for (let k = 0; k < 8; k += 1) c = c & 1 ? 0xedb88320 ^ (c >>> 1) : c >>> 1;
+    table[i] = c >>> 0;
   }
-  const percent = wormArea ? (gfpArea / wormArea) * 100 : 0;
-  const csv = [
-    "sample,plane,outline_approved,worm_area_px,gfp_area_px,gfp_percent,integrated_gfp,gfp_threshold,min_gfp_object_px,anchor_points",
-    [
-      "cytoGFP_pmk-1",
-      state.plane,
-      state.outlineApproved ? "yes" : "no",
-      wormArea,
-      gfpArea,
-      percent.toFixed(4),
-      Math.round(integrated),
-      els.gfpThreshold.value,
-      els.minObject.value,
-      state.anchors.length,
-    ].join(","),
-  ].join("\n");
-  downloadBlob("worm-gfp-measurement.csv", "text/csv", csv);
+  return table;
+}
+
+const crc32Table = makeCrc32Table();
+
+function crc32(bytes) {
+  let crc = 0xffffffff;
+  for (const byte of bytes) crc = crc32Table[(crc ^ byte) & 0xff] ^ (crc >>> 8);
+  return (crc ^ 0xffffffff) >>> 0;
+}
+
+function writeUint16(view, offset, value) {
+  view.setUint16(offset, value, true);
+}
+
+function writeUint32(view, offset, value) {
+  view.setUint32(offset, value >>> 0, true);
+}
+
+function dosDateTime(date) {
+  const year = Math.max(1980, date.getFullYear());
+  return {
+    time: (date.getHours() << 11) | (date.getMinutes() << 5) | Math.floor(date.getSeconds() / 2),
+    date: ((year - 1980) << 9) | ((date.getMonth() + 1) << 5) | date.getDate(),
+  };
+}
+
+function makeZipBlob(files) {
+  const encoder = new TextEncoder();
+  const now = dosDateTime(new Date());
+  const chunks = [];
+  const central = [];
+  let offset = 0;
+
+  for (const file of files) {
+    const nameBytes = encoder.encode(file.name);
+    const checksum = crc32(file.bytes);
+    const local = new Uint8Array(30 + nameBytes.length);
+    const localView = new DataView(local.buffer);
+    writeUint32(localView, 0, 0x04034b50);
+    writeUint16(localView, 4, 20);
+    writeUint16(localView, 10, now.time);
+    writeUint16(localView, 12, now.date);
+    writeUint32(localView, 14, checksum);
+    writeUint32(localView, 18, file.bytes.length);
+    writeUint32(localView, 22, file.bytes.length);
+    writeUint16(localView, 26, nameBytes.length);
+    local.set(nameBytes, 30);
+    chunks.push(local, file.bytes);
+
+    const directory = new Uint8Array(46 + nameBytes.length);
+    const directoryView = new DataView(directory.buffer);
+    writeUint32(directoryView, 0, 0x02014b50);
+    writeUint16(directoryView, 4, 20);
+    writeUint16(directoryView, 6, 20);
+    writeUint16(directoryView, 12, now.time);
+    writeUint16(directoryView, 14, now.date);
+    writeUint32(directoryView, 16, checksum);
+    writeUint32(directoryView, 20, file.bytes.length);
+    writeUint32(directoryView, 24, file.bytes.length);
+    writeUint16(directoryView, 28, nameBytes.length);
+    writeUint32(directoryView, 42, offset);
+    directory.set(nameBytes, 46);
+    central.push(directory);
+
+    offset += local.length + file.bytes.length;
+  }
+
+  const centralSize = central.reduce((sum, chunk) => sum + chunk.length, 0);
+  const end = new Uint8Array(22);
+  const endView = new DataView(end.buffer);
+  writeUint32(endView, 0, 0x06054b50);
+  writeUint16(endView, 8, files.length);
+  writeUint16(endView, 10, files.length);
+  writeUint32(endView, 12, centralSize);
+  writeUint32(endView, 16, offset);
+  return new Blob([...chunks, ...central, end], { type: "application/zip" });
+}
+
+async function bytesFromBlob(blob) {
+  return new Uint8Array(await blob.arrayBuffer());
+}
+
+async function downloadMasks() {
+  els.statusText.textContent = "Preparing all mask files...";
+  const files = [];
+  for (let plane = 1; plane <= state.planeCount; plane += 1) {
+    const exportState = getPlaneExportState(plane);
+    if (!hasOutlinedPlane(exportState)) continue;
+    const blob = await createMaskPngBlob(exportState);
+    files.push({
+      name: `plane-${String(plane).padStart(2, "0")}-masks.png`,
+      bytes: await bytesFromBlob(blob),
+    });
+  }
+  if (!files.length) {
+    els.statusText.textContent = "No outlined planes to save";
+    return;
+  }
+  downloadBlob("worm-gfp-masks-all-planes.zip", "application/zip", makeZipBlob(files));
+  els.statusText.textContent = `Saved ${files.length} outlined plane mask${files.length === 1 ? "" : "s"}`;
+}
+
+async function downloadCsv() {
+  els.statusText.textContent = "Preparing all CSV rows...";
+  const rows = [
+    "sample,plane,outline_approved,gfp_approved,worm_area_px,gfp_area_px,gfp_percent,integrated_gfp,gfp_threshold,min_gfp_object_px,anchor_points",
+  ];
+  for (let plane = 1; plane <= state.planeCount; plane += 1) {
+    const exportState = getPlaneExportState(plane);
+    if (!hasOutlinedPlane(exportState)) continue;
+    const planeName = String(plane).padStart(2, "0");
+    const gfpPixels = plane === state.plane ? state.gfp : getGrayPixels(await loadImage(`assets/planes/gfp/${planeName}.png`));
+    const metrics = measurePlaneMasks(exportState, gfpPixels);
+    rows.push(
+      [
+        "cytoGFP_pmk-1",
+        plane,
+        exportState.outlineApproved ? "yes" : "no",
+        exportState.gfpApproved ? "yes" : "no",
+        metrics.wormArea,
+        metrics.gfpArea,
+        metrics.gfpPercent.toFixed(4),
+        metrics.integratedGfp,
+        exportState.gfpThreshold,
+        exportState.minObject,
+        exportState.anchors.length,
+      ].join(","),
+    );
+  }
+  if (rows.length === 1) {
+    els.statusText.textContent = "No outlined planes to export";
+    return;
+  }
+  downloadBlob("worm-gfp-measurements-all-planes.csv", "text/csv", rows.join("\n"));
+  els.statusText.textContent = `Exported ${rows.length - 1} outlined plane row${rows.length === 2 ? "" : "s"}`;
 }
 
 function bindEvents() {
@@ -1735,7 +1911,7 @@ function bindEvents() {
       document.querySelectorAll("[data-view]").forEach((b) => b.classList.toggle("active", b.dataset.view === "debug"));
     });
   });
-  els.brushSize.addEventListener("input", () => {
+  els.brushSize?.addEventListener("input", () => {
     state.brushSize = Number(els.brushSize.value);
     updateCursorText();
   });
@@ -1750,11 +1926,11 @@ function bindEvents() {
     state.debugCleanup = Number(els.debugCleanup.value);
     refreshDebugMasks();
   });
-  els.gfpThreshold.addEventListener("input", () => autoGfpMask());
-  els.minObject.addEventListener("input", () => autoGfpMask());
+  els.gfpThreshold.addEventListener("input", scheduleAutoGfpMask);
+  els.minObject.addEventListener("input", scheduleAutoGfpMask);
 
-  document.getElementById("draftOutlineBtn").addEventListener("click", draftOutline);
-  document.getElementById("generateGuideBtn").addEventListener("click", generateGuideOutline);
+  document.getElementById("draftOutlineBtn")?.addEventListener("click", draftOutline);
+  document.getElementById("generateGuideBtn")?.addEventListener("click", generateGuideOutline);
   document.getElementById("refreshDebugBtn")?.addEventListener("click", refreshDebugMasks);
   document.getElementById("makeOutlineBtn").addEventListener("click", closePath);
   document.getElementById("autoHandlesBtn").addEventListener("click", () => autoHandles());
@@ -1824,7 +2000,7 @@ function bindEvents() {
       const count = state.guidePoints.length;
       els.outlineStatus.textContent =
         count === 1
-          ? "Body path: tail set. Click bends along the worm, ending with head, then Generate boundary from DIC."
+          ? "Body path: tail set. Click bends along the worm, ending with head, then Generate from body path."
           : `Body path: ${count} points set. Last point is treated as head when you generate the boundary.`;
       render();
       return;
@@ -1834,6 +2010,7 @@ function bindEvents() {
       pushUndo();
       if (target) {
         state.dragTarget = target;
+        state.dragDirty = false;
         canvas.setPointerCapture(event.pointerId);
       } else if (state.outlineClosed) {
         const insert = nearestPathSegment(point);
@@ -1874,18 +2051,33 @@ function bindEvents() {
         mirrorHandle(anchor, state.dragTarget.type);
       }
       state.outlineApproved = false;
-      updateMaskFromPath(false);
+      state.gfpApproved = false;
+      state.dragDirty = true;
+      els.outlineStatus.textContent = "Adjusting boundary. Release to update the worm mask.";
+      requestRender();
       return;
     }
     if (state.drawing) paintAt(point.x, point.y);
   });
   canvas.addEventListener("pointerup", () => {
+    const shouldUpdateMask = state.dragTarget && state.dragDirty;
+    const shouldUpdateGfpStatus = state.drawing && state.paintDirty && state.tool.startsWith("gfp");
     state.drawing = false;
     state.dragTarget = null;
+    state.dragDirty = false;
+    state.paintDirty = false;
+    if (shouldUpdateMask) updateMaskFromPath(false);
+    if (shouldUpdateGfpStatus) {
+      updateGfpStatus();
+      updateWorkflowUi();
+      requestRender();
+    }
   });
   canvas.addEventListener("pointercancel", () => {
     state.drawing = false;
     state.dragTarget = null;
+    state.dragDirty = false;
+    state.paintDirty = false;
   });
   canvas.addEventListener("dblclick", (event) => {
     if (state.tool !== "worm-outline") return;

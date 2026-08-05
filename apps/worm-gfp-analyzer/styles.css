@@ -126,7 +126,23 @@ button.primary {
   display: flex;
   gap: 5px;
   overflow-x: auto;
-  padding-bottom: 2px;
+  padding-bottom: 8px;
+  scrollbar-color: #9fb1a5 #eef1ed;
+  scrollbar-width: thin;
+}
+
+.plane-strip::-webkit-scrollbar {
+  height: 9px;
+}
+
+.plane-strip::-webkit-scrollbar-track {
+  background: #eef1ed;
+  border-radius: 999px;
+}
+
+.plane-strip::-webkit-scrollbar-thumb {
+  background: #9fb1a5;
+  border-radius: 999px;
 }
 
 .plane-tile {

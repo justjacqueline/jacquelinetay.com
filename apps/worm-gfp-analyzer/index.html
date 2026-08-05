@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Worm GFP Analyzer</title>
-    <link rel="stylesheet" href="styles.css?v=31">
+    <link rel="stylesheet" href="styles.css?v=32">
   </head>
   <body>
     <main class="app-shell">
@@ -32,7 +32,7 @@
           <div class="stage-head">
             <div>
               <h2>Worm Mask from DIC</h2>
-              <span class="stage-subtitle">Draw or generate the worm outline on the DIC image.</span>
+              <span class="stage-subtitle">Draw the worm outline on the DIC image.</span>
             </div>
             <span class="stage-badge" id="wormBadge">Needs review</span>
           </div>
@@ -44,40 +44,44 @@
               <button class="active worm-tool" data-tool="worm-outline">Add/edit boundary points</button>
               <button id="makeOutlineBtn">Close boundary (C)</button>
               <button id="autoHandlesBtn">Smooth handles</button>
-              <button id="clearCurveBtn">Clear worm</button>
             </div>
           </div>
 
-          <div class="subpanel">
-            <h3>DIC-Assisted Body Path</h3>
+          <!--
+          <details class="subpanel experimental-tools">
+            <summary>Experimental DIC-assisted outline</summary>
             <div class="button-row">
               <button id="draftOutlineBtn">Start body path</button>
-              <button id="generateGuideBtn">Generate boundary from DIC</button>
+              <button id="generateGuideBtn">Generate from body path</button>
             </div>
-            <p class="helper">Click tail, optional bends through the worm, then head. DIC edges are used to place the editable boundary.</p>
-          </div>
+            <p class="helper">This is kept for testing, but manual boundary drawing is the recommended workflow.</p>
+          </details>
 
           <details class="subpanel">
-            <summary>Advanced pixel fixes</summary>
+            <summary>Experimental worm pixel brush</summary>
             <div class="tool-grid">
-              <button class="worm-tool" data-tool="worm-add">Paint worm pixels</button>
-              <button class="worm-tool" data-tool="worm-erase">Erase worm pixels</button>
+              <button class="worm-tool" data-tool="worm-add">Brush in worm mask</button>
+              <button class="worm-tool" data-tool="worm-erase">Brush out worm mask</button>
             </div>
             <label class="control">
               <span>Pixel brush size</span>
               <input id="brushSize" type="range" min="4" max="80" value="24">
             </label>
           </details>
+          -->
 
-          <button id="undoBtn" type="button">Undo</button>
-          <p class="helper" id="outlineStatus">Click anchors manually, or Start body path: tail, bends, head, then Generate boundary from DIC.</p>
+          <div class="button-row">
+            <button id="undoBtn" type="button">Undo</button>
+            <button id="clearCurveBtn" type="button">Clear worm</button>
+          </div>
+          <p class="helper" id="outlineStatus">Click around the worm, then close the boundary and approve the mask.</p>
         </section>
 
         <section class="panel stage-panel" id="gfpPanel" data-stage-panel="gfp" hidden>
           <div class="stage-head">
             <div>
               <h2>GFP Mask from GFP Image</h2>
-              <span class="stage-subtitle">Tune the threshold on the GFP image, then brush small corrections.</span>
+              <span class="stage-subtitle">Tune the GFP selection, then optionally brush corrections.</span>
             </div>
             <span class="stage-badge" id="gfpBadge">Locked</span>
           </div>
@@ -88,15 +92,15 @@
             <span><i class="swatch erase"></i>Removed</span>
           </div>
           <div class="tool-grid">
-            <button class="gfp-tool" data-tool="gfp-add">Add GFP area</button>
-            <button class="gfp-tool" data-tool="gfp-erase">Remove GFP area</button>
+            <button class="gfp-tool" data-tool="gfp-add">Brush in GFP signal</button>
+            <button class="gfp-tool" data-tool="gfp-erase">Brush out GFP signal</button>
           </div>
           <label class="control">
-            <span>Selection threshold</span>
+            <span>GFP brightness cutoff</span>
             <input id="gfpThreshold" type="range" min="0" max="255" value="72">
           </label>
           <label class="control">
-            <span>Ignore specks smaller than</span>
+            <span>Minimum GFP spot size</span>
             <input id="minObject" type="range" min="0" max="800" value="80">
           </label>
           <button id="resetGfpEditsBtn" type="button">Clear manual GFP edits</button>
@@ -122,8 +126,8 @@
             <strong id="integratedGfp">0</strong>
           </div>
           <div class="button-row">
-            <button id="downloadMasksBtn">Save masks</button>
-            <button id="downloadCsvBtn">Export CSV</button>
+            <button id="downloadMasksBtn">Save outlined masks</button>
+            <button id="downloadCsvBtn">Export outlined CSV</button>
           </div>
         </section>
       </aside>
@@ -137,6 +141,6 @@
       </section>
     </main>
 
-    <script src="app.js?v=31"></script>
+    <script src="app.js?v=32"></script>
   </body>
 </html>
