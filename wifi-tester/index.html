@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Wi-Fi Tester - Jacqueline Tay</title>
+  <meta name="description" content="A browser-based Wi-Fi quality test for comparing office rooms and desks.">
+  <link rel="canonical" href="https://jacquelinetay.com/wifi-tester/">
+  <link rel="icon" href="/assets/favicon.png" type="image/png">
+  <link rel="apple-touch-icon" href="/assets/favicon.png">
+  <meta property="og:site_name" content="Jacqueline Tay">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Wi-Fi Tester - Jacqueline Tay">
+  <meta property="og:description" content="Measure latency, jitter, download speed, and upload speed from an office browser.">
+  <meta property="og:url" content="https://jacquelinetay.com/wifi-tester/">
+  <meta property="og:image" content="https://jacquelinetay.com/assets/logo-home.png">
+  <meta property="og:image:alt" content="Jacqueline Tay">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Wi-Fi Tester - Jacqueline Tay">
+  <meta name="twitter:description" content="Measure latency, jitter, download speed, and upload speed from an office browser.">
+  <meta name="twitter:image" content="https://jacquelinetay.com/assets/logo-home.png">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2.1.1/css/pico.min.css">
+  <link rel="stylesheet" href="/assets/site.css">
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body class="wifi-app">
+  <header>
+    <nav class="container-fluid wifi-nav">
+      <ul>
+        <li>
+          <strong class="site-brand">
+            <a href="/shelf/" aria-label="Jacqueline Tay - shelf">
+              <img class="site-logo" src="/assets/logo-home.png" alt="" width="1036" height="191" decoding="async">
+            </a>
+          </strong>
+        </li>
+      </ul>
+      <ul>
+        <li><a href="/shelf/">Shelf</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main class="wifi-shell">
+    <section class="control-panel" aria-labelledby="page-title">
+      <p class="eyebrow">Office network check</p>
+      <h1 id="page-title">Wi-Fi Tester</h1>
+      <p class="lede">Run the same browser test from different desks or rooms. Results stay on this device.</p>
+
+      <label for="locationInput">Location</label>
+      <input id="locationInput" type="text" autocomplete="off" placeholder="Conference room, front desk, kitchen">
+
+      <label for="notesInput">Notes</label>
+      <textarea id="notesInput" rows="3" placeholder="Optional: device, time of day, number of people nearby"></textarea>
+
+      <div class="button-row">
+        <button id="runTestBtn" type="button">
+          Run test
+        </button>
+        <button id="stopTestBtn" class="secondary" type="button" disabled>
+          Stop
+        </button>
+      </div>
+
+      <div class="progress-wrap" aria-live="polite">
+        <div class="progress-label">
+          <span id="statusText">Ready</span>
+          <span id="progressText">0%</span>
+        </div>
+        <div class="progress-track">
+          <div id="progressBar" class="progress-bar"></div>
+        </div>
+      </div>
+
+      <details class="tester-notes">
+        <summary>What this can and cannot see</summary>
+        <p>This measures real browser network quality: latency, jitter, download, upload, and failed requests. Browsers cannot directly read Wi-Fi signal strength, router channel congestion, or radio interference.</p>
+      </details>
+    </section>
+
+    <section class="results-panel" aria-label="Current Wi-Fi test results">
+      <div class="score-band" id="scoreBand">
+        <div>
+          <span class="score-label">Office readiness</span>
+          <strong id="scoreValue">--</strong>
+        </div>
+        <p id="scoreSummary">Run a test to score this spot.</p>
+      </div>
+
+      <div class="metric-grid">
+        <article class="metric-card">
+          <span>Latency</span>
+          <strong id="latencyValue">--</strong>
+          <small id="latencyHint">Round-trip request time</small>
+        </article>
+        <article class="metric-card">
+          <span>Jitter</span>
+          <strong id="jitterValue">--</strong>
+          <small id="jitterHint">Stability of latency</small>
+        </article>
+        <article class="metric-card">
+          <span>Download</span>
+          <strong id="downloadValue">--</strong>
+          <small id="downloadHint">Large file fetch speed</small>
+        </article>
+        <article class="metric-card">
+          <span>Upload</span>
+          <strong id="uploadValue">--</strong>
+          <small id="uploadHint">Browser POST speed</small>
+        </article>
+      </div>
+
+      <div class="chart-panel">
+        <div class="section-heading">
+          <h2>Latency Samples</h2>
+          <span id="sampleCount">0 samples</span>
+        </div>
+        <canvas id="latencyChart" width="880" height="260" aria-label="Latency sample chart"></canvas>
+      </div>
+    </section>
+
+    <section class="history-panel" aria-labelledby="history-title">
+      <div class="section-heading">
+        <h2 id="history-title">Room History</h2>
+        <button id="clearHistoryBtn" class="secondary" type="button">Clear history</button>
+      </div>
+      <div class="history-table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Time</th>
+              <th>Location</th>
+              <th>Score</th>
+              <th>Latency</th>
+              <th>Jitter</th>
+              <th>Down</th>
+              <th>Up</th>
+            </tr>
+          </thead>
+          <tbody id="historyBody">
+            <tr><td colspan="7">No saved tests yet.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <script src="./app.js"></script>
+</body>
+</html>
