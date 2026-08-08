@@ -5,6 +5,10 @@ const uploadValue = document.getElementById('uploadValue');
 const scoreValue = document.getElementById('scoreValue');
 const scoreSummary = document.getElementById('scoreSummary');
 const scoreBand = document.getElementById('scoreBand');
+const verdictBand = document.getElementById('verdictBand');
+const verdictTitle = document.getElementById('verdictTitle');
+const verdictSummary = document.getElementById('verdictSummary');
+const actionList = document.getElementById('actionList');
 const sampleCount = document.getElementById('sampleCount');
 const statusText = document.getElementById('statusText');
 const progressText = document.getElementById('progressText');
@@ -17,6 +21,12 @@ const notesInput = document.getElementById('notesInput');
 const historyBody = document.getElementById('historyBody');
 const chart = document.getElementById('latencyChart');
 const ctx = chart.getContext('2d');
+const metricRatings = {
+  latency: document.getElementById('latencyRating'),
+  jitter: document.getElementById('jitterRating'),
+  download: document.getElementById('downloadRating'),
+  upload: document.getElementById('uploadRating'),
+};
 
 const HISTORY_KEY = 'wifi-tester-history-v1';
 const SPEED_BASE = 'https://speed.cloudflare.com';
@@ -95,6 +105,87 @@ function scoreResult(result) {
   const upScore = speedMetric(result.upload, 12, 4);
   const failurePenalty = Math.max(0, 100 - result.failures * 12);
   return Math.round(((latencyScore * 0.3) + (jitterScore * 0.25) + (downScore * 0.25) + (upScore * 0.2)) * (failurePenalty / 100));
+}
+
+function gradeLatency(value) {
+  if (!Number.isFinite(value)) return { label: 'Not measured', level: 'bad' };
+  if (value <= 100) return { label: 'Good for calls', level: 'good' };
+  if (value <= 180) return { label: 'May lag', level: 'ok' };
+  return { label: 'Too slow', level: 'bad' };
+}
+
+function gradeJitter(value) {
+  if (!Number.isFinite(value)) return { label: 'Not measured', level: 'bad' };
+  if (value <= 20) return { label: 'Stable', level: 'good' };
+  if (value <= 50) return { label: 'A little jumpy', level: 'ok' };
+  return { label: 'Move spots', level: 'bad' };
+}
+
+function gradeDownload(value) {
+  if (!Number.isFinite(value)) return { label: 'Not measured', level: 'bad' };
+  if (value >= 15) return { label: 'Enough', level: 'good' };
+  if (value >= 5) return { label: 'Limited', level: 'ok' };
+  return { label: 'Too slow', level: 'bad' };
+}
+
+function gradeUpload(value) {
+  if (!Number.isFinite(value)) return { label: 'Not measured', level: 'bad' };
+  if (value >= 8) return { label: 'Good for video', level: 'good' };
+  if (value >= 4) return { label: 'Probably okay', level: 'ok' };
+  return { label: 'Video may fail', level: 'bad' };
+}
+
+function getMetricGrades(result) {
+  return {
+    latency: gradeLatency(result.latency),
+    jitter: gradeJitter(result.jitter),
+    download: gradeDownload(result.download),
+    upload: gradeUpload(result.upload),
+  };
+}
+
+function getVerdict(result) {
+  const problems = [];
+  if (result.failures > 0) problems.push('some requests failed');
+  if (result.jitter > 50) problems.push('the connection is jumpy');
+  if (result.upload < 4) problems.push('upload is weak');
+  if (result.latency > 180) problems.push('latency is high');
+  if (result.download < 5) problems.push('download is weak');
+
+  if (!problems.length && result.score >= 82) {
+    return {
+      level: 'good',
+      title: 'Stay here for Zoom',
+      summary: 'This spot looks stable enough for video calls and normal office work.',
+      actions: [
+        'Use this room or desk for important calls.',
+        'Run one more test if the office is much busier later.',
+      ],
+    };
+  }
+
+  if (result.jitter > 50 || result.upload < 4 || result.failures > 1 || result.score < 62) {
+    return {
+      level: 'bad',
+      title: 'Move before a Zoom call',
+      summary: `This spot is risky because ${problems.slice(0, 2).join(' and ')}.`,
+      actions: [
+        'Move closer to the router or access point.',
+        'Try another room and run the test again.',
+        'If every room looks bad, use a hotspot or ask whoever manages the router.',
+      ],
+    };
+  }
+
+  return {
+    level: 'ok',
+    title: 'Probably okay, but test another spot',
+    summary: 'This should handle a basic call, but it may be uneven for screen sharing or busy meetings.',
+    actions: [
+      'Try one nearby room or desk and compare the score.',
+      'Prefer the spot with lower jitter and higher upload.',
+    ],
+  };
 }
 
 function summarizeScore(score, result) {
@@ -218,6 +309,9 @@ async function runUploadTest() {
 }
 
 function renderResult(result) {
+  const grades = getMetricGrades(result);
+  const verdict = getVerdict(result);
+
   latencyValue.textContent = formatMs(result.latency);
   jitterValue.textContent = formatMs(result.jitter);
   downloadValue.textContent = formatMbps(result.download);
@@ -226,16 +320,27 @@ function renderResult(result) {
   scoreSummary.textContent = summarizeScore(result.score, result);
   scoreBand.classList.remove('good', 'ok', 'bad');
   scoreBand.classList.add(result.score >= 82 ? 'good' : result.score >= 62 ? 'ok' : 'bad');
+  verdictBand.classList.remove('good', 'ok', 'bad');
+  verdictBand.classList.add(verdict.level);
+  verdictTitle.textContent = verdict.title;
+  verdictSummary.textContent = verdict.summary;
+  actionList.innerHTML = verdict.actions.map(action => `<li>${escapeHtml(action)}</li>`).join('');
+
+  Object.entries(grades).forEach(([key, grade]) => {
+    metricRatings[key].textContent = grade.label;
+    metricRatings[key].className = grade.level;
+  });
 }
 
 function renderHistory() {
   const history = getHistory();
   if (!history.length) {
-    historyBody.innerHTML = '<tr><td colspan="7">No saved tests yet.</td></tr>';
+    historyBody.innerHTML = '<tr><td colspan="8">No saved tests yet.</td></tr>';
     return;
   }
 
   historyBody.innerHTML = history.map(entry => {
+    const verdict = getVerdict(entry);
     const time = new Date(entry.createdAt).toLocaleString([], {
       month: 'short',
       day: 'numeric',
@@ -245,6 +350,7 @@ function renderHistory() {
     return `<tr>
       <td>${time}</td>
       <td>${escapeHtml(entry.location || 'Unlabeled')}</td>
+      <td><span class="history-pill ${verdict.level}">${escapeHtml(verdict.title)}</span></td>
       <td>${entry.score}</td>
       <td>${formatMs(entry.latency)}</td>
       <td>${formatMs(entry.jitter)}</td>

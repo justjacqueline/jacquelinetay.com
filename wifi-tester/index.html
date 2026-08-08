@@ -79,6 +79,15 @@
     </section>
 
     <section class="results-panel" aria-label="Current Wi-Fi test results">
+      <div class="verdict-band" id="verdictBand">
+        <span class="score-label">Zoom call verdict</span>
+        <strong id="verdictTitle">Run a test first</strong>
+        <p id="verdictSummary">The result will tell you whether to stay here, move closer to the router, or try another network.</p>
+        <ul class="action-list" id="actionList">
+          <li>Test from the exact desk or room where you plan to take the call.</li>
+        </ul>
+      </div>
+
       <div class="score-band" id="scoreBand">
         <div>
           <span class="score-label">Office readiness</span>
@@ -91,23 +100,36 @@
         <article class="metric-card">
           <span>Latency</span>
           <strong id="latencyValue">--</strong>
-          <small id="latencyHint">Round-trip request time</small>
+          <em id="latencyRating">Waiting</em>
+          <small id="latencyHint">How long each response takes. Lower feels more instant.</small>
         </article>
         <article class="metric-card">
           <span>Jitter</span>
           <strong id="jitterValue">--</strong>
-          <small id="jitterHint">Stability of latency</small>
+          <em id="jitterRating">Waiting</em>
+          <small id="jitterHint">How jumpy the connection is. High jitter causes frozen or robotic calls.</small>
         </article>
         <article class="metric-card">
           <span>Download</span>
           <strong id="downloadValue">--</strong>
-          <small id="downloadHint">Large file fetch speed</small>
+          <em id="downloadRating">Waiting</em>
+          <small id="downloadHint">How fast you receive video, shared screens, and files.</small>
         </article>
         <article class="metric-card">
           <span>Upload</span>
           <strong id="uploadValue">--</strong>
-          <small id="uploadHint">Browser POST speed</small>
+          <em id="uploadRating">Waiting</em>
+          <small id="uploadHint">How well your camera, voice, and screen share send out.</small>
         </article>
+      </div>
+
+      <div class="plain-guide" aria-label="How to read the test">
+        <h2>How to read this</h2>
+        <div class="guide-grid">
+          <p><strong>Latency</strong> under 100 ms is usually fine for Zoom.</p>
+          <p><strong>Jitter</strong> over 50 ms is the big warning sign for choppy calls.</p>
+          <p><strong>Upload</strong> under 4 Mbps can make your video or screen share struggle.</p>
+        </div>
       </div>
 
       <div class="chart-panel">
@@ -130,6 +152,7 @@
             <tr>
               <th>Time</th>
               <th>Location</th>
+              <th>Zoom</th>
               <th>Score</th>
               <th>Latency</th>
               <th>Jitter</th>

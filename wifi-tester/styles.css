@@ -132,6 +132,15 @@
   background: var(--wifi-panel-strong);
 }
 
+.verdict-band {
+  padding: 1rem;
+  border: 1px solid var(--wifi-line);
+  border-left: 0.45rem solid var(--wifi-muted);
+  border-radius: 8px;
+  background: var(--wifi-panel-strong);
+  margin-bottom: 0.9rem;
+}
+
 .score-band.good {
   border-left-color: var(--wifi-good);
 }
@@ -142,6 +151,41 @@
 
 .score-band.bad {
   border-left-color: var(--wifi-bad);
+}
+
+.verdict-band.good {
+  border-left-color: var(--wifi-good);
+}
+
+.verdict-band.ok {
+  border-left-color: var(--wifi-ok);
+}
+
+.verdict-band.bad {
+  border-left-color: var(--wifi-bad);
+}
+
+.verdict-band strong {
+  display: block;
+  margin: 0.25rem 0 0.35rem;
+  font-size: clamp(1.75rem, 4vw, 2.75rem);
+  line-height: 1.04;
+  letter-spacing: 0;
+}
+
+.verdict-band p {
+  margin: 0;
+  color: var(--wifi-muted);
+}
+
+.action-list {
+  margin: 0.8rem 0 0;
+  padding-left: 1.2rem;
+  color: var(--wifi-ink);
+}
+
+.action-list li {
+  margin-bottom: 0.24rem;
 }
 
 .score-label,
@@ -186,15 +230,78 @@
 
 .metric-card strong {
   display: block;
-  margin: 0.55rem 0 0.35rem;
+  margin: 0.55rem 0 0.25rem;
   font-size: clamp(1.6rem, 3vw, 2.25rem);
   line-height: 1;
   letter-spacing: 0;
 }
 
+.metric-card em,
+.history-pill {
+  display: inline-block;
+  width: fit-content;
+  margin-bottom: 0.42rem;
+  padding: 0.16rem 0.45rem;
+  border-radius: 999px;
+  font-size: 0.76rem;
+  font-style: normal;
+  font-weight: 700;
+  line-height: 1.35;
+}
+
+.metric-card em.good,
+.history-pill.good {
+  color: #0f5134;
+  background: rgba(22, 115, 76, 0.12);
+}
+
+.metric-card em.ok,
+.history-pill.ok {
+  color: #764a00;
+  background: rgba(154, 100, 0, 0.14);
+}
+
+.metric-card em.bad,
+.history-pill.bad {
+  color: #842029;
+  background: rgba(180, 35, 24, 0.12);
+}
+
 .metric-card small {
+  display: block;
   color: var(--wifi-muted);
   line-height: 1.35;
+}
+
+.plain-guide {
+  margin-top: 0.95rem;
+  padding: 1rem;
+  border: 1px solid var(--wifi-line);
+  border-radius: 8px;
+  background: rgba(248, 250, 247, 0.86);
+}
+
+.plain-guide h2 {
+  margin: 0 0 0.75rem;
+  font-size: 1rem;
+  letter-spacing: 0;
+}
+
+.guide-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+.guide-grid p {
+  margin: 0;
+  color: var(--wifi-muted);
+  font-size: 0.9rem;
+  line-height: 1.42;
+}
+
+.guide-grid strong {
+  color: var(--wifi-ink);
 }
 
 .chart-panel {
@@ -255,6 +362,10 @@
 
   .metric-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .guide-grid {
+    grid-template-columns: 1fr;
   }
 }
 
